@@ -9,8 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ROUTER BIND
-app.use('/api/v1/posts', require('./routes/api/v1/posts'));
-app.use('/api/v1/users', require('./routes/api/v1/users'));
+app.use('/api/v2/customers', require('./routes/api/v2/customers'));
 
 // ENVIRONMENT VARS
 const { PORT, DB_URL } = process.env;
