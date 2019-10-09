@@ -1,6 +1,6 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv/config");
+const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv/config');
 
 const app = express();
 
@@ -9,17 +9,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ROUTER BIND
-app.use('/api/v1/posts', require("./routes/api/v1/posts"));
+app.use('/api/v1/posts', require('./routes/api/v1/posts'));
+app.use('/api/v1/users', require('./routes/api/v1/users'));
 
 // ENVIRONMENT VARS
-const PORT = process.env.PORT || 3000;
-const DB_URL = process.env.DB_URL;
+const { PORT, DB_URL } = process.env;
 
 // DB CONNECTON
-mongoose.connect(DB_URL, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
-  console.log("DB connected")
-})
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+  console.log('DB connected');
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-})
+});
