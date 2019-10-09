@@ -15,7 +15,7 @@ app.use('/api/v2/customers', require('./routes/api/v2/customers'));
 const { PORT, DB_URL } = process.env;
 
 // DB CONNECTON
-mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, () => {
   console.log('DB connected');
 });
 
