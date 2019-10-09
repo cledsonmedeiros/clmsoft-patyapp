@@ -31,7 +31,13 @@ router.post('/', (req, res) => {
 router.get('/show/:id', (req, res) => {
   Customer.findById(req.params.id)
     .then((data) => {
-      res.status(200).json(data);
+      if (!data) {
+        res.status(404).json({
+          error: 'Customer not found',
+        });
+      } else {
+        res.status(200).json(data);
+      }
     })
     .catch((err) => {
       res.status(400).json(err);
@@ -42,7 +48,18 @@ router.get('/show/:id', (req, res) => {
 router.put('/update/:id', (req, res) => {
   Customer.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then((data) => {
-      res.status(201).json(data);
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
+// DELETE
+router.delete('/delete/:id', (req, res) => {
+  Customer.findOneAndDelete(req.params.id)
+    .then((data) => {
+      res.status(200).json(data);
     })
     .catch((err) => {
       res.status(400).json(err);
