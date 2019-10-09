@@ -38,7 +38,7 @@
           </template>
 
           <v-list-item-group link>
-            <v-list-item to="/clientes/pesquisar">
+            <v-list-item to="/clientes">
               <v-list-item-icon>
                 <v-icon>mdi-magnify</v-icon>
               </v-list-item-icon>

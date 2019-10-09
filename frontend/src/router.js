@@ -16,9 +16,9 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Crud.vue'),
     },
     {
-      path: '/clientes/pesquisar',
-      name: 'clientes-pesquisar',
-      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Pesquisar.vue'),
+      path: '/clientes',
+      name: 'clientes',
+      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Home.vue'),
     },
   ],
 });

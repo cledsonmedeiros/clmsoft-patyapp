@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv/config');
 
 const app = express();
+
+// CORS
+app.use(cors());
 
 // BODY PARSER
 app.use(express.urlencoded({ extended: true }));
