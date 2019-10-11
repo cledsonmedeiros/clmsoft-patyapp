@@ -16,10 +16,10 @@ app.use(express.json());
 app.use('/api/v2/customers', require('./routes/api/v2/customers'));
 
 // ENVIRONMENT VARS
-const { PORT, DB_URL } = process.env;
+const { PORT, DB_URL, NODE_ENV } = process.env;
 
 // DB CONNECTON
-mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, () => {
+mongoose.connect(NODE_ENV === "dev" ? DB_URL : DB_URL_PROD, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, () => {
   console.log('DB connected');
 });
 

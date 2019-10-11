@@ -23,7 +23,6 @@
 </template>
 
 <script>
-// import axios from 'axios'
 import axios from "axios";
 
 export default {
@@ -42,10 +41,20 @@ export default {
   },
   methods: {
     async atualizarLista() {
+      let api_url =
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL;
       var _this = this;
-      let response = await axios.get("http://localhost:3333/api/v2/customers");
+      let response = await axios.get(`${api_url}/customers`);
       _this.clientes = response.data;
-    },
+      // _this.$toast.open({
+      //     message: "Lista atualizada!",
+      //     type: "success",
+      //     position: "bottom",
+      //     duration: 1500
+      //   });
+    }
   },
   created() {
     this.atualizarLista();
