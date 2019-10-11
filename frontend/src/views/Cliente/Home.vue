@@ -46,8 +46,13 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
       var _this = this;
-      let response = await axios.get(`${api_url}/customers`);
-      _this.clientes = response.data;
+
+      axios
+        .get(`${api_url}/customers`)
+        .then((response) => {
+          _this.clientes = response.data;
+        });
+
       // _this.$toast.open({
       //     message: "Lista atualizada!",
       //     type: "success",
