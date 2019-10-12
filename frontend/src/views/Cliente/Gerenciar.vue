@@ -2,13 +2,18 @@
   <v-data-table :headers="headers" :items="clientes" sort-by="name" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Clientes</v-toolbar-title>
+        <v-toolbar-title>
+          Gerenciar clientes
+          <v-btn text icon color="purple" @click="atualizarLista()">
+            <v-icon>mdi-cached</v-icon>
+          </v-btn>
+        </v-toolbar-title>
         <div class="flex-grow-1"></div>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
             <v-btn color="purple" outlined dark class="mb-2" v-on="on">
               <v-icon left>mdi-plus</v-icon>
-              <span>Criar</span>
+              <span>Novo</span>
             </v-btn>
           </template>
           <v-card>
@@ -20,7 +25,7 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                    <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
@@ -38,7 +43,12 @@
             <v-card-actions>
               <div class="flex-grow-1"></div>
               <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                :disabled="editedItem.name === undefined || editedItem.name.length === 0"
+                @click="save"
+              >Salvar</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -57,6 +67,11 @@ import axios from "axios";
 export default {
   data: () => ({
     dialog: false,
+    valid: false,
+    nameRules: [
+      v => !!v || "O nome é obrigatório"
+      // v => v.length <= 10 || 'Name must be less than 10 characters',
+    ],
     search: "",
     headers: [
       { text: "Nome", value: "name" },
@@ -82,11 +97,11 @@ export default {
         address: "",
         cpf: ""
       }
-    },
+    }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Criar" : "Editar";
+      return this.editedIndex === -1 ? "Novo cliente" : "Editar cliente";
     }
   },
   watch: {
@@ -152,7 +167,6 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-
         let oldCliente = {
           _id: this.clientes[this.editedIndex]._id,
           name: this.clientes[this.editedIndex].name,
@@ -185,9 +199,7 @@ export default {
               duration: 2000
             });
           });
-
       } else {
-
         let newCliente = {
           name: this.editedItem.name,
           contact: this.editedItem.contact,
