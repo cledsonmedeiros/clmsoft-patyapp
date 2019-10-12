@@ -135,7 +135,7 @@ export default {
         axios.delete(`${api_url}/customers/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
-            message: "Cliente deletado!",
+            message: "Cliente deletado com sucesso",
             type: "success",
             position: "bottom",
             duration: 2000
@@ -179,7 +179,7 @@ export default {
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente atualizado!",
+              message: "Cliente atualizado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -212,8 +212,16 @@ export default {
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente criado!",
+              message: "Cliente criado com sucesso",
               type: "success",
+              position: "bottom",
+              duration: 2000
+            });
+          })
+          .catch(response => {
+            this.$toast.open({
+              message: "Falha ao criar cliente",
+              type: "error",
               position: "bottom",
               duration: 2000
             });
