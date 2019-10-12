@@ -28,7 +28,6 @@
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
-
           <v-list-item-title>Home</v-list-item-title>
         </v-list-item>
 
@@ -37,7 +36,7 @@
             <v-list-item-title>Clientes</v-list-item-title>
           </template>
 
-          <v-list-item-group link>
+          <v-list-item-group>
             <v-list-item to="/clientes">
               <v-list-item-icon>
                 <v-icon>mdi-magnify</v-icon>
@@ -56,7 +55,6 @@
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
-
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
@@ -66,7 +64,7 @@
 <script>
 export default {
   data: () => ({
-    drawer: null,
+    drawer: null
   })
 };
 </script>

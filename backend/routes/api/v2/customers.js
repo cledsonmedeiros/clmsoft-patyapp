@@ -57,7 +57,7 @@ router.put('/update/:id', (req, res) => {
 
 // DELETE
 router.delete('/delete/:id', (req, res) => {
-  Customer.findOneAndDelete(req.params.id)
+  Customer.findByIdAndDelete(req.params.id)
     .then((data) => {
       res.status(200).json(data);
     })

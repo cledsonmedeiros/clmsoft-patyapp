@@ -40,7 +40,7 @@ export default {
     };
   },
   methods: {
-    async atualizarLista() {
+    atualizarLista() {
       let api_url =
         process.env.VUE_APP_ENV === "dev"
           ? process.env.VUE_APP_API_URL_LOCAL
@@ -52,13 +52,6 @@ export default {
         .then((response) => {
           _this.clientes = response.data;
         });
-
-      // _this.$toast.open({
-      //     message: "Lista atualizada!",
-      //     type: "success",
-      //     position: "bottom",
-      //     duration: 1500
-      //   });
     }
   },
   created() {

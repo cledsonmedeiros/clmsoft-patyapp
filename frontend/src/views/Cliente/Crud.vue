@@ -1,22 +1,15 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="desserts"
-    sort-by="calorias"
-    class="elevation-1"
-  >
+  <v-data-table :headers="headers" :items="clientes" sort-by="name" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Sobremesas</v-toolbar-title>
-        <div class="flex-grow-1"></div>
-
+        <v-toolbar-title>Clientes</v-toolbar-title>
         <div class="flex-grow-1"></div>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
             <v-btn color="purple" outlined dark class="mb-2" v-on="on">
-              <v-icon left="">mdi-plus</v-icon>
+              <v-icon left>mdi-plus</v-icon>
               <span>Criar</span>
-              </v-btn>
+            </v-btn>
           </template>
           <v-card>
             <v-card-title>
@@ -26,20 +19,17 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calorias" label="Calorias"></v-text-field>
+                    <v-text-field v-model="editedItem.contact" label="Contato"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.gordura" label="Gordura"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carboidratos" label="Carboidratos"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.proteina" label="Proteínas"></v-text-field>
+                    <v-text-field v-model="editedItem.cpf" label="CPF"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -55,173 +45,182 @@
       </v-toolbar>
     </template>
     <template v-slot:item.action="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      dialog: false,
-      search: '',
-      headers: [
-        {
-          text: 'Sobremesas',
-          align: 'left',
-          sortable: false,
-          value: 'nome',
-        },
-        { text: 'Calorias', value: 'calorias' },
-        { text: 'Gordura', value: 'gordura' },
-        { text: 'Carboidratos', value: 'carboidratos' },
-        { text: 'Proteínas', value: 'proteina' },
-        { text: 'Ações', value: 'action', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        nome: '',
-        calorias: 0,
-        gordura: 0,
-        carboidratos: 0,
-        proteina: 0,
-      },
-      defaultItem: {
-        nome: '',
-        calorias: 0,
-        gordura: 0,
-        carboidratos: 0,
-        proteina: 0,
-      },
-    }),
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Criar' : 'Editar'
-      },
+import axios from "axios";
+
+export default {
+  data: () => ({
+    dialog: false,
+    search: "",
+    headers: [
+      { text: "Nome", value: "name" },
+      { text: "Contato", value: "contact" },
+      { text: "Endereço", value: "address" },
+      { text: "CPF", value: "cpf" },
+      { text: "Ações", value: "action", sortable: false }
+    ],
+    clientes: [],
+    editedIndex: -1,
+    editedItem: {
+      cliente: {
+        name: "",
+        contact: "",
+        address: "",
+        cpf: ""
+      }
     },
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
+    defaultItem: {
+      cliente: {
+        name: "",
+        contact: "",
+        address: "",
+        cpf: ""
+      }
     },
-    created () {
-      this.initialize()
+  }),
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? "Criar" : "Editar";
+    }
+  },
+  watch: {
+    dialog(val) {
+      val || this.close();
+    }
+  },
+  created() {
+    this.atualizarLista();
+  },
+  methods: {
+    atualizarLista() {
+      let api_url =
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL;
+
+      axios.get(`${api_url}/customers`).then(response => {
+        this.clientes = response.data;
+      });
     },
-    methods: {
-      initialize () {
-        this.desserts = [
-          {
-            nome: 'Frozen Yogurt',
-            calorias: 159,
-            gordura: 6.0,
-            carboidratos: 24,
-            proteina: 4.0,
-          },
-          {
-            nome: 'Ice cream sandwich',
-            calorias: 237,
-            gordura: 9.0,
-            carboidratos: 37,
-            proteina: 4.3,
-          },
-          {
-            nome: 'Eclair',
-            calorias: 262,
-            gordura: 16.0,
-            carboidratos: 23,
-            proteina: 6.0,
-          },
-          {
-            nome: 'Cupcake',
-            calorias: 305,
-            gordura: 3.7,
-            carboidratos: 67,
-            proteina: 4.3,
-          },
-          {
-            nome: 'Gingerbread',
-            calorias: 356,
-            gordura: 16.0,
-            carboidratos: 49,
-            proteina: 3.9,
-          },
-          {
-            nome: 'Jelly bean',
-            calorias: 375,
-            gordura: 0.0,
-            carboidratos: 94,
-            proteina: 0.0,
-          },
-          {
-            nome: 'Lollipop',
-            calorias: 392,
-            gordura: 0.2,
-            carboidratos: 98,
-            proteina: 0,
-          },
-          {
-            nome: 'Honeycomb',
-            calorias: 408,
-            gordura: 3.2,
-            carboidratos: 87,
-            proteina: 6.5,
-          },
-          {
-            nome: 'Donut',
-            calorias: 452,
-            gordura: 25.0,
-            carboidratos: 51,
-            proteina: 4.9,
-          },
-          {
-            nome: 'KitKat',
-            calorias: 518,
-            gordura: 26.0,
-            carboidratos: 65,
-            proteina: 7,
-          },
-        ]
-      },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deseja realmente deletar esse item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
-      },
+    editItem(item) {
+      this.editedIndex = this.clientes.indexOf(item);
+
+      let cliente = {
+        _id: item._id,
+        name: item.name,
+        contact: item.contact,
+        address: item.address,
+        cpf: item.cpf
+      };
+
+      this.editedItem = Object.assign({}, cliente);
+      this.dialog = true;
     },
+    deleteItem(item) {
+      const index = this.clientes.indexOf(item);
+
+      if (confirm("Deseja realmente deletar esse item?")) {
+        let id = this.clientes[this.clientes.indexOf(item)]._id;
+        let api_url =
+          process.env.VUE_APP_ENV === "dev"
+            ? process.env.VUE_APP_API_URL_LOCAL
+            : process.env.VUE_APP_API_URL;
+
+        axios.delete(`${api_url}/customers/delete/${id}`).then(response => {
+          this.atualizarLista();
+          this.$toast.open({
+            message: "Cliente deletado!",
+            type: "success",
+            position: "bottom",
+            duration: 2000
+          });
+        });
+      }
+    },
+    close() {
+      this.dialog = false;
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      }, 300);
+    },
+    save() {
+      if (this.editedIndex > -1) {
+
+        let oldCliente = {
+          _id: this.clientes[this.editedIndex]._id,
+          name: this.clientes[this.editedIndex].name,
+          contact: this.clientes[this.editedIndex].contact,
+          address: this.clientes[this.editedIndex].address,
+          cpf: this.clientes[this.editedIndex].cpf
+        };
+
+        let newCliente = {
+          _id: this.editedItem._id,
+          name: this.editedItem.name,
+          contact: this.editedItem.contact,
+          address: this.editedItem.address,
+          cpf: this.editedItem.cpf
+        };
+
+        let api_url =
+          process.env.VUE_APP_ENV === "dev"
+            ? process.env.VUE_APP_API_URL_LOCAL
+            : process.env.VUE_APP_API_URL;
+
+        axios
+          .put(`${api_url}/customers/update/${newCliente._id}`, newCliente)
+          .then(response => {
+            this.atualizarLista();
+            this.$toast.open({
+              message: "Cliente atualizado!",
+              type: "success",
+              position: "bottom",
+              duration: 2000
+            });
+          });
+
+      } else {
+
+        let newCliente = {
+          name: this.editedItem.name,
+          contact: this.editedItem.contact,
+          address: this.editedItem.address,
+          cpf: this.editedItem.cpf
+        };
+
+        let api_url =
+          process.env.VUE_APP_ENV === "dev"
+            ? process.env.VUE_APP_API_URL_LOCAL
+            : process.env.VUE_APP_API_URL;
+
+        axios
+          .post(`${api_url}/customers`, {
+            customer: {
+              name: newCliente.name,
+              contact: newCliente.contact,
+              address: newCliente.address,
+              cpf: newCliente.cpf
+            }
+          })
+          .then(response => {
+            this.atualizarLista();
+            this.$toast.open({
+              message: "Cliente criado!",
+              type: "success",
+              position: "bottom",
+              duration: 2000
+            });
+          });
+      }
+      this.close();
+    }
   }
+};
 </script>

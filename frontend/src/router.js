@@ -11,13 +11,13 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
     },
     {
-      path: '/clientes/crud',
-      name: 'clientes-crud',
+      path: '/clientes/gerenciar',
+      name: 'clientes-gerenciar',
       component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Crud.vue'),
     },
     {
-      path: '/clientes',
-      name: 'clientes',
+      path: '/clientes/pesquisar',
+      name: 'clientes-pesquisar',
       component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Home.vue'),
     },
   ],
