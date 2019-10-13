@@ -102,7 +102,7 @@ export default {
           ]
         },
         {
-          action: "mdi-microsoft",
+          action: "mdi-view-dashboard",
           title: "Produtos",
           items: [
             {
