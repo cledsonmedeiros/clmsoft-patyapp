@@ -82,6 +82,7 @@
 export default {
   data() {
     return {
+      name: "NavBar",
       drawer: null,
       items: [
         {
@@ -113,6 +114,22 @@ export default {
               title: "Gerenciar",
               icon: "mdi-format-list-bulleted",
               route: "/produtos/gerenciar"
+            },
+          ]
+        },
+        {
+          action: "mdi-briefcase-account",
+          title: "Dono produto",
+          items: [
+            {
+              title: "Pesquisar",
+              icon: "mdi-magnify",
+              route: "/donosdeprodutos/pesquisar"
+            },
+            {
+              title: "Gerenciar",
+              icon: "mdi-format-list-bulleted",
+              route: "/donosdeprodutos/gerenciar"
             },
           ]
         },

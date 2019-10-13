@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <v-card-title>
-        Pesquisar clientes
+        Pesquisar dono de produto
         <v-col cols="12" sm="3">
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
@@ -17,7 +17,7 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-      <v-data-table :headers="headers" :items="clientes" :search="search" sort-by="name"></v-data-table>
+      <v-data-table :headers="headers" :items="donoproduto" :search="search" sort-by="name"></v-data-table>
     </v-card>
   </div>
 </template>
@@ -26,17 +26,14 @@
 import axios from "axios";
 
 export default {
-  name: "PesquisarCliente",
+  name: "PesquisarDonoProduto",
   data() {
     return {
       search: "",
       headers: [
         { text: "Nome", value: "name" },
-        { text: "Contato", value: "contact" },
-        { text: "Endereço", value: "address" },
-        { text: "CPF", value: "cpf" }
       ],
-      clientes: []
+      donoproduto: []
     };
   },
   methods: {
@@ -48,14 +45,16 @@ export default {
       var _this = this;
 
       axios
-        .get(`${api_url}/customers`)
+        .get(`${api_url}/productowner`)
         .then((response) => {
-          _this.clientes = response.data;
+          _this.donoproduto = response.data;
         });
     }
   },
   created() {
     this.atualizarLista();
+    console.log(process.env.VUE_APP_ENV);
+
   }
 };
 </script>

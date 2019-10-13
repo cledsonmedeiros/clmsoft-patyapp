@@ -1,9 +1,9 @@
 <template>
-  <v-data-table :headers="headers" :items="clientes" sort-by="name" class="elevation-1">
+  <v-data-table :headers="headers" :items="donosprodutos" sort-by="name" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title>
-          Gerenciar clientes
+          Gerenciar dono de produto
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
@@ -26,15 +26,6 @@
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.contact" label="Contato"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.cpf" class="cpf" label="CPF"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -78,33 +69,24 @@ export default {
     search: "",
     headers: [
       { text: "Nome", value: "name" },
-      { text: "Contato", value: "contact" },
-      { text: "Endereço", value: "address" },
-      { text: "CPF", value: "cpf" },
       { text: "Ações", value: "action", sortable: false, align: 'right', }
     ],
-    clientes: [],
+    donosprodutos: [],
     editedIndex: -1,
     editedItem: {
-      cliente: {
+      donoproduto: {
         name: "",
-        contact: "",
-        address: "",
-        cpf: ""
       }
     },
     defaultItem: {
-      cliente: {
+      donoproduto: {
         name: "",
-        contact: "",
-        address: "",
-        cpf: ""
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Novo cliente" : "Editar cliente";
+      return this.editedIndex === -1 ? "Novo dono de produto" : "Editar dono de produto";
     }
   },
   watch: {
@@ -122,38 +104,35 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios.get(`${api_url}/customers`).then(response => {
-        this.clientes = response.data;
+      axios.get(`${api_url}/productowner`).then(response => {
+        this.donosprodutos = response.data;
       });
     },
     editItem(item) {
-      this.editedIndex = this.clientes.indexOf(item);
+      this.editedIndex = this.donosprodutos.indexOf(item);
 
-      let cliente = {
+      let donoproduto = {
         _id: item._id,
         name: item.name,
-        contact: item.contact,
-        address: item.address,
-        cpf: item.cpf
       };
 
-      this.editedItem = Object.assign({}, cliente);
+      this.editedItem = Object.assign({}, donoproduto);
       this.dialog = true;
     },
     deleteItem(item) {
-      const index = this.clientes.indexOf(item);
+      const index = this.donosprodutos.indexOf(item);
 
       if (confirm("Deseja realmente deletar esse item?")) {
-        let id = this.clientes[this.clientes.indexOf(item)]._id;
+        let id = this.donosprodutos[this.donosprodutos.indexOf(item)]._id;
         let api_url =
           process.env.VUE_APP_ENV === "dev"
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios.delete(`${api_url}/customers/delete/${id}`).then(response => {
+        axios.delete(`${api_url}/productowner/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
-            message: "Cliente deletado com sucesso",
+            message: "Dono de produto deletado com sucesso",
             type: "success",
             position: "bottom",
             duration: 2000
@@ -171,19 +150,13 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         let oldCliente = {
-          _id: this.clientes[this.editedIndex]._id,
-          name: this.clientes[this.editedIndex].name,
-          contact: this.clientes[this.editedIndex].contact,
-          address: this.clientes[this.editedIndex].address,
-          cpf: this.clientes[this.editedIndex].cpf
+          _id: this.donosprodutos[this.editedIndex]._id,
+          name: this.donosprodutos[this.editedIndex].name,
         };
 
-        let newCliente = {
+        let newDonoProduto = {
           _id: this.editedItem._id,
           name: this.editedItem.name,
-          contact: this.editedItem.contact,
-          address: this.editedItem.address,
-          cpf: this.editedItem.cpf
         };
 
         let api_url =
@@ -192,22 +165,19 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(`${api_url}/customers/update/${newCliente._id}`, newCliente)
+          .put(`${api_url}/productowner/update/${newDonoProduto._id}`, newDonoProduto)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente atualizado com sucesso",
+              message: "Dono de produto atualizado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
             });
           });
       } else {
-        let newCliente = {
+        let newDonoProduto = {
           name: this.editedItem.name,
-          contact: this.editedItem.contact,
-          address: this.editedItem.address,
-          cpf: this.editedItem.cpf
         };
 
         let api_url =
@@ -216,18 +186,15 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .post(`${api_url}/customers`, {
-            customer: {
-              name: newCliente.name,
-              contact: newCliente.contact,
-              address: newCliente.address,
-              cpf: newCliente.cpf
+          .post(`${api_url}/productowner`, {
+            productowner: {
+              name: newDonoProduto.name,
             }
           })
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente criado com sucesso",
+              message: "Dono de produto criado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -235,7 +202,7 @@ export default {
           })
           .catch(response => {
             this.$toast.open({
-              message: "Falha ao criar cliente",
+              message: "Falha ao criar dono de produto",
               type: "error",
               position: "bottom",
               duration: 2000

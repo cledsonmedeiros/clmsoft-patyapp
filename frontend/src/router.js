@@ -20,5 +20,15 @@ export default new Router({
       name: 'clientes-pesquisar',
       component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Pesquisar.vue'),
     },
+    {
+      path: '/donosdeprodutos/pesquisar',
+      name: 'donosdeprodutos-pesquisar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Produto/DonoPesquisar.vue'),
+    },
+    {
+      path: '/donosdeprodutos/gerenciar',
+      name: 'donosdeprodutos-gerenciar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Produto/DonoGerenciar.vue'),
+    },
   ],
 });

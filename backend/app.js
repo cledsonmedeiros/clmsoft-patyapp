@@ -14,6 +14,7 @@ app.use(express.json());
 
 // ROUTER BIND
 app.use('/api/v2/customers', require('./routes/api/v2/customers'));
+app.use('/api/v2/productowner', require('./routes/api/v2/productOwner'));
 
 // ENVIRONMENT VARS
 const { PORT, DB_URL, NODE_ENV } = process.env;
