@@ -2,12 +2,12 @@
   <div>
     <v-card>
       <v-card-title>
-        Pesquisar donos de produto
+        Pesquisar clientes
         <v-col cols="12" sm="3">
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
-          <v-btn text icon color="purple" to="/donosdeprodutos/gerenciar">
+          <v-btn text icon color="purple" to="/clientes/gerenciar">
             <v-icon>mdi-format-list-bulleted</v-icon>
           </v-btn>
         </v-col>
@@ -20,7 +20,7 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-      <v-data-table :headers="headers" :items="donoproduto" :search="search" sort-by="name"></v-data-table>
+      <v-data-table :headers="headers" :items="clientes" :search="search" sort-by="name"></v-data-table>
     </v-card>
   </div>
 </template>
@@ -29,12 +29,17 @@
 import axios from "axios";
 
 export default {
-  name: "ProdutoDonoPesquisar",
+  name: "ClientePesquisar",
   data() {
     return {
       search: "",
-      headers: [{ text: "Nome", value: "name" }],
-      donoproduto: []
+      headers: [
+        { text: "Nome", value: "name" },
+        { text: "Contato", value: "contact" },
+        { text: "Endereço", value: "address" },
+        { text: "CPF", value: "cpf" }
+      ],
+      clientes: []
     };
   },
   methods: {
@@ -45,8 +50,8 @@ export default {
           : process.env.VUE_APP_API_URL;
       var _this = this;
 
-      axios.get(`${api_url}/productowner`).then(response => {
-        _this.donoproduto = response.data;
+      axios.get(`${api_url}/customers`).then(response => {
+        _this.clientes = response.data;
       });
     }
   },

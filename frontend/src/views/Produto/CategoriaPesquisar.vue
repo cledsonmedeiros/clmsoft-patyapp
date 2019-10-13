@@ -2,10 +2,13 @@
   <div>
     <v-card>
       <v-card-title>
-        Pesquisar clientes
+        Pesquisar categorias de produto
         <v-col cols="12" sm="3">
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
+          </v-btn>
+          <v-btn text icon color="purple" to="/categoriasdeprodutos/gerenciar">
+            <v-icon>mdi-format-list-bulleted</v-icon>
           </v-btn>
         </v-col>
         <div class="flex-grow-1"></div>
@@ -17,7 +20,7 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-      <v-data-table :headers="headers" :items="clientes" :search="search" sort-by="name"></v-data-table>
+      <v-data-table :headers="headers" :items="categoriaproduto" :search="search" sort-by="name"></v-data-table>
     </v-card>
   </div>
 </template>
@@ -26,17 +29,14 @@
 import axios from "axios";
 
 export default {
-  name: "PesquisarCliente",
+  name: "ProdutoCategoriaPesquisar",
   data() {
     return {
       search: "",
       headers: [
         { text: "Nome", value: "name" },
-        { text: "Contato", value: "contact" },
-        { text: "Endereço", value: "address" },
-        { text: "CPF", value: "cpf" }
       ],
-      clientes: []
+      categoriaproduto: []
     };
   },
   methods: {
@@ -48,9 +48,9 @@ export default {
       var _this = this;
 
       axios
-        .get(`${api_url}/customers`)
+        .get(`${api_url}/productcategory`)
         .then((response) => {
-          _this.clientes = response.data;
+          _this.categoriaproduto = response.data;
         });
     }
   },

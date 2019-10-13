@@ -1,13 +1,13 @@
 <template>
-  <v-data-table :headers="headers" :items="donosprodutos" sort-by="name" class="elevation-1">
+  <v-data-table :headers="headers" :items="categoriasprodutos" sort-by="name" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title>
-          Gerenciar donos de produto
+          Gerenciar categorias de produto
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
-          <v-btn text icon color="purple" to="/donosdeprodutos/pesquisar">
+          <v-btn text icon color="purple" to="/categoriasdeprodutos/pesquisar">
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-toolbar-title>
@@ -59,7 +59,7 @@
 import axios from "axios";
 
 export default {
-  name: "ProdutoDonoGerenciar",
+  name: "ProdutoCategoriaGerenciar",
   data: () => ({
     dialog: false,
     valid: false,
@@ -71,22 +71,22 @@ export default {
       { text: "Nome", value: "name" },
       { text: "Ações", value: "action", sortable: false, align: 'right', }
     ],
-    donosprodutos: [],
+    categoriasprodutos: [],
     editedIndex: -1,
     editedItem: {
-      donoproduto: {
+      categoriaproduto: {
         name: "",
       }
     },
     defaultItem: {
-      donoproduto: {
+      categoriaproduto: {
         name: "",
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Novo dono de produto" : "Editar dono de produto";
+      return this.editedIndex === -1 ? "Nova categoria de produto" : "Editar categoria de produto";
     }
   },
   watch: {
@@ -104,35 +104,35 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios.get(`${api_url}/productowner`).then(response => {
-        this.donosprodutos = response.data;
+      axios.get(`${api_url}/productcategory`).then(response => {
+        this.categoriasprodutos = response.data;
       });
     },
     editItem(item) {
-      this.editedIndex = this.donosprodutos.indexOf(item);
+      this.editedIndex = this.categoriasprodutos.indexOf(item);
 
-      let donoproduto = {
+      let categoriaproduto = {
         _id: item._id,
         name: item.name,
       };
 
-      this.editedItem = Object.assign({}, donoproduto);
+      this.editedItem = Object.assign({}, categoriaproduto);
       this.dialog = true;
     },
     deleteItem(item) {
-      const index = this.donosprodutos.indexOf(item);
+      const index = this.categoriasprodutos.indexOf(item);
 
       if (confirm("Deseja realmente deletar esse item?")) {
-        let id = this.donosprodutos[this.donosprodutos.indexOf(item)]._id;
+        let id = this.categoriasprodutos[this.categoriasprodutos.indexOf(item)]._id;
         let api_url =
           process.env.VUE_APP_ENV === "dev"
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios.delete(`${api_url}/productowner/delete/${id}`).then(response => {
+        axios.delete(`${api_url}/productcategory/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
-            message: "Dono de produto deletado com sucesso",
+            message: "Categoria de produto deletada com sucesso",
             type: "success",
             position: "bottom",
             duration: 2000
@@ -149,12 +149,12 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        let oldCliente = {
-          _id: this.donosprodutos[this.editedIndex]._id,
-          name: this.donosprodutos[this.editedIndex].name,
+        let oldCategoriaProduto = {
+          _id: this.categoriasprodutos[this.editedIndex]._id,
+          name: this.categoriasprodutos[this.editedIndex].name,
         };
 
-        let newDonoProduto = {
+        let newCategoriaProduto = {
           _id: this.editedItem._id,
           name: this.editedItem.name,
         };
@@ -165,18 +165,18 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(`${api_url}/productowner/update/${newDonoProduto._id}`, newDonoProduto)
+          .put(`${api_url}/productcategory/update/${newCategoriaProduto._id}`, newCategoriaProduto)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Dono de produto atualizado com sucesso",
+              message: "Categoria de produto atualizada com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
             });
           });
       } else {
-        let newDonoProduto = {
+        let newCategoriaProduto = {
           name: this.editedItem.name,
         };
 
@@ -186,15 +186,15 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .post(`${api_url}/productowner`, {
-            productowner: {
-              name: newDonoProduto.name,
+          .post(`${api_url}/productcategory`, {
+            productcategory: {
+              name: newCategoriaProduto.name,
             }
           })
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Dono de produto criado com sucesso",
+              message: "Categoria de produto criada com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -202,7 +202,7 @@ export default {
           })
           .catch(response => {
             this.$toast.open({
-              message: "Falha ao criar dono de produto",
+              message: "Falha ao criar categoria de produto",
               type: "error",
               position: "bottom",
               duration: 2000

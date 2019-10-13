@@ -13,12 +13,12 @@ export default new Router({
     {
       path: '/clientes/gerenciar',
       name: 'clientes-gerenciar',
-      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Gerenciar.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClienteGerenciar.vue'),
     },
     {
       path: '/clientes/pesquisar',
       name: 'clientes-pesquisar',
-      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/Pesquisar.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClientePesquisar.vue'),
     },
     {
       path: '/donosdeprodutos/pesquisar',
@@ -29,6 +29,16 @@ export default new Router({
       path: '/donosdeprodutos/gerenciar',
       name: 'donosdeprodutos-gerenciar',
       component: () => import(/* webpackChunkName: "about" */ './views/Produto/DonoGerenciar.vue'),
+    },
+    {
+      path: '/categoriasdeprodutos/pesquisar',
+      name: 'categoriasdeprodutos-pesquisar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Produto/CategoriaPesquisar.vue'),
+    },
+    {
+      path: '/categoriasdeprodutos/gerenciar',
+      name: 'categoriasdeprodutos-gerenciar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Produto/CategoriaGerenciar.vue'),
     },
   ],
 });

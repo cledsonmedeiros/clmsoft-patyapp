@@ -7,6 +7,9 @@
           <v-btn text icon color="purple" @click="atualizarLista()">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
+          <v-btn text icon color="purple" to="/clientes/pesquisar">
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
         </v-toolbar-title>
         <div class="flex-grow-1"></div>
         <v-dialog v-model="dialog" max-width="500px">
@@ -31,10 +34,10 @@
                     <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.contact" label="Contato"></v-text-field>
+                    <v-text-field v-model="editedItem.contact" v-mask="mascaraTelefone" label="Contato"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.cpf" class="cpf" label="CPF"></v-text-field>
+                    <v-text-field v-model="editedItem.cpf" v-mask="mascaraCPF" class="cpf" label="CPF"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -63,17 +66,20 @@
 
 <script>
 import axios from "axios";
-// import mask from "vue-the-mask";
+import { mask } from "vue-the-mask";
 
 export default {
-  name: "GerenciarCliente",
+  name: "ClienteGerenciar",
+  directives: {
+    mask
+  },
   data: () => ({
-    // mask: '(##) #.####-####',
+    mascaraTelefone: "(##) #.####-####",
+    mascaraCPF: "###.###.###-##",
     dialog: false,
     valid: false,
     nameRules: [
       v => !!v || "O nome é obrigatório"
-      // v => v.length <= 10 || 'Name must be less than 10 characters',
     ],
     search: "",
     headers: [
@@ -81,7 +87,7 @@ export default {
       { text: "Contato", value: "contact" },
       { text: "Endereço", value: "address" },
       { text: "CPF", value: "cpf" },
-      { text: "Ações", value: "action", sortable: false, align: 'right', }
+      { text: "Ações", value: "action", sortable: false, align: "right" }
     ],
     clientes: [],
     editedIndex: -1,

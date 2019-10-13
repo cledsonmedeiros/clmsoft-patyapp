@@ -13,7 +13,7 @@
       </v-btn>
     </v-toolbar>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary>
+    <v-navigation-drawer v-model="drawer" absolute temporary width="300">
       <v-list-item>
         <span class="font-weight-light">Paty</span>
         <span>App</span>
@@ -119,7 +119,7 @@ export default {
         },
         {
           action: "mdi-briefcase-account",
-          title: "Dono produto",
+          title: "Donos de produto",
           items: [
             {
               title: "Pesquisar",
@@ -130,6 +130,22 @@ export default {
               title: "Gerenciar",
               icon: "mdi-format-list-bulleted",
               route: "/donosdeprodutos/gerenciar"
+            },
+          ]
+        },
+        {
+          action: "mdi-format-list-bulleted-type",
+          title: "Categorias de produto",
+          items: [
+            {
+              title: "Pesquisar",
+              icon: "mdi-magnify",
+              route: "/categoriasdeprodutos/pesquisar"
+            },
+            {
+              title: "Gerenciar",
+              icon: "mdi-format-list-bulleted",
+              route: "/categoriasdeprodutos/gerenciar"
             },
           ]
         },
