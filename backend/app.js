@@ -20,7 +20,7 @@ app.use('/api/v2/productowner', require('./routes/api/v2/productOwner'));
 const { PORT, DB_URL, NODE_ENV } = process.env;
 
 // DB CONNECTON
-mongoose.connect(NODE_ENV === "dev" ? DB_URL : DB_URL_PROD, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, () => {
+mongoose.connect(NODE_ENV === "dev" ? DB_URL : DB_URL_PROD, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, () => {
   console.log('DB connected');
 });
 
