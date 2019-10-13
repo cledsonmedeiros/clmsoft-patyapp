@@ -11,16 +11,16 @@
 </template>
 
 <script>
-  import { mask } from 'vue-the-mask'
+  // import { mask } from 'vue-the-mask'
 
   export default {
-    directives: {
-      mask,
-    },
+    // directives: {
+    //   mask,
+    // },
     data: () => ({
-      mascaraTelefone: '(##) #.####-####',
-      mascaraCPF: '###.###.###-##',
-      value: '',
+      // mascaraTelefone: '(##) #.####-####',
+      // mascaraCPF: '###.###.###-##',
+      // value: '',
     }),
   }
 </script>
