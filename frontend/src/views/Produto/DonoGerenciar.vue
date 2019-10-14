@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="donosprodutos" sort-by="name" class="elevation-1">
+  <v-data-table :headers="headers" :search="search" :items="donosprodutos" sort-by="name" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title>
@@ -11,6 +11,14 @@
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
         </v-toolbar-title>
+        <!-- <div class="flex-grow-1"></div>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Pesquisar"
+          single-line
+          hide-details
+        ></v-text-field> -->
         <div class="flex-grow-1"></div>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
@@ -61,6 +69,7 @@ import axios from "axios";
 export default {
   name: "ProdutoDonoGerenciar",
   data: () => ({
+    search: "",
     dialog: false,
     valid: false,
     nameRules: [
