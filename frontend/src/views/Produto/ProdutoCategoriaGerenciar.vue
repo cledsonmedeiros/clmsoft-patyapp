@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="clientes"
+    :items="categoriasprodutos"
     :search="search"
     sort-by="name"
     class="elevation-1"
@@ -24,7 +24,7 @@
           append-icon="mdi-magnify"
           label="Pesquisar"
           single-line
-          hint="Clientes"
+          hint="Categorias de produto"
           persistent-hint
         ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
@@ -38,24 +38,6 @@
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.contact"
-                      v-mask="mascaraTelefone"
-                      label="Contato"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.cpf"
-                      v-mask="mascaraCPF"
-                      class="cpf"
-                      label="CPF"
-                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -84,49 +66,36 @@
 
 <script>
 import axios from "axios";
-import { mask } from "vue-the-mask";
 
 export default {
-  name: "ClienteGerenciar",
-  directives: {
-    mask
-  },
+  name: "ProdutoCategoriaGerenciar",
   data: () => ({
-    mascaraTelefone: "(##) #.####-####",
-    mascaraCPF: "###.###.###-##",
     dialog: false,
     valid: false,
     nameRules: [v => !!v || "O nome é obrigatório"],
     search: "",
     headers: [
       { text: "Nome", value: "name" },
-      { text: "Contato", value: "contact" },
-      { text: "Endereço", value: "address" },
-      { text: "CPF", value: "cpf" },
       { text: "Ações", value: "action", sortable: false, align: "right" }
     ],
-    clientes: [],
+    categoriasprodutos: [],
     editedIndex: -1,
     editedItem: {
-      cliente: {
-        name: "",
-        contact: "",
-        address: "",
-        cpf: ""
+      categoriaproduto: {
+        name: ""
       }
     },
     defaultItem: {
-      cliente: {
-        name: "",
-        contact: "",
-        address: "",
-        cpf: ""
+      categoriaproduto: {
+        name: ""
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Criar" : "Editar";
+      return this.editedIndex === -1
+        ? "Nova categoria de produto"
+        : "Editar categoria de produto";
     }
   },
   watch: {
@@ -144,47 +113,44 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios.get(`${api_url}/customers`).then(response => {
-        this.clientes = response.data;
+      axios.get(`${api_url}/productcategory`).then(response => {
+        this.categoriasprodutos = response.data;
       });
     },
     editItem(item) {
-      this.editedIndex = this.clientes.indexOf(item);
+      this.editedIndex = this.categoriasprodutos.indexOf(item);
 
-      let cliente = {
+      let categoriaproduto = {
         _id: item._id,
-        name: item.name,
-        contact: item.contact,
-        address: item.address,
-        cpf: item.cpf
+        name: item.name
       };
 
-      this.editedItem = Object.assign({}, cliente);
+      this.editedItem = Object.assign({}, categoriaproduto);
       this.dialog = true;
     },
     deleteItem(item) {
-      const index = this.clientes.indexOf(item);
+      const index = this.categoriasprodutos.indexOf(item);
 
       if (confirm("Deseja realmente deletar esse item?")) {
-        let id = this.clientes[this.clientes.indexOf(item)]._id;
+        let id = this.categoriasprodutos[this.categoriasprodutos.indexOf(item)]
+          ._id;
         let api_url =
           process.env.VUE_APP_ENV === "dev"
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios.delete(`${api_url}/customers/delete/${id}`).then(response => {
-          this.atualizarLista();
-          this.$toast.open({
-            message: "Cliente deletado com sucesso",
-            type: "success",
-            position: "bottom",
-            duration: 2000
+        axios
+          .delete(`${api_url}/productcategory/delete/${id}`)
+          .then(response => {
+            this.atualizarLista();
+            this.$toast.open({
+              message: "Categoria de produto deletada com sucesso",
+              type: "success",
+              position: "bottom",
+              duration: 2000
+            });
           });
-        });
       }
-    },
-    open() {
-      this.dialog = true;
     },
     close() {
       this.dialog = false;
@@ -195,20 +161,14 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        let oldCliente = {
-          _id: this.clientes[this.editedIndex]._id,
-          name: this.clientes[this.editedIndex].name,
-          contact: this.clientes[this.editedIndex].contact,
-          address: this.clientes[this.editedIndex].address,
-          cpf: this.clientes[this.editedIndex].cpf
+        let oldCategoriaProduto = {
+          _id: this.categoriasprodutos[this.editedIndex]._id,
+          name: this.categoriasprodutos[this.editedIndex].name
         };
 
-        let newCliente = {
+        let newCategoriaProduto = {
           _id: this.editedItem._id,
-          name: this.editedItem.name,
-          contact: this.editedItem.contact,
-          address: this.editedItem.address,
-          cpf: this.editedItem.cpf
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -217,22 +177,22 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(`${api_url}/customers/update/${newCliente._id}`, newCliente)
+          .put(
+            `${api_url}/productcategory/update/${newCategoriaProduto._id}`,
+            newCategoriaProduto
+          )
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente atualizado com sucesso",
+              message: "Categoria de produto atualizada com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
             });
           });
       } else {
-        let newCliente = {
-          name: this.editedItem.name,
-          contact: this.editedItem.contact,
-          address: this.editedItem.address,
-          cpf: this.editedItem.cpf
+        let newCategoriaProduto = {
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -241,18 +201,15 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .post(`${api_url}/customers`, {
-            customer: {
-              name: newCliente.name,
-              contact: newCliente.contact,
-              address: newCliente.address,
-              cpf: newCliente.cpf
+          .post(`${api_url}/productcategory`, {
+            productcategory: {
+              name: newCategoriaProduto.name
             }
           })
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Cliente criado com sucesso",
+              message: "Categoria de produto criada com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -260,7 +217,7 @@ export default {
           })
           .catch(response => {
             this.$toast.open({
-              message: "Falha ao criar cliente",
+              message: "Falha ao criar categoria de produto",
               type: "error",
               position: "bottom",
               duration: 2000

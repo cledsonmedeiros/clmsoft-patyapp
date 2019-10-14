@@ -25,14 +25,14 @@
 
       <v-list dense rounded="">
 
-        <v-list-item-group v-for="item in items" :key="item.title" link>
-          <v-list-item :to="item.route">
+        <v-list-item-group v-for="item in itens" :key="item.titulo" link>
+          <v-list-item :to="item.rota">
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>{{ item.icone }}</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title>{{ item.titulo }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -48,26 +48,34 @@ export default {
   data() {
     return {
       drawer: null,
-      items: [
+      itens: [
         {
-          title: "Home",
-          icon: "mdi-view-dashboard",
-          route: "/"
+          titulo: "Home",
+          icone: "mdi-home",
+          rota: "/"
         },
         {
-          title: "Meus projetos",
-          icon: "mdi-folder-open",
-          route: "/projetos"
+          titulo: "Clientes",
+          icone: "mdi-account-group",
+          rota: "/clientes"
         },
         {
-          title: "Staff",
-          icon: "mdi-account-group",
-          route: "/staff"
-        }
+          titulo: "Produtos",
+          icone: "mdi-view-dashboard",
+          rota: "/produtos"
+        },
+        {
+          titulo: "Donos de produto",
+          icone: "mdi-account-tie",
+          rota: "/donosdeprodutos"
+        },
+        {
+          titulo: "Categorias de produto",
+          icone: "mdi-format-list-bulleted-type",
+          rota: "/categoriasdeprodutos"
+        },
       ]
     };
   }
 };
 </script>
-
-<style lang="stylus"></style>

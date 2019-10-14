@@ -1,24 +1,34 @@
 <template>
-  <v-data-table :headers="headers" :items="categoriasprodutos" sort-by="name" class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :search="search"
+    :items="donosprodutos"
+    sort-by="name"
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>
-          Gerenciar categorias de produto
-          <v-btn text icon color="purple" @click="atualizarLista()">
-            <v-icon>mdi-cached</v-icon>
-          </v-btn>
-          <v-btn text icon color="purple" to="/categoriasdeprodutos/pesquisar">
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
+        <v-toolbar-title class="mr-5">
+          <div>
+            <h1 class="display-1">Falta desenvolver o CRUD</h1>
+            <v-btn text icon color="purple" @click="open">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn text icon class="mr-10" color="purple" @click="atualizarLista()">
+              <v-icon>mdi-cached</v-icon>
+            </v-btn>
+          </div>
         </v-toolbar-title>
         <div class="flex-grow-1"></div>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Pesquisar"
+          single-line
+          hint="Produto"
+          persistent-hint
+        ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="purple" outlined dark class="mb-2" v-on="on">
-              <v-icon left>mdi-plus</v-icon>
-              <span>Novo</span>
-            </v-btn>
-          </template>
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -49,7 +59,7 @@
       </v-toolbar>
     </template>
     <template v-slot:item.action="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon small class="mr-4" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -59,34 +69,32 @@
 import axios from "axios";
 
 export default {
-  name: "ProdutoCategoriaGerenciar",
+  name: "ProdutoDonoGerenciar",
   data: () => ({
     dialog: false,
     valid: false,
-    nameRules: [
-      v => !!v || "O nome é obrigatório"
-    ],
+    nameRules: [v => !!v || "O nome é obrigatório"],
     search: "",
     headers: [
       { text: "Nome", value: "name" },
-      { text: "Ações", value: "action", sortable: false, align: 'right', }
+      { text: "Ações", value: "action", sortable: false, align: "right" }
     ],
-    categoriasprodutos: [],
+    donosprodutos: [],
     editedIndex: -1,
     editedItem: {
-      categoriaproduto: {
-        name: "",
+      donoproduto: {
+        name: ""
       }
     },
     defaultItem: {
-      categoriaproduto: {
-        name: "",
+      donoproduto: {
+        name: ""
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nova categoria de produto" : "Editar categoria de produto";
+      return this.editedIndex === -1 ? "Criar" : "Editar";
     }
   },
   watch: {
@@ -104,41 +112,44 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios.get(`${api_url}/productcategory`).then(response => {
-        this.categoriasprodutos = response.data;
+      axios.get(`${api_url}/productowner`).then(response => {
+        this.donosprodutos = response.data;
       });
     },
     editItem(item) {
-      this.editedIndex = this.categoriasprodutos.indexOf(item);
+      this.editedIndex = this.donosprodutos.indexOf(item);
 
-      let categoriaproduto = {
+      let donoproduto = {
         _id: item._id,
-        name: item.name,
+        name: item.name
       };
 
-      this.editedItem = Object.assign({}, categoriaproduto);
+      this.editedItem = Object.assign({}, donoproduto);
       this.dialog = true;
     },
     deleteItem(item) {
-      const index = this.categoriasprodutos.indexOf(item);
+      const index = this.donosprodutos.indexOf(item);
 
       if (confirm("Deseja realmente deletar esse item?")) {
-        let id = this.categoriasprodutos[this.categoriasprodutos.indexOf(item)]._id;
+        let id = this.donosprodutos[this.donosprodutos.indexOf(item)]._id;
         let api_url =
           process.env.VUE_APP_ENV === "dev"
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios.delete(`${api_url}/productcategory/delete/${id}`).then(response => {
+        axios.delete(`${api_url}/productowner/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
-            message: "Categoria de produto deletada com sucesso",
+            message: "Dono de produto deletado com sucesso",
             type: "success",
             position: "bottom",
             duration: 2000
           });
         });
       }
+    },
+    open() {
+      this.dialog = true;
     },
     close() {
       this.dialog = false;
@@ -149,14 +160,14 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        let oldCategoriaProduto = {
-          _id: this.categoriasprodutos[this.editedIndex]._id,
-          name: this.categoriasprodutos[this.editedIndex].name,
+        let oldCliente = {
+          _id: this.donosprodutos[this.editedIndex]._id,
+          name: this.donosprodutos[this.editedIndex].name
         };
 
-        let newCategoriaProduto = {
+        let newDonoProduto = {
           _id: this.editedItem._id,
-          name: this.editedItem.name,
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -165,19 +176,22 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(`${api_url}/productcategory/update/${newCategoriaProduto._id}`, newCategoriaProduto)
+          .put(
+            `${api_url}/productowner/update/${newDonoProduto._id}`,
+            newDonoProduto
+          )
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Categoria de produto atualizada com sucesso",
+              message: "Dono de produto atualizado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
             });
           });
       } else {
-        let newCategoriaProduto = {
-          name: this.editedItem.name,
+        let newDonoProduto = {
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -186,15 +200,15 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .post(`${api_url}/productcategory`, {
-            productcategory: {
-              name: newCategoriaProduto.name,
+          .post(`${api_url}/productowner`, {
+            productowner: {
+              name: newDonoProduto.name
             }
           })
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Categoria de produto criada com sucesso",
+              message: "Dono de produto criado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -202,7 +216,7 @@ export default {
           })
           .catch(response => {
             this.$toast.open({
-              message: "Falha ao criar categoria de produto",
+              message: "Falha ao criar dono de produto",
               type: "error",
               position: "bottom",
               duration: 2000

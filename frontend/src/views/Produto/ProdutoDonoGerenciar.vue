@@ -1,32 +1,33 @@
 <template>
-  <v-data-table :headers="headers" :search="search" :items="donosprodutos" sort-by="name" class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :search="search"
+    :items="donosprodutos"
+    sort-by="name"
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>
-          Gerenciar donos de produto
-          <v-btn text icon color="purple" @click="atualizarLista()">
-            <v-icon>mdi-cached</v-icon>
-          </v-btn>
-          <v-btn text icon color="purple" to="/donosdeprodutos/pesquisar">
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
+        <v-toolbar-title class="mr-5">
+          <div>
+            <v-btn text icon color="purple" @click="open">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn text icon class="mr-10" color="purple" @click="atualizarLista()">
+              <v-icon>mdi-cached</v-icon>
+            </v-btn>
+          </div>
         </v-toolbar-title>
-        <!-- <div class="flex-grow-1"></div>
+        <div class="flex-grow-1"></div>
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
           label="Pesquisar"
           single-line
-          hide-details
-        ></v-text-field> -->
-        <div class="flex-grow-1"></div>
+          hint="Donos de produto"
+          persistent-hint
+        ></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="purple" outlined dark class="mb-2" v-on="on">
-              <v-icon left>mdi-plus</v-icon>
-              <span>Novo</span>
-            </v-btn>
-          </template>
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -57,7 +58,7 @@
       </v-toolbar>
     </template>
     <template v-slot:item.action="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <v-icon small class="mr-4" @click="editItem(item)">mdi-pencil</v-icon>
       <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
     </template>
   </v-data-table>
@@ -69,33 +70,30 @@ import axios from "axios";
 export default {
   name: "ProdutoDonoGerenciar",
   data: () => ({
-    search: "",
     dialog: false,
     valid: false,
-    nameRules: [
-      v => !!v || "O nome é obrigatório"
-    ],
+    nameRules: [v => !!v || "O nome é obrigatório"],
     search: "",
     headers: [
       { text: "Nome", value: "name" },
-      { text: "Ações", value: "action", sortable: false, align: 'right', }
+      { text: "Ações", value: "action", sortable: false, align: "right" }
     ],
     donosprodutos: [],
     editedIndex: -1,
     editedItem: {
       donoproduto: {
-        name: "",
+        name: ""
       }
     },
     defaultItem: {
       donoproduto: {
-        name: "",
+        name: ""
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Novo dono de produto" : "Editar dono de produto";
+      return this.editedIndex === -1 ? "Criar" : "Editar";
     }
   },
   watch: {
@@ -122,7 +120,7 @@ export default {
 
       let donoproduto = {
         _id: item._id,
-        name: item.name,
+        name: item.name
       };
 
       this.editedItem = Object.assign({}, donoproduto);
@@ -149,6 +147,9 @@ export default {
         });
       }
     },
+    open() {
+      this.dialog = true;
+    },
     close() {
       this.dialog = false;
       setTimeout(() => {
@@ -160,12 +161,12 @@ export default {
       if (this.editedIndex > -1) {
         let oldCliente = {
           _id: this.donosprodutos[this.editedIndex]._id,
-          name: this.donosprodutos[this.editedIndex].name,
+          name: this.donosprodutos[this.editedIndex].name
         };
 
         let newDonoProduto = {
           _id: this.editedItem._id,
-          name: this.editedItem.name,
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -174,7 +175,10 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(`${api_url}/productowner/update/${newDonoProduto._id}`, newDonoProduto)
+          .put(
+            `${api_url}/productowner/update/${newDonoProduto._id}`,
+            newDonoProduto
+          )
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
@@ -186,7 +190,7 @@ export default {
           });
       } else {
         let newDonoProduto = {
-          name: this.editedItem.name,
+          name: this.editedItem.name
         };
 
         let api_url =
@@ -197,7 +201,7 @@ export default {
         axios
           .post(`${api_url}/productowner`, {
             productowner: {
-              name: newDonoProduto.name,
+              name: newDonoProduto.name
             }
           })
           .then(response => {
