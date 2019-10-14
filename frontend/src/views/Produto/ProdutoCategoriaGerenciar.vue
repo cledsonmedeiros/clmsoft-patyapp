@@ -152,6 +152,9 @@ export default {
           });
       }
     },
+    open() {
+      this.dialog = true;
+    },
     close() {
       this.dialog = false;
       setTimeout(() => {
