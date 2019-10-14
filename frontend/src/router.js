@@ -11,14 +11,19 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
     },
     {
+      path: '/clientes/pesquisar',
+      name: 'clientes-pesquisar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClientePesquisar.vue'),
+    },
+    {
       path: '/clientes/gerenciar',
       name: 'clientes-gerenciar',
       component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClienteGerenciar.vue'),
     },
     {
-      path: '/clientes/pesquisar',
-      name: 'clientes-pesquisar',
-      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClientePesquisar.vue'),
+      path: '/produtos/pesquisar',
+      name: 'produtos-pesquisar',
+      component: () => import(/* webpackChunkName: "about" */ './views/Produto/ProdutoPesquisar.vue'),
     },
     {
       path: '/donosdeprodutos/pesquisar',
