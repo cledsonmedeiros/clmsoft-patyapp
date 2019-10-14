@@ -33,7 +33,14 @@ export default {
   data() {
     return {
       search: "",
-      headers: [{ text: "Nome", value: "name" }],
+      headers: [
+        { text: "Nome", value: "name" },
+        { text: "Quantidade", value: "amount" },
+        { text: "Dono", value: "owner.name" },
+        { text: "Categoria", value: "category.name" },
+        { text: "Preço de compra", value: "price_buy" },
+        { text: "Preço de venda", value: "price_sell" }
+      ],
       produtos: []
     };
   },
