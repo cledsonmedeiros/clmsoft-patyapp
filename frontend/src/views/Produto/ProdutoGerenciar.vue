@@ -2,7 +2,7 @@
   <v-data-table
     :headers="headers"
     :search="search"
-    :items="donosprodutos"
+    :items="produtos"
     sort-by="name"
     class="elevation-1"
   >
@@ -10,7 +10,7 @@
       <v-toolbar flat color="white">
         <v-toolbar-title class="mr-5">
           <div>
-            <h1 class="display-1">Falta desenvolver o CRUD</h1>
+            <h1 class="display-1">Falta desenvolver o RU</h1>
             <v-btn text icon color="purple" @click="open">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -39,6 +39,39 @@
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="2">
+                    <v-text-field v-model="editedItem.amount" label="Qntd"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="5">
+                    <v-text-field v-model="editedItem.price_buy" label="Preço de compra"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="5">
+                    <v-text-field v-model="editedItem.price_sell" label="Preço de venda"></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" sm="12" md="6">
+                    <v-select
+                      v-model="selected_dono"
+                      :items="select_dono"
+                      item-text="name"
+                      item-value="_id"
+                      label="Dono"
+                      return-object
+                      single-line
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="12" md="6">
+                    <v-select
+                      v-model="selected_categoria"
+                      :items="select_categoria"
+                      item-text="name"
+                      item-value="_id"
+                      label="Categoria"
+                      return-object
+                      single-line
+                    ></v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -75,26 +108,53 @@ export default {
     valid: false,
     nameRules: [v => !!v || "O nome é obrigatório"],
     search: "",
+    selected_dono: { name: "", _id: "" },
+    select_dono: [],
+    selected_categoria: { name: "", _id: "" },
+    select_categoria: [],
     headers: [
       { text: "Nome", value: "name" },
+      { text: "Quantidade", value: "amount" },
+      { text: "Dono", value: "owner.name" },
+      { text: "Categoria", value: "category.name" },
+      { text: "Preço de compra", value: "price_buy" },
+      { text: "Preço de venda", value: "price_sell" },
       { text: "Ações", value: "action", sortable: false, align: "right" }
     ],
-    donosprodutos: [],
+    produtos: [],
     editedIndex: -1,
     editedItem: {
-      donoproduto: {
-        name: ""
+      produto: {
+        name: "",
+        amount: "",
+        owner_name: "",
+        owner_id: "",
+        category_name: "",
+        category_id: "",
+        price_buy: "",
+        price_sell: ""
       }
     },
     defaultItem: {
-      donoproduto: {
-        name: ""
+      produto: {
+        name: "",
+        amount: "",
+        owner_name: "",
+        owner_id: "",
+        category_name: "",
+        category_id: "",
+        price_buy: "",
+        price_sell: ""
       }
     }
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Criar" : "Editar";
+      if (this.editedIndex === -1) {
+        return "Criar";
+      } else {
+        return "Editar";
+      }
     }
   },
   watch: {
@@ -104,6 +164,8 @@ export default {
   },
   created() {
     this.atualizarLista();
+    this.atualizarListaDonos();
+    this.atualizarListaCategorias();
   },
   methods: {
     atualizarLista() {
@@ -112,35 +174,70 @@ export default {
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios.get(`${api_url}/productowner`).then(response => {
-        this.donosprodutos = response.data;
+      axios.get(`${api_url}/products`).then(response => {
+        this.produtos = response.data;
       });
     },
-    editItem(item) {
-      this.editedIndex = this.donosprodutos.indexOf(item);
+    atualizarListaDonos() {
+      let api_url =
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL;
 
-      let donoproduto = {
+      axios.get(`${api_url}/productowner`).then(response => {
+        this.select_dono = response.data;
+      });
+    },
+    atualizarListaCategorias() {
+      let api_url =
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL;
+
+      axios.get(`${api_url}/productcategory`).then(response => {
+        this.select_categoria = response.data;
+      });
+    },
+    limparForm() {
+      this.editedItem.name = undefined;
+      this.editedItem.amount = undefined;
+      this.editedItem.price_buy = undefined;
+      this.editedItem.price_sell = undefined;
+      this.selected_dono = undefined;
+      this.selected_categoria = undefined;
+    },
+    editItem(item) {
+      this.editedIndex = this.produtos.indexOf(item);
+
+      let produto = {
         _id: item._id,
-        name: item.name
+        name: item.name,
+        amount: item.amount,
+        owner_name: item.owner.name,
+        owner_id: item.owner._id,
+        category_name: item.category.name,
+        category_id: item.category._id,
+        price_buy: item.price_buy,
+        price_sell: item.price_sell
       };
 
-      this.editedItem = Object.assign({}, donoproduto);
+      this.editedItem = Object.assign({}, produto);
       this.dialog = true;
     },
     deleteItem(item) {
-      const index = this.donosprodutos.indexOf(item);
+      const index = this.produtos.indexOf(item);
 
       if (confirm("Deseja realmente deletar esse item?")) {
-        let id = this.donosprodutos[this.donosprodutos.indexOf(item)]._id;
+        let id = this.produtos[this.produtos.indexOf(item)]._id;
         let api_url =
           process.env.VUE_APP_ENV === "dev"
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios.delete(`${api_url}/productowner/delete/${id}`).then(response => {
+        axios.delete(`${api_url}/products/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
-            message: "Dono de produto deletado com sucesso",
+            message: "Produto deletado com sucesso",
             type: "success",
             position: "bottom",
             duration: 2000
@@ -161,11 +258,11 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         let oldCliente = {
-          _id: this.donosprodutos[this.editedIndex]._id,
-          name: this.donosprodutos[this.editedIndex].name
+          _id: this.produtos[this.editedIndex]._id,
+          name: this.produtos[this.editedIndex].name
         };
 
-        let newDonoProduto = {
+        let newProduto = {
           _id: this.editedItem._id,
           name: this.editedItem.name
         };
@@ -176,22 +273,28 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .put(
-            `${api_url}/productowner/update/${newDonoProduto._id}`,
-            newDonoProduto
-          )
+          .put(`${api_url}/products/update/${newProduto._id}`, newProduto)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Dono de produto atualizado com sucesso",
+              message: "Produto atualizado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
             });
           });
       } else {
-        let newDonoProduto = {
-          name: this.editedItem.name
+        let newProduto = {
+          name: this.editedItem.name,
+          amount: this.editedItem.amount,
+          owner: {
+            _id: this.selected_dono._id
+          },
+          category: {
+            _id: this.selected_categoria._id
+          },
+          price_buy: this.editedItem.price_buy,
+          price_sell: this.editedItem.price_sell
         };
 
         let api_url =
@@ -200,15 +303,20 @@ export default {
             : process.env.VUE_APP_API_URL;
 
         axios
-          .post(`${api_url}/productowner`, {
-            productowner: {
-              name: newDonoProduto.name
+          .post(`${api_url}/products`, {
+            product: {
+              name: newProduto.name,
+              amount: newProduto.amount,
+              owner: newProduto.owner,
+              category: newProduto.category,
+              price_buy: newProduto.price_buy,
+              price_sell: newProduto.price_sell
             }
           })
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
-              message: "Dono de produto criado com sucesso",
+              message: "Produto criado com sucesso",
               type: "success",
               position: "bottom",
               duration: 2000
@@ -216,7 +324,7 @@ export default {
           })
           .catch(response => {
             this.$toast.open({
-              message: "Falha ao criar dono de produto",
+              message: "Falha ao criar produto",
               type: "error",
               position: "bottom",
               duration: 2000
@@ -224,6 +332,7 @@ export default {
           });
       }
       this.close();
+      this.limparForm();
     }
   }
 };
