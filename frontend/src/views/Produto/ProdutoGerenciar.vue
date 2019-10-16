@@ -10,7 +10,6 @@
       <v-toolbar flat color="white">
         <v-toolbar-title class="mr-5">
           <div>
-            <h1 class="display-1">Falta desenvolver o RU</h1>
             <v-btn text icon color="purple" @click="open">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -124,28 +123,24 @@ export default {
     produtos: [],
     editedIndex: -1,
     editedItem: {
-      produto: {
-        name: "",
-        amount: "",
-        owner_name: "",
-        owner_id: "",
-        category_name: "",
-        category_id: "",
-        price_buy: "",
-        price_sell: ""
-      }
+      name: "",
+      amount: "",
+      owner_name: "",
+      owner_id: "",
+      category_name: "",
+      category_id: "",
+      price_buy: "",
+      price_sell: ""
     },
     defaultItem: {
-      produto: {
-        name: "",
-        amount: "",
-        owner_name: "",
-        owner_id: "",
-        category_name: "",
-        category_id: "",
-        price_buy: "",
-        price_sell: ""
-      }
+      name: "",
+      amount: "",
+      owner_name: "",
+      owner_id: "",
+      category_name: "",
+      category_id: "",
+      price_buy: "",
+      price_sell: ""
     }
   }),
   computed: {
@@ -199,15 +194,21 @@ export default {
       });
     },
     limparForm() {
-      this.editedItem.name = undefined;
-      this.editedItem.amount = undefined;
-      this.editedItem.price_buy = undefined;
-      this.editedItem.price_sell = undefined;
-      this.selected_dono = undefined;
-      this.selected_categoria = undefined;
+      this.editedItem.name = "";
+      this.editedItem.amount = "";
+      this.editedItem.price_buy = "";
+      this.editedItem.price_sell = "";
+      this.selected_dono._id = "";
+      this.selected_dono.name = "";
+      this.selected_categoria._id = "";
+      this.selected_categoria.name = "";
+      return true;
     },
     editItem(item) {
       this.editedIndex = this.produtos.indexOf(item);
+
+      this.atualizarListaDonos();
+      this.atualizarListaCategorias();
 
       let produto = {
         _id: item._id,
@@ -221,7 +222,11 @@ export default {
         price_sell: item.price_sell
       };
 
+      this.selected_dono._id = produto.owner_id;
+      this.selected_categoria._id = produto.category_id;
+
       this.editedItem = Object.assign({}, produto);
+
       this.dialog = true;
     },
     deleteItem(item) {
@@ -246,25 +251,28 @@ export default {
       }
     },
     open() {
+      this.limparForm();
       this.dialog = true;
     },
     close() {
       this.dialog = false;
       setTimeout(() => {
+        this.limparForm();
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
     },
     save() {
       if (this.editedIndex > -1) {
-        let oldCliente = {
-          _id: this.produtos[this.editedIndex]._id,
-          name: this.produtos[this.editedIndex].name
-        };
 
         let newProduto = {
           _id: this.editedItem._id,
-          name: this.editedItem.name
+          name: this.editedItem.name,
+          amount: this.editedItem.amount,
+          price_buy: this.editedItem.price_buy,
+          price_sell: this.editedItem.price_sell,
+          owner: this.selected_dono._id,
+          category: this.selected_categoria._id,
         };
 
         let api_url =
@@ -332,7 +340,7 @@ export default {
           });
       }
       this.close();
-      this.limparForm();
+      // this.limparForm();
     }
   }
 };
