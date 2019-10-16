@@ -6,6 +6,7 @@ import store from './store';
 import vuetify from './plugins/vuetify';
 
 import 'vue-toast-notification/dist/index.css';
+import './modules/vuetify-money';
 
 Vue.use(VueToast);
 

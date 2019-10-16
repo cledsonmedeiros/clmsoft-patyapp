@@ -8685,6 +8685,11 @@ vuetify-loader@^1.2.2:
   dependencies:
     loader-utils "^1.2.0"
 
+vuetify-money@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/vuetify-money/-/vuetify-money-0.1.11.tgz#f7c16ec165eecb9fd141e30803e56051e3fa8382"
+  integrity sha512-SXF3Z3Y3gSGeACpai9tbogmcXX6SXBWawr+VOAhpgQI9H16ACM+wyF23sashdeSk0bD3zMKJ9ZqhVMfx4qjcKA==
+
 vuetify@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.1.1.tgz#1578167f9adc0046d6c63f04d5e2d0fee1bfc5c2"

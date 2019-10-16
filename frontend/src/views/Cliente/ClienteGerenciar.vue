@@ -42,14 +42,14 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       v-model="editedItem.contact"
                       v-mask="mascaraTelefone"
                       label="Contato"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       v-model="editedItem.cpf"
                       v-mask="mascaraCPF"
