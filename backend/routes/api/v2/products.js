@@ -70,4 +70,23 @@ router.delete('/delete/:id', (req, res) => {
     });
 });
 
+//CUSTOM
+router.get('/category/:id', (req, res) => {  
+  Produto.find({ "category": req.params.id })
+    .populate('owner')
+    .populate('category')
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          error: 'Product not found',
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
 module.exports = router;

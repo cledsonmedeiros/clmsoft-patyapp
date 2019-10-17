@@ -40,7 +40,7 @@
                     <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="2">
-                    <v-text-field v-model="editedItem.amount" label="Qntd"></v-text-field>
+                    <v-text-field v-model="editedItem.amount" type="number" label="Qntd"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="5">
                     <v-text-field v-model="editedItem.price_buy" label="Preço de compra"></v-text-field>

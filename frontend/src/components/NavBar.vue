@@ -25,14 +25,14 @@
 
       <v-list dense rounded="">
 
-        <v-list-item-group v-for="item in itens" :key="item.titulo" link>
-          <v-list-item :to="item.rota">
+        <v-list-item-group v-for="rota in rotas" :key="rota.titulo" link>
+          <v-list-item :to="rota.link">
             <v-list-item-icon>
-              <v-icon>{{ item.icone }}</v-icon>
+              <v-icon>{{ rota.icone }}</v-icon>
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item.titulo }}</v-list-item-title>
+              <v-list-item-title>{{ rota.titulo }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -48,31 +48,36 @@ export default {
   data() {
     return {
       drawer: null,
-      itens: [
+      rotas: [
         {
           titulo: "Home",
           icone: "mdi-home",
-          rota: "/"
+          link: "/"
         },
         {
           titulo: "Clientes",
           icone: "mdi-account-group",
-          rota: "/clientes"
+          link: "/clientes"
         },
         {
           titulo: "Produtos",
           icone: "mdi-view-dashboard",
-          rota: "/produtos"
+          link: "/produtos"
         },
         {
           titulo: "Donos de produto",
           icone: "mdi-account-tie",
-          rota: "/donosdeprodutos"
+          link: "/donosdeprodutos"
         },
         {
           titulo: "Categorias de produto",
           icone: "mdi-format-list-bulleted-type",
-          rota: "/categoriasdeprodutos"
+          link: "/categoriasdeprodutos"
+        },
+        {
+          titulo: "Nova venda",
+          icone: "mdi-shopify",
+          link: "/novavenda"
         },
       ]
     };

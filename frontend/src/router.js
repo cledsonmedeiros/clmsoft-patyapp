@@ -35,5 +35,10 @@ export default new Router({
       name: 'categoriasdeprodutos',
       component: () => import(/* webpackChunkName: "about" */ './views/Produto/ProdutoCategoriaGerenciar.vue'),
     },
+    {
+      path: '/novavenda',
+      name: 'novavenda',
+      component: () => import(/* webpackChunkName: "about" */ './views/Venda/VendaNova.vue'),
+    },
   ],
 });
