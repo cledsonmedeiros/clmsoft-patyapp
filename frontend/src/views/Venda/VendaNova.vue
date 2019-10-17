@@ -28,7 +28,21 @@
     <v-layout row>
       <v-flex sm12>
         <v-card class="ma-1" :elevation="elevation">
-          <v-card-text>Produtos</v-card-text>
+          <v-card-text>
+            <div>
+              Produtos
+              <v-text-field
+                v-model="search"
+                @input="getProdutosPesquisa()"
+                append-icon="mdi-magnify"
+                label="Pesquisar"
+                single-line
+                hint="Pesquisar produto"
+                persistent-hint
+              ></v-text-field>
+            </div>
+          </v-card-text>
+
           <v-btn
             rounded
             small
@@ -78,7 +92,8 @@ export default {
       categorias: [],
       produtos: [],
       cesta: [],
-      total: 0
+      total: 0,
+      search: ""
     };
   },
   methods: {
@@ -90,6 +105,7 @@ export default {
     limparCesta() {
       this.cesta = [];
       this.total = 0;
+      this.search = "";
     },
     getCategorias() {
       let api_url =
@@ -99,19 +115,52 @@ export default {
 
       axios.get(`${api_url}/productcategory`).then(response => {
         this.categorias = response.data;
+        this.categorias.push({ _id: "todos", name: "Todos" });
+        this.categorias.push({ _id: "nenhum", name: "Nenhum" });
       });
     },
-    getProdutos(id_categoria) {
+    getProdutosPesquisa() {
       let api_url =
         process.env.VUE_APP_ENV === "dev"
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL;
 
-      axios
-        .get(`${api_url}/products/category/${id_categoria}`)
-        .then(response => {
+      if (this.search !== "") {
+        axios.get(`${api_url}/products/name/${this.search}`).then(response => {
           this.produtos = response.data;
         });
+      } else {
+        this.produtos = [];
+      }
+    },
+    getProdutos(id_categoria) {
+      if (id_categoria !== "nenhum" && id_categoria !== "todos") {
+        let api_url =
+          process.env.VUE_APP_ENV === "dev"
+            ? process.env.VUE_APP_API_URL_LOCAL
+            : process.env.VUE_APP_API_URL;
+
+        axios
+          .get(`${api_url}/products/category/${id_categoria}`)
+          .then(response => {
+            this.produtos = response.data;
+          });
+      } else if (id_categoria === "nenhum") {
+        this.produtos = [];
+        this.search = "";
+      } else if (id_categoria === "todos") {
+        let api_url =
+          process.env.VUE_APP_ENV === "dev"
+            ? process.env.VUE_APP_API_URL_LOCAL
+            : process.env.VUE_APP_API_URL;
+
+        axios
+          .get(`${api_url}/products`)
+          .then(response => {
+            this.produtos = response.data;
+            this.search = "";
+          });
+      }
     },
     somarTotal(element, index, array) {
       this.total += Number(element.quantidade) * Number(element.total);
@@ -125,6 +174,7 @@ export default {
       };
       this.cesta.push(item);
       this.total = this.total + produto.price_sell;
+      this.produtos = [];
     }
   },
   created() {
