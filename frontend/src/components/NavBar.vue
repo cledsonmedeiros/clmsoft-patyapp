@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar flat="" color="purple darken-1">
+    <v-toolbar flat dense color="purple darken-1">
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-uppercase white--text">
         <span class="font-weight-light">Paty</span>

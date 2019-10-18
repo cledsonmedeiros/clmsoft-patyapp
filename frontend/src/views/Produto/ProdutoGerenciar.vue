@@ -20,6 +20,7 @@
         </v-toolbar-title>
         <div class="flex-grow-1"></div>
         <v-text-field
+          color="purple"
           v-model="search"
           append-icon="mdi-magnify"
           label="Pesquisar"
@@ -37,16 +38,34 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
+                    <v-text-field
+                      color="purple"
+                      v-model="editedItem.name"
+                      :rules="nameRules"
+                      label="Nome"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="2">
-                    <v-text-field v-model="editedItem.amount" type="number" label="Qntd"></v-text-field>
+                    <v-text-field
+                      color="purple"
+                      v-model="editedItem.amount"
+                      type="number"
+                      label="Qntd"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="5">
-                    <v-text-field v-model="editedItem.price_buy" label="Preço de compra"></v-text-field>
+                    <v-text-field
+                      color="purple"
+                      v-model="editedItem.price_buy"
+                      label="Preço de compra"
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="5">
-                    <v-text-field v-model="editedItem.price_sell" label="Preço de venda"></v-text-field>
+                    <v-text-field
+                      color="purple"
+                      v-model="editedItem.price_sell"
+                      label="Preço de venda"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -78,9 +97,9 @@
 
             <v-card-actions>
               <div class="flex-grow-1"></div>
-              <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+              <v-btn color="purple" text @click="close">Cancelar</v-btn>
               <v-btn
-                color="blue darken-1"
+                color="purple"
                 text
                 :disabled="editedItem.name === undefined || editedItem.name.length === 0"
                 @click="save"
@@ -264,7 +283,6 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-
         let newProduto = {
           _id: this.editedItem._id,
           name: this.editedItem.name,
@@ -272,7 +290,7 @@ export default {
           price_buy: this.editedItem.price_buy,
           price_sell: this.editedItem.price_sell,
           owner: this.selected_dono._id,
-          category: this.selected_categoria._id,
+          category: this.selected_categoria._id
         };
 
         let api_url =
