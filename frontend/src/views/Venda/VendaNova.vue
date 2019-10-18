@@ -230,7 +230,9 @@ export default {
     limparCesta() {
       this.cesta = [];
       this.total = 0;
-      this.search = "";
+      this.unsetCliente();
+      this.searchCliente = "";
+      this.searchProduto = "";
     },
     getCategorias() {
       let api_url =
