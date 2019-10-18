@@ -1,5 +1,5 @@
 <template>
-  <v-container class="grey lighten-5">
+  <div class="mx-2">
     <v-snackbar v-model="snackbar" color="green" top :timeout="timeout">
       Exemplo toast
       <!-- <v-btn dark text @click="snackbar = false">Fechar</v-btn> -->
@@ -98,7 +98,7 @@
                 v-for="produto in produtos"
                 v-bind:key="produto._id"
                 @click="addProdutoCesta(produto)"
-              >{{produto.name}} - R${{produto.price_sell.toFixed(2)}}</v-btn>
+              >{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -117,33 +117,62 @@
             </div>
             <div>
               Total:
-              <b>{{this.total.toFixed(2)}}</b>
+              <b>R$ {{this.total.toFixed(2)}}</b>
             </div>
             <div>
               <v-chip
+                small
                 pill
                 class="my-2 mr-2 purple"
                 dark
                 v-for="item in cesta"
                 :key="item.produto.index"
+                @click="abrirEdicao(item)"
               >
-                <v-avatar left color="purple lighten-3" class="mr-4" @click="decrementarItem(item)">
-                  <v-icon dark>mdi-minus</v-icon>
-                </v-avatar>
-                <v-avatar left color="purple lighten-3" @click="incrementarItem(item)">
-                  <v-icon dark>mdi-plus</v-icon>
-                </v-avatar>
-                <!-- <v-avatar left color="purple" @click="removerItem(item)">
-              <v-icon dark>mdi-close</v-icon>
-                </v-avatar>-->
-                {{item.quantidade}} x {{item.produto.name}} - R${{item.total}}
+                {{item.quantidade}}
+                <v-divider vertical class="mx-2"></v-divider>
+                {{item.produto.name}}
+                <v-divider vertical class="mx-2"></v-divider>
+                R$ {{item.produto.price_sell.toFixed(2)}}
               </v-chip>
             </div>
           </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
-  </v-container>
+
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{editedItem.nome}}</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  color="purple"
+                  number
+                  v-model="editedItem.quantidade"
+                  label="Quantidade"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field color="purple" v-model="editedItem.valor" label="Valor"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="purple" text @click="fecharEdicao()">Cancelar</v-btn>
+          <v-btn color="purple" text @click="salvarEdicao()">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -166,30 +195,38 @@ export default {
       clienteSelected: {
         _id: "",
         name: ""
+      },
+      dialog: false,
+      editedItem: {
+        index: -1,
+        nome: "",
+        quantidade: 0,
+        preco: 0
       }
     };
   },
   methods: {
-    teste() {
-      console.log("teste");
+    abrirEdicao(item) {
+      this.editedItem.index = item.index;
+      this.editedItem.nome = item.produto.name;
+      this.editedItem.quantidade = item.quantidade;
+      this.editedItem.valor = item.produto.price_sell;
+      this.dialog = true;
     },
-    incrementarItem(item) {
-      this.cesta[item.index].quantidade += 1;
+    fecharEdicao() {
+      this.dialog = false;
+      this.editedItem.nome = "";
+      this.editedItem.quantidade = 0;
+      this.editedItem.valor = 0;
+    },
+    salvarEdicao() {
+      this.cesta[this.editedItem.index].quantidade = this.editedItem.quantidade;
+      this.cesta[this.editedItem.index].produto.price_sell = Number(this.editedItem.valor);
+      this.cesta[this.editedItem.index].total = Number(this.editedItem.valor) * Number(this.editedItem.quantidade);
       this.total = 0;
       this.cesta.forEach(this.somarTotal);
+      this.fecharEdicao();
     },
-    decrementarItem(item) {
-      if (this.cesta[item.index].quantidade >= 1) {
-        this.cesta[item.index].quantidade -= 1;
-        this.total = 0;
-        this.cesta.forEach(this.somarTotal);
-      }
-    },
-    // removerItem(item) {
-    //   this.cesta.splice(item.index,1);
-    //   this.total = 0;
-    //   this.cesta.forEach(this.somarTotal);
-    // },
     limparCesta() {
       this.cesta = [];
       this.total = 0;
@@ -266,7 +303,8 @@ export default {
       this.searchProduto = "";
     },
     somarTotal(element, index, array) {
-      this.total += Number(element.quantidade) * Number(element.total);
+      // this.total += Number(element.quantidade) * Number(element.total);
+      this.total += Number(element.total);
     },
     addProdutoCesta(produto) {
       let item = {
