@@ -1,12 +1,19 @@
 <template>
   <v-container class="grey lighten-5">
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      teste
+      <v-btn color="blue" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
     <v-layout row>
       <v-flex xs12>
         <v-card class="ma-1" :elevation="elevation">
           <v-card-text>
-            categorias
-            <v-btn text icon class="mr-10" color="purple" @click="limparCesta()">
+            Categorias
+            <v-btn text icon color="purple" @click="limparCesta()">
               <v-icon>mdi-cached</v-icon>
+            </v-btn>
+            <v-btn text icon color="purple" @click="snackbar = true">
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-card-text>
           <v-card-text>
@@ -14,7 +21,7 @@
               rounded
               small
               color="purple"
-              class="mx-1"
+              class="mx-1 mb-3"
               dark
               v-for="categoria in categorias"
               v-bind:key="categoria._id"
@@ -61,7 +68,21 @@
         <v-card class="ma-1" :elevation="elevation">
           <v-card-text>Cesta</v-card-text>
           <v-card-title>Total: {{this.total.toFixed(2)}}</v-card-title>
-          <v-btn-toggle
+
+          <v-chip pill class="ma-2 purple" dark v-for="item in cesta" :key="item.produto.index">
+            <v-avatar left color="purple lighten-3" class="mr-4" @click="decrementarItem(item)">
+              <v-icon dark>mdi-minus</v-icon>
+            </v-avatar>
+            <v-avatar left color="purple lighten-3" class="mr-4" @click="incrementarItem(item)">
+              <v-icon dark>mdi-plus</v-icon>
+            </v-avatar>
+            <!-- <v-avatar left color="purple" @click="removerItem(item)">
+              <v-icon dark>mdi-close</v-icon>
+            </v-avatar> -->
+            {{item.quantidade}} x {{item.produto.name}} - R${{item.total}}
+          </v-chip>
+
+          <!-- <v-btn-toggle
             background-color="purple"
             class="ma-2"
             dark
@@ -71,10 +92,10 @@
             :key="item.produto.index"
           >
             <v-btn>{{item.quantidade}} x {{item.produto.name}} - R${{item.total}}</v-btn>
-            <v-btn @click="teste(item)">
+            <v-btn @click="incrementarItem(item)">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-          </v-btn-toggle>
+          </v-btn-toggle>-->
         </v-card>
       </v-flex>
     </v-layout>
@@ -93,15 +114,32 @@ export default {
       produtos: [],
       cesta: [],
       total: 0,
-      search: ""
+      search: "",
+      snackbar: false,
+      timeout: 2000
     };
   },
   methods: {
-    teste(item) {
+    teste() {
+      console.log("teste");
+    },
+    incrementarItem(item) {
       this.cesta[item.index].quantidade += 1;
       this.total = 0;
       this.cesta.forEach(this.somarTotal);
     },
+    decrementarItem(item) {
+      if(this.cesta[item.index].quantidade >= 1){
+        this.cesta[item.index].quantidade -= 1;
+        this.total = 0;
+        this.cesta.forEach(this.somarTotal);
+      }
+    },
+    // removerItem(item) {
+    //   this.cesta.splice(item.index,1);
+    //   this.total = 0;
+    //   this.cesta.forEach(this.somarTotal);
+    // },
     limparCesta() {
       this.cesta = [];
       this.total = 0;
@@ -154,12 +192,10 @@ export default {
             ? process.env.VUE_APP_API_URL_LOCAL
             : process.env.VUE_APP_API_URL;
 
-        axios
-          .get(`${api_url}/products`)
-          .then(response => {
-            this.produtos = response.data;
-            this.search = "";
-          });
+        axios.get(`${api_url}/products`).then(response => {
+          this.produtos = response.data;
+          this.search = "";
+        });
       }
     },
     somarTotal(element, index, array) {
@@ -175,6 +211,7 @@ export default {
       this.cesta.push(item);
       this.total = this.total + produto.price_sell;
       this.produtos = [];
+      this.search = "";
     }
   },
   created() {
