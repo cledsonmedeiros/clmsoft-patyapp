@@ -357,8 +357,10 @@ export default {
             });
           });
       }
+      this.atualizarLista();
+      this.atualizarListaDonos();
+      this.atualizarListaCategorias();
       this.close();
-      // this.limparForm();
     }
   }
 };
