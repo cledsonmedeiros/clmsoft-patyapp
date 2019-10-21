@@ -94,8 +94,8 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1
-        ? "Nova categoria de produto"
-        : "Editar categoria de produto";
+        ? "Criar"
+        : "Editar";
     }
   },
   watch: {

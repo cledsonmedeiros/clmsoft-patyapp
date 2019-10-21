@@ -69,7 +69,7 @@ router.delete('/delete/:id', (req, res) => {
 // CUSTOM
 router.get('/name/:name', (req, res) => {
   // res.send(req.params.name)
-  Customer.find({"name": { "$regex": req.params.name, "$options": "i" }})
+  Customer.find({ "name": { "$regex": req.params.name, "$options": "i" } })
     .then((data) => {
       res.status(200).json(data);
     })

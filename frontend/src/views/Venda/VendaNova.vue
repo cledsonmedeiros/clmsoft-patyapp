@@ -111,8 +111,23 @@
           <v-card-text class="ma-0">
             <div>
               Cesta
-              <v-btn text icon color="purple" @click="limparCesta()">
+              <v-btn
+                text
+                icon
+                color="purple"
+                :disabled="this.cesta.length === 0"
+                @click="limparCesta()"
+              >
                 <v-icon>mdi-cached</v-icon>
+              </v-btn>
+              <v-btn
+                text
+                icon
+                color="purple"
+                :disabled="this.cesta.length === 0"
+                @click="salvarCesta()"
+              >
+                <v-icon>mdi-content-save</v-icon>
               </v-btn>
             </div>
             <div>
@@ -168,6 +183,7 @@
         <v-card-actions>
           <div class="flex-grow-1"></div>
           <v-btn color="purple" text @click="fecharEdicao()">Cancelar</v-btn>
+          <v-btn color="purple" text @click="deletarItemCesta()">Deletar</v-btn>
           <v-btn color="purple" text @click="salvarEdicao()">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -206,6 +222,12 @@ export default {
     };
   },
   methods: {
+    deletarItemCesta() {
+      // console.log(this.cesta[this.editedItem.index]);
+      this.cesta.splice(this.editedItem.index, 1)
+      this.atualizarCesta();
+      this.fecharEdicao();
+    },
     abrirEdicao(item) {
       this.editedItem.index = item.index;
       this.editedItem.nome = item.produto.name;
@@ -221,18 +243,26 @@ export default {
     },
     salvarEdicao() {
       this.cesta[this.editedItem.index].quantidade = this.editedItem.quantidade;
-      this.cesta[this.editedItem.index].produto.price_sell = Number(this.editedItem.valor);
-      this.cesta[this.editedItem.index].total = Number(this.editedItem.valor) * Number(this.editedItem.quantidade);
-      this.total = 0;
-      this.cesta.forEach(this.somarTotal);
+      this.cesta[this.editedItem.index].produto.price_sell = Number(
+        this.editedItem.valor
+      );
+      this.cesta[this.editedItem.index].total =
+        Number(this.editedItem.valor) * Number(this.editedItem.quantidade);
+      this.atualizarCesta();
       this.fecharEdicao();
     },
-    limparCesta() {
-      this.cesta = [];
+    atualizarCesta() {
       this.total = 0;
-      this.unsetCliente();
-      this.searchCliente = "";
-      this.searchProduto = "";
+      this.cesta.forEach(this.atualizarTotalCesta);
+    },
+    limparCesta() {
+      if (confirm("Deseja realmente limpar a cesta?")) {
+        this.cesta = [];
+        this.total = 0;
+        this.unsetCliente();
+        this.searchCliente = "";
+        this.searchProduto = "";
+      }
     },
     getCategorias() {
       let api_url =
@@ -304,8 +334,10 @@ export default {
       }
       this.searchProduto = "";
     },
-    somarTotal(element, index, array) {
-      // this.total += Number(element.quantidade) * Number(element.total);
+    atualizarTotalCesta(element, index, array) {
+      this.cesta[index].index = index;
+      // console.log(`Cesta index: ${this.cesta[index].index}`);
+
       this.total += Number(element.total);
     },
     addProdutoCesta(produto) {
@@ -313,7 +345,7 @@ export default {
         index: this.cesta.length,
         quantidade: 1,
         produto: produto,
-        total: 1 * produto.price_sell
+        total: produto.price_sell
       };
       this.cesta.push(item);
       this.total = this.total + produto.price_sell;

@@ -16,6 +16,8 @@ module.exports = {
   },
   rules: {
     "no-console": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "quotes": "off",
+    "quote-props": "off",
   },
 };
