@@ -222,9 +222,57 @@ export default {
     };
   },
   methods: {
+    salvarCesta() {
+      let itensVenda = [];
+      this.cesta.forEach(element => {
+        itensVenda.push({
+          produto: element.produto._id,
+          quantidade: element.quantidade,
+          preco: element.produto.price_sell,
+          total: element.total
+        });
+      });
+
+      let venda = {
+        data: {
+          data_completa: new Date().toLocaleDateString(),
+          data_dia: new Date().toLocaleDateString().split("/")[0],
+          data_mes: new Date().toLocaleDateString().split("/")[1],
+          data_ano: new Date().toLocaleDateString().split("/")[2]
+        },
+        cliente: this.clienteSelected._id,
+        // isParcelado: false,
+        total: this.total,
+        total_pago: 0,
+        itens: []
+      };
+
+      let api_url =
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL;
+
+      itensVenda.forEach(element => {
+        axios
+          .post(`${api_url}/sellitem`, {
+            sellItem: {
+              product: element.produto,
+              price: element.preco,
+              amount: element.quantidade,
+              total: element.total
+            }
+          })
+          .then(response => {
+            venda.itens.push(response.data._id)
+          })
+          .catch(response => {
+            console.log("falha", response);
+          });
+      });
+      console.log(venda);
+    },
     deletarItemCesta() {
-      // console.log(this.cesta[this.editedItem.index]);
-      this.cesta.splice(this.editedItem.index, 1)
+      this.cesta.splice(this.editedItem.index, 1);
       this.atualizarCesta();
       this.fecharEdicao();
     },
@@ -242,7 +290,9 @@ export default {
       this.editedItem.valor = 0;
     },
     salvarEdicao() {
-      this.cesta[this.editedItem.index].quantidade = this.editedItem.quantidade;
+      this.cesta[this.editedItem.index].quantidade = Number(
+        this.editedItem.quantidade
+      );
       this.cesta[this.editedItem.index].produto.price_sell = Number(
         this.editedItem.valor
       );
@@ -336,8 +386,6 @@ export default {
     },
     atualizarTotalCesta(element, index, array) {
       this.cesta[index].index = index;
-      // console.log(`Cesta index: ${this.cesta[index].index}`);
-
       this.total += Number(element.total);
     },
     addProdutoCesta(produto) {

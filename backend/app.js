@@ -17,6 +17,8 @@ app.use('/api/v2/customers', require('./routes/api/v2/customers'));
 app.use('/api/v2/products', require('./routes/api/v2/products'));
 app.use('/api/v2/productowner', require('./routes/api/v2/productOwner'));
 app.use('/api/v2/productcategory', require('./routes/api/v2/productCategory'));
+app.use('/api/v2/sell', require('./routes/api/v2/sell'));
+app.use('/api/v2/sellitem', require('./routes/api/v2/sellItem'));
 
 // ENVIRONMENT VARS
 const { PORT, DB_URL, NODE_ENV } = process.env;

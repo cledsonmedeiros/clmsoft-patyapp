@@ -7,23 +7,23 @@ const ProdutoSchema = new mongoose.Schema({
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'ProdutoDono'
+    ref: 'ProdutoDono',
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'ProdutoCategoria'
+    ref: 'ProdutoCategoria',
   },
   price_buy: {
     type: Number,
-    required: true
+    required: true,
   },
   price_sell: {
     type: Number,
-    required: true
+    required: true,
   },
 });
 
