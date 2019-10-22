@@ -95,7 +95,11 @@ export default {
       donoproduto: {
         name: ""
       }
-    }
+    },
+    api_url:
+      process.env.VUE_APP_ENV === "dev"
+        ? process.env.VUE_APP_API_URL_LOCAL
+        : process.env.VUE_APP_API_URL
   }),
   computed: {
     formTitle() {
@@ -112,12 +116,7 @@ export default {
   },
   methods: {
     atualizarLista() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/productowner`).then(response => {
+      axios.get(`${this.api_url}/productowner`).then(response => {
         this.donosprodutos = response.data;
       });
     },
@@ -137,20 +136,17 @@ export default {
 
       if (confirm("Deseja realmente deletar esse item?")) {
         let id = this.donosprodutos[this.donosprodutos.indexOf(item)]._id;
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
-        axios.delete(`${api_url}/productowner/delete/${id}`).then(response => {
-          this.atualizarLista();
-          this.$toast.open({
-            message: "Dono de produto deletado com sucesso",
-            type: "success",
-            position: "bottom",
-            duration: 2000
+        axios
+          .delete(`${this.api_url}/productowner/delete/${id}`)
+          .then(response => {
+            this.atualizarLista();
+            this.$toast.open({
+              message: "Dono de produto deletado com sucesso",
+              type: "success",
+              position: "bottom",
+              duration: 2000
+            });
           });
-        });
       }
     },
     open() {
@@ -174,15 +170,9 @@ export default {
           _id: this.editedItem._id,
           name: this.editedItem.name
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
           .put(
-            `${api_url}/productowner/update/${newDonoProduto._id}`,
+            `${this.api_url}/productowner/update/${newDonoProduto._id}`,
             newDonoProduto
           )
           .then(response => {
@@ -198,14 +188,8 @@ export default {
         let newDonoProduto = {
           name: this.editedItem.name
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .post(`${api_url}/productowner`, {
+          .post(`${this.api_url}/productowner`, {
             productowner: {
               name: newDonoProduto.name
             }

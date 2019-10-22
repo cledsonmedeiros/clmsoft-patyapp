@@ -218,7 +218,11 @@ export default {
         nome: "",
         quantidade: 0,
         preco: 0
-      }
+      },
+      api_url:
+        process.env.VUE_APP_ENV === "dev"
+          ? process.env.VUE_APP_API_URL_LOCAL
+          : process.env.VUE_APP_API_URL,
     };
   },
   methods: {
@@ -247,14 +251,9 @@ export default {
         itens: []
       };
 
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
       itensVenda.forEach(element => {
         axios
-          .post(`${api_url}/sellitem`, {
+          .post(`${this.api_url}/sellitem`, {
             sellItem: {
               product: element.produto,
               price: element.preco,
@@ -263,7 +262,7 @@ export default {
             }
           })
           .then(response => {
-            venda.itens.push(response.data._id)
+            venda.itens.push(response.data._id);
           })
           .catch(response => {
             console.log("falha", response);
@@ -315,26 +314,16 @@ export default {
       }
     },
     getCategorias() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/productcategory`).then(response => {
+      axios.get(`${this.api_url}/productcategory`).then(response => {
         this.categorias = response.data;
         this.categorias.push({ _id: "todos", name: "Todos" });
         this.categorias.push({ _id: "nenhum", name: "Nenhum" });
       });
     },
     getClientesPesquisa() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
       if (this.searchCliente !== "") {
         axios
-          .get(`${api_url}/customers/name/${this.searchCliente}`)
+          .get(`${this.api_url}/customers/name/${this.searchCliente}`)
           .then(response => {
             this.clientes = response.data;
           });
@@ -343,14 +332,9 @@ export default {
       }
     },
     getProdutosPesquisa() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
       if (this.searchProduto !== "") {
         axios
-          .get(`${api_url}/products/name/${this.searchProduto}`)
+          .get(`${this.api_url}/products/name/${this.searchProduto}`)
           .then(response => {
             this.produtos = response.data;
           });
@@ -360,25 +344,15 @@ export default {
     },
     getProdutos(id_categoria) {
       if (id_categoria !== "nenhum" && id_categoria !== "todos") {
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .get(`${api_url}/products/category/${id_categoria}`)
+          .get(`${this.api_url}/products/category/${id_categoria}`)
           .then(response => {
             this.produtos = response.data;
           });
       } else if (id_categoria === "nenhum") {
         this.produtos = [];
       } else if (id_categoria === "todos") {
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
-        axios.get(`${api_url}/products`).then(response => {
+        axios.get(`${this.api_url}/products`).then(response => {
           this.produtos = response.data;
         });
       }

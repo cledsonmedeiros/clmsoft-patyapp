@@ -19,7 +19,8 @@
           </div>
         </v-toolbar-title>
         <div class="flex-grow-1"></div>
-        <v-text-field color="purple"
+        <v-text-field
+          color="purple"
           v-model="search"
           append-icon="mdi-magnify"
           label="Pesquisar"
@@ -37,7 +38,12 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
-                    <v-text-field color="purple" v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
+                    <v-text-field
+                      color="purple"
+                      v-model="editedItem.name"
+                      :rules="nameRules"
+                      label="Nome"
+                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -89,13 +95,15 @@ export default {
       categoriaproduto: {
         name: ""
       }
-    }
+    },
+    api_url:
+      process.env.VUE_APP_ENV === "dev"
+        ? process.env.VUE_APP_API_URL_LOCAL
+        : process.env.VUE_APP_API_URL
   }),
   computed: {
     formTitle() {
-      return this.editedIndex === -1
-        ? "Criar"
-        : "Editar";
+      return this.editedIndex === -1 ? "Criar" : "Editar";
     }
   },
   watch: {
@@ -108,12 +116,7 @@ export default {
   },
   methods: {
     atualizarLista() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/productcategory`).then(response => {
+      axios.get(`${this.api_url}/productcategory`).then(response => {
         this.categoriasprodutos = response.data;
       });
     },
@@ -134,13 +137,8 @@ export default {
       if (confirm("Deseja realmente deletar esse item?")) {
         let id = this.categoriasprodutos[this.categoriasprodutos.indexOf(item)]
           ._id;
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .delete(`${api_url}/productcategory/delete/${id}`)
+          .delete(`${this.api_url}/productcategory/delete/${id}`)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
@@ -173,15 +171,9 @@ export default {
           _id: this.editedItem._id,
           name: this.editedItem.name
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
           .put(
-            `${api_url}/productcategory/update/${newCategoriaProduto._id}`,
+            `${this.api_url}/productcategory/update/${newCategoriaProduto._id}`,
             newCategoriaProduto
           )
           .then(response => {
@@ -197,14 +189,8 @@ export default {
         let newCategoriaProduto = {
           name: this.editedItem.name
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .post(`${api_url}/productcategory`, {
+          .post(`${this.api_url}/productcategory`, {
             productcategory: {
               name: newCategoriaProduto.name
             }

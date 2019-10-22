@@ -130,7 +130,11 @@ export default {
         address: "",
         cpf: ""
       }
-    }
+    },
+    api_url:
+      process.env.VUE_APP_ENV === "dev"
+        ? process.env.VUE_APP_API_URL_LOCAL
+        : process.env.VUE_APP_API_URL
   }),
   computed: {
     formTitle() {
@@ -147,12 +151,7 @@ export default {
   },
   methods: {
     atualizarLista() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/customers`).then(response => {
+      axios.get(`${this.api_url}/customers`).then(response => {
         this.clientes = response.data;
       });
     },
@@ -175,20 +174,17 @@ export default {
 
       if (confirm("Deseja realmente deletar esse item?")) {
         let id = this.clientes[this.clientes.indexOf(item)]._id;
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
-        axios.delete(`${api_url}/customers/delete/${id}`).then(response => {
-          this.atualizarLista();
-          this.$toast.open({
-            message: "Cliente deletado com sucesso",
-            type: "success",
-            position: "bottom",
-            duration: 2000
+        axios
+          .delete(`${this.api_url}/customers/delete/${id}`)
+          .then(response => {
+            this.atualizarLista();
+            this.$toast.open({
+              message: "Cliente deletado com sucesso",
+              type: "success",
+              position: "bottom",
+              duration: 2000
+            });
           });
-        });
       }
     },
     open() {
@@ -218,14 +214,8 @@ export default {
           address: this.editedItem.address,
           cpf: this.editedItem.cpf
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .put(`${api_url}/customers/update/${newCliente._id}`, newCliente)
+          .put(`${this.api_url}/customers/update/${newCliente._id}`, newCliente)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
@@ -242,14 +232,8 @@ export default {
           address: this.editedItem.address,
           cpf: this.editedItem.cpf
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .post(`${api_url}/customers`, {
+          .post(`${this.api_url}/customers`, {
             customer: {
               name: newCliente.name,
               contact: newCliente.contact,

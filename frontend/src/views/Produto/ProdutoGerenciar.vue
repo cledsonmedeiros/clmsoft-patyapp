@@ -160,7 +160,11 @@ export default {
       category_id: "",
       price_buy: "",
       price_sell: ""
-    }
+    },
+    api_url:
+      process.env.VUE_APP_ENV === "dev"
+        ? process.env.VUE_APP_API_URL_LOCAL
+        : process.env.VUE_APP_API_URL
   }),
   computed: {
     formTitle() {
@@ -183,32 +187,17 @@ export default {
   },
   methods: {
     atualizarLista() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/products`).then(response => {
+      axios.get(`${this.api_url}/products`).then(response => {
         this.produtos = response.data;
       });
     },
     atualizarListaDonos() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/productowner`).then(response => {
+      axios.get(`${this.api_url}/productowner`).then(response => {
         this.select_dono = response.data;
       });
     },
     atualizarListaCategorias() {
-      let api_url =
-        process.env.VUE_APP_ENV === "dev"
-          ? process.env.VUE_APP_API_URL_LOCAL
-          : process.env.VUE_APP_API_URL;
-
-      axios.get(`${api_url}/productcategory`).then(response => {
+      axios.get(`${this.api_url}/productcategory`).then(response => {
         this.select_categoria = response.data;
       });
     },
@@ -253,12 +242,7 @@ export default {
 
       if (confirm("Deseja realmente deletar esse item?")) {
         let id = this.produtos[this.produtos.indexOf(item)]._id;
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
-        axios.delete(`${api_url}/products/delete/${id}`).then(response => {
+        axios.delete(`${this.api_url}/products/delete/${id}`).then(response => {
           this.atualizarLista();
           this.$toast.open({
             message: "Produto deletado com sucesso",
@@ -292,14 +276,8 @@ export default {
           owner: this.selected_dono._id,
           category: this.selected_categoria._id
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .put(`${api_url}/products/update/${newProduto._id}`, newProduto)
+          .put(`${this.api_url}/products/update/${newProduto._id}`, newProduto)
           .then(response => {
             this.atualizarLista();
             this.$toast.open({
@@ -322,14 +300,8 @@ export default {
           price_buy: this.editedItem.price_buy,
           price_sell: this.editedItem.price_sell
         };
-
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
         axios
-          .post(`${api_url}/products`, {
+          .post(`${this.api_url}/products`, {
             product: {
               name: newProduto.name,
               amount: newProduto.amount,
