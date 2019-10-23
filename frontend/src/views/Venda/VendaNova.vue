@@ -6,8 +6,8 @@
     </v-snackbar>
 
     <v-layout row>
-      <v-flex sm12>
-        <v-card class="ma-1" :elevation="elevation">
+      <v-flex xs12 sm6>
+        <v-card class="ma-1" min-height="172" :elevation="elevation">
           <v-card-text>
             <div>
               Cliente
@@ -44,13 +44,11 @@
           </v-card-text>
         </v-card>
       </v-flex>
-    </v-layout>
 
-    <v-layout row>
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
+      <v-flex xs12 sm6>
+        <v-card class="ma-1" min-height="172" :elevation="elevation">
           <v-card-text>
-            <div>Categorias</div>
+            <div>Categorias de produto</div>
             <div>
               <v-btn
                 rounded
@@ -69,74 +67,20 @@
     </v-layout>
 
     <v-layout row>
-      <v-flex sm12>
-        <v-card class="ma-1" :elevation="elevation">
-          <v-card-text>
-            <div>
-              Produtos
-              <v-text-field
-                color="purple"
-                v-model="searchProduto"
-                @input="getProdutosPesquisa()"
-                append-icon="mdi-magnify"
-                label="Pesquisar"
-                single-line
-                hint="Pesquisar produto"
-                persistent-hint
-              ></v-text-field>
-            </div>
-            <div>
-              <v-btn
-                rounded
-                small
-                color="purple"
-                class="mt-4 mr-2"
-                dark
-                v-for="produto in produtos"
-                v-bind:key="produto._id"
-                @click="addProdutoCesta(produto)"
-              >{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
-    <v-layout row>
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
+      <v-flex xs12 sm6>
+        <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
           <v-card-text class="ma-0">
-            <div>
-              Cesta
-              <v-btn
-                text
-                icon
-                color="purple"
-                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
-                @click="limparCesta()"
-              >
-                <v-icon>mdi-cached</v-icon>
-              </v-btn>
-              <v-btn
-                text
-                icon
-                color="purple"
-                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
-                @click="salvarCesta()"
-              >
-                <v-icon>mdi-content-save</v-icon>
-              </v-btn>
-            </div>
+            <div>Cesta</div>
             <div>
               Total:
               <b>R$ {{this.total.toFixed(2)}}</b>
               <br />
-              <!-- <span>{{ data_modificada | moment('timezone', 'America/Sao_Paulo', "add", "1 month").format("DD/MM/YYYY") }}</span> -->
             </div>
             <div class="mt-3">
               <p>Pagamento:</p>
               <v-switch
                 v-model="isPrazo"
+                dense
                 color="purple"
                 :label="`${isPrazo ? 'à prazo' : 'à vista'}`"
               ></v-switch>
@@ -178,7 +122,6 @@
                   </v-dialog>
                 </v-flex>
               </v-layout>
-              <!-- aparece as coisas pra escolher a quantidade e o dia da primeira parcela e o período -->
             </div>
             <div>
               <v-chip
@@ -196,6 +139,53 @@
                 <v-divider vertical class="mx-2"></v-divider>
                 R$ {{item.produto.price_sell.toFixed(2)}}
               </v-chip>
+            </div>
+            <div class="mt-3">
+              <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
+                <!-- <v-icon left>mdi-cached</v-icon> -->
+                Limpar
+              </v-btn>
+              <v-btn
+                text
+                color="purple"
+                @click="salvarCesta()"
+                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
+              >
+                <!-- <v-icon left>mdi-content-save</v-icon> -->
+                Salvar
+              </v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+
+      <v-flex xs12 sm6>
+        <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+          <v-card-text>
+            <div>
+              Produtos
+              <v-text-field
+                color="purple"
+                v-model="searchProduto"
+                @input="getProdutosPesquisa()"
+                append-icon="mdi-magnify"
+                label="Pesquisar"
+                single-line
+                hint="Pesquisar produto"
+                persistent-hint
+              ></v-text-field>
+            </div>
+            <div>
+              <v-btn
+                rounded
+                small
+                color="purple"
+                class="mt-4 mr-2"
+                dark
+                v-for="produto in produtos"
+                v-bind:key="produto._id"
+                @click="addProdutoCesta(produto)"
+              >{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -248,6 +238,8 @@ export default {
   data() {
     return {
       elevation: 2,
+      heightSup: 172,
+      heightInf: 348,
       categorias: [],
       produtos: [],
       clientes: [],
@@ -274,7 +266,7 @@ export default {
           : process.env.VUE_APP_API_URL,
       estadoBotao: false,
       isPrazo: false,
-      qntParcelas: 1,
+      qntParcelas: 2,
       data_atual: new Date().toISOString().substr(0, 10),
       data_modificada_formatada: new Date().toLocaleDateString(),
       data_modificada: null,
@@ -282,7 +274,7 @@ export default {
       modalDataParcela: false,
       periodos: ["Semana", "Quinzena", "Mês"],
       periodo: "Mês",
-      datas_parcelas: [],
+      datas_parcelas: []
     };
   },
   methods: {

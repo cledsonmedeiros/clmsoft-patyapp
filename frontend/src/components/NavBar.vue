@@ -75,9 +75,19 @@ export default {
           link: "/categoriasdeprodutos"
         },
         {
+          titulo: "Vendas",
+          icone: "mdi-currency-brl",
+          link: "/vendas"
+        },
+        {
           titulo: "Nova venda",
           icone: "mdi-shopify",
           link: "/novavenda"
+        },
+        {
+          titulo: "Relatórios",
+          icone: "mdi-file-chart",
+          link: "/relatorios"
         },
       ]
     };
