@@ -1,8 +1,8 @@
 <template>
   <div class="mx-2">
-    <v-snackbar v-model="snackbar" color="green" top :timeout="timeout">
-      Exemplo toast
-      <!-- <v-btn dark text @click="snackbar = false">Fechar</v-btn> -->
+    <v-snackbar v-model="snackbar" color="green" class="text-center" bottom :timeout="timeout">
+      Compra salva com sucesso
+      <i class="fas fa-check"></i>
     </v-snackbar>
 
     <v-layout row>
@@ -115,7 +115,7 @@
                 text
                 icon
                 color="purple"
-                :disabled="this.cesta.length === 0"
+                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
                 @click="limparCesta()"
               >
                 <v-icon>mdi-cached</v-icon>
@@ -124,7 +124,7 @@
                 text
                 icon
                 color="purple"
-                :disabled="this.cesta.length === 0"
+                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
                 @click="salvarCesta()"
               >
                 <v-icon>mdi-content-save</v-icon>
@@ -168,7 +168,8 @@
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
                   color="purple"
-                  number
+                  @input="bindDisabled()"
+                  type="number"
                   v-model="editedItem.quantidade"
                   label="Quantidade"
                 ></v-text-field>
@@ -184,7 +185,7 @@
           <div class="flex-grow-1"></div>
           <v-btn color="purple" text @click="fecharEdicao()">Cancelar</v-btn>
           <v-btn color="purple" text @click="deletarItemCesta()">Deletar</v-btn>
-          <v-btn color="purple" text @click="salvarEdicao()">Salvar</v-btn>
+          <v-btn color="purple" text @click="salvarEdicao()" :disabled="this.estadoBotao">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -193,6 +194,8 @@
 
 <script>
 import axios from "axios";
+import { log } from "util";
+import { async } from "q";
 
 export default {
   name: "VendaNova",
@@ -223,9 +226,17 @@ export default {
         process.env.VUE_APP_ENV === "dev"
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL,
+      estadoBotao: false
     };
   },
   methods: {
+    bindDisabled() {
+      if(this.editedItem.quantidade > this.produtos[this.editedItem.index].amount){
+        this.estadoBotao = true;
+      } else {
+        this.estadoBotao = false;
+      }
+    },
     salvarCesta() {
       let itensVenda = [];
       this.cesta.forEach(element => {
@@ -247,11 +258,13 @@ export default {
         cliente: this.clienteSelected._id,
         // isParcelado: false,
         total: this.total,
-        total_pago: 0,
-        itens: []
+        total_pago: 0
       };
 
-      itensVenda.forEach(element => {
+      var itensID = [];
+
+      for (let index = 0; index < itensVenda.length; index++) {
+        const element = itensVenda[index];
         axios
           .post(`${this.api_url}/sellitem`, {
             sellItem: {
@@ -262,16 +275,48 @@ export default {
             }
           })
           .then(response => {
-            venda.itens.push(response.data._id);
+            itensID[index] = String(response.data.id);
           })
           .catch(response => {
             console.log("falha", response);
           });
-      });
-      console.log(venda);
+      }
+
+      this.snackbar = true;
+
+      setTimeout(function(snack) {
+        if (itensID.length !== 0) {
+          let api_url =
+            process.env.VUE_APP_ENV === "dev"
+              ? process.env.VUE_APP_API_URL_LOCAL
+              : process.env.VUE_APP_API_URL;
+
+          axios
+            .post(`${api_url}/sell`, {
+              sell: {
+                date_complete: venda.data.data_completa,
+                date_day: venda.data.data_dia,
+                date_month: venda.data.data_mes,
+                date_year: venda.data.data_ano,
+                customer: venda.cliente,
+                total: venda.total,
+                total_paid: venda.total_pago,
+                products: itensID
+              }
+            })
+            .then(response => {
+            })
+            .catch(response => {
+              console.log("falha", response);
+            });
+        }
+      }, 500);
+
+      this.limparCestaAposSalvarCompra();
     },
     deletarItemCesta() {
       this.cesta.splice(this.editedItem.index, 1);
+      this.produtos = [];
       this.atualizarCesta();
       this.fecharEdicao();
     },
@@ -308,10 +353,19 @@ export default {
       if (confirm("Deseja realmente limpar a cesta?")) {
         this.cesta = [];
         this.total = 0;
+        this.produtos = [];
         this.unsetCliente();
         this.searchCliente = "";
         this.searchProduto = "";
       }
+    },
+    limparCestaAposSalvarCompra() {
+      this.cesta = [];
+      this.total = 0;
+      this.produtos = [];
+      this.unsetCliente();
+      this.searchCliente = "";
+      this.searchProduto = "";
     },
     getCategorias() {
       axios.get(`${this.api_url}/productcategory`).then(response => {
@@ -371,7 +425,6 @@ export default {
       };
       this.cesta.push(item);
       this.total = this.total + produto.price_sell;
-      this.produtos = [];
       this.searchProduto = "";
     },
     setCliente(cliente) {

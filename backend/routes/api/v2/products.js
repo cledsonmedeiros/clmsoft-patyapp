@@ -70,9 +70,9 @@ router.delete('/delete/:id', (req, res) => {
     });
 });
 
-//CUSTOM
-router.get('/category/:id', (req, res) => {  
-  Produto.find({ "category": req.params.id })
+// CUSTOM
+router.get('/category/:id', (req, res) => {
+  Produto.find({ "category": req.params.id, "amount": { "$gt": 0 } })
     .populate('owner')
     .populate('category')
     .then((data) => {
@@ -90,7 +90,10 @@ router.get('/category/:id', (req, res) => {
 });
 
 router.get('/name/:name', (req, res) => {
-  Produto.find({"name": { "$regex": req.params.name, "$options": "i" }})
+  Produto.find({
+    "name": { "$regex": req.params.name, "$options": "i" },
+    "amount": { "$gt": 0 },
+  })
     .populate('owner')
     .populate('category')
     .then((data) => {

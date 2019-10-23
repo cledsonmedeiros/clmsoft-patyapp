@@ -329,6 +329,7 @@ export default {
             });
           });
       }
+      this.limparForm();
       this.atualizarLista();
       this.atualizarListaDonos();
       this.atualizarListaCategorias();

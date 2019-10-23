@@ -19,5 +19,7 @@ module.exports = {
     "max-len": "off",
     "quotes": "off",
     "quote-props": "off",
+    "no-underscore-dangle": "off",
+    "no-dupe-keys": "off",
   },
 };

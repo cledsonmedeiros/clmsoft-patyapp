@@ -13,6 +13,14 @@ router.get('/', (req, res) => {
       populate: {
         path: 'product',
         model: 'Produto',
+        populate: {
+          path: 'owner',
+          model: 'ProdutoDono',
+        },
+        populate: {
+          path: 'category',
+          model: 'ProdutoCategoria',
+        },
       },
     })
     .then((data) => {
@@ -26,6 +34,7 @@ router.get('/', (req, res) => {
 // CREATE
 router.post('/', (req, res) => {
   const { sell } = req.body;
+  // console.log(sell);
   const newVenda = new Venda(sell);
   newVenda.save()
     .then((data) => {

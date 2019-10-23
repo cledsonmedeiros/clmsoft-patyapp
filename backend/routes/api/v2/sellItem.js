@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
   const newItemVenda = new ItemVenda(sellItem);
   newItemVenda.save()
     .then((data) => {
-      res.status(201).json(data);
+      res.status(201).json({ id: data._id });
     })
     .catch((err) => {
       res.status(400).json(err);
