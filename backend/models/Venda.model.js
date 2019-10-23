@@ -34,6 +34,10 @@ const VendaSchema = new mongoose.Schema({
     required: true,
     ref: 'ItemVenda',
   }],
+  isPrazo: {
+    type: Boolean,
+    // required: true,
+  },
 });
 
 module.exports = mongoose.model('Venda', VendaSchema, 'Venda');

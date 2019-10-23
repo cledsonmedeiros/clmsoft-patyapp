@@ -21,5 +21,6 @@ module.exports = {
     "quote-props": "off",
     "no-underscore-dangle": "off",
     "no-dupe-keys": "off",
+    "no-undef": "off",
   },
 };

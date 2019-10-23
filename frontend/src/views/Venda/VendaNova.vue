@@ -63,9 +63,6 @@
                 @click="getProdutos(categoria._id)"
               >{{categoria.name}}</v-btn>
             </div>
-            <!-- <v-btn text icon color="purple" @click="snackbar = true">
-                <v-icon>mdi-plus</v-icon>
-            </v-btn>-->
           </v-card-text>
         </v-card>
       </v-flex>
@@ -133,6 +130,55 @@
             <div>
               Total:
               <b>R$ {{this.total.toFixed(2)}}</b>
+              <br />
+              <!-- <span>{{ data_modificada | moment('timezone', 'America/Sao_Paulo', "add", "1 month").format("DD/MM/YYYY") }}</span> -->
+            </div>
+            <div class="mt-3">
+              <p>Pagamento:</p>
+              <v-switch
+                v-model="isPrazo"
+                color="purple"
+                :label="`${isPrazo ? 'à prazo' : 'à vista'}`"
+              ></v-switch>
+            </div>
+            <div v-if="isPrazo" class="mb-3 mx-3">
+              <v-layout row>
+                <v-flex xs12 md3 class="mr-3">
+                  <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
+                </v-flex>
+                <v-flex xs12 md4 class="mr-3">
+                  <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
+                </v-flex>
+                <v-flex xs12 md4>
+                  <v-dialog
+                    ref="dialog"
+                    v-model="modalDataParcela"
+                    :return-value.sync="data_atual"
+                    persistent
+                    width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="data_modificada_formatada"
+                        label="Primeira parcela"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="data_atual"
+                      :first-day-of-week="1"
+                      locale="pt-br"
+                      scrollable
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
+                      <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
+                    </v-date-picker>
+                  </v-dialog>
+                </v-flex>
+              </v-layout>
+              <!-- aparece as coisas pra escolher a quantidade e o dia da primeira parcela e o período -->
             </div>
             <div>
               <v-chip
@@ -226,12 +272,36 @@ export default {
         process.env.VUE_APP_ENV === "dev"
           ? process.env.VUE_APP_API_URL_LOCAL
           : process.env.VUE_APP_API_URL,
-      estadoBotao: false
+      estadoBotao: false,
+      isPrazo: false,
+      qntParcelas: 1,
+      data_atual: new Date().toISOString().substr(0, 10),
+      data_modificada_formatada: new Date().toLocaleDateString(),
+      data_modificada: null,
+      menu: false,
+      modalDataParcela: false,
+      periodos: ["Semana", "Quinzena", "Mês"],
+      periodo: "Mês",
+      datas_parcelas: [],
     };
   },
   methods: {
+    salvarDataParcela(data) {
+      this.data_modificada_formatada = `${data.split("-")[2]}/${
+        data.split("-")[1]
+      }/${data.split("-")[0]}`;
+      this.data_modificada = `${this.data_modificada_formatada.split("/")[2]}-${
+        this.data_modificada_formatada.split("/")[1]
+      }-${this.data_modificada_formatada.split("/")[0]}`;
+      this.data_atual = this.data_modificada;
+      this.modalDataParcela = false;
+    },
     bindDisabled() {
-      if(this.editedItem.quantidade > this.produtos[this.editedItem.index].amount || this.editedItem.quantidade <= 0){
+      if (
+        this.editedItem.quantidade >
+          this.produtos[this.editedItem.index].amount ||
+        this.editedItem.quantidade <= 0
+      ) {
         this.estadoBotao = true;
       } else {
         this.estadoBotao = false;
@@ -256,12 +326,13 @@ export default {
           data_ano: new Date().toLocaleDateString().split("/")[2]
         },
         cliente: this.clienteSelected._id,
-        // isParcelado: false,
+        isParcelado: this.isPrazo,
         total: this.total,
         total_pago: 0
       };
 
       var itensID = [];
+      var isAPrazo = this.isPrazo;
 
       for (let index = 0; index < itensVenda.length; index++) {
         const element = itensVenda[index];
@@ -301,11 +372,11 @@ export default {
                 customer: venda.cliente,
                 total: venda.total,
                 total_paid: venda.total_pago,
-                products: itensID
+                products: itensID,
+                isPrazo: isAPrazo
               }
             })
-            .then(response => {
-            })
+            .then(response => {})
             .catch(response => {
               console.log("falha", response);
             });
@@ -357,6 +428,7 @@ export default {
         this.unsetCliente();
         this.searchCliente = "";
         this.searchProduto = "";
+        this.isPrazo = false;
       }
     },
     limparCestaAposSalvarCompra() {
@@ -366,6 +438,7 @@ export default {
       this.unsetCliente();
       this.searchCliente = "";
       this.searchProduto = "";
+      this.isPrazo = false;
     },
     getCategorias() {
       axios.get(`${this.api_url}/productcategory`).then(response => {
@@ -441,6 +514,7 @@ export default {
     }
   },
   created() {
+    this.data_modificada = new Date().toISOString().substr(0, 10);
     this.getCategorias();
   }
 };
