@@ -231,7 +231,7 @@ export default {
   },
   methods: {
     bindDisabled() {
-      if(this.editedItem.quantidade > this.produtos[this.editedItem.index].amount){
+      if(this.editedItem.quantidade > this.produtos[this.editedItem.index].amount || this.editedItem.quantidade >= 0){
         this.estadoBotao = true;
       } else {
         this.estadoBotao = false;
