@@ -34,9 +34,14 @@ const VendaSchema = new mongoose.Schema({
     required: true,
     ref: 'ItemVenda',
   }],
+  bill_splits: [{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'ItemParcela',
+  }],
   isPrazo: {
     type: Boolean,
-    // required: true,
+    required: true,
   },
 });
 
