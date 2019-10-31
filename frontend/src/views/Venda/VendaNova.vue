@@ -1,12 +1,6 @@
 <template>
   <div class="mx-2">
-    <v-snackbar
-      v-model="snackbar"
-      color="green"
-      class="text-center"
-      bottom
-      :timeout="snackbarTimeout"
-    >
+    <v-snackbar v-model="snackbar" color="green" class="text-center" bottom :timeout="snackbarTimeout">
       {{snackbarMessage}}
       <i class="fas fa-check"></i>
     </v-snackbar>
@@ -17,17 +11,7 @@
           <v-card-text>
             <div>
               Cliente
-              <v-text-field
-                color="purple"
-                autocomplete="off"
-                v-model="searchCliente"
-                @input="getClientesPesquisa()"
-                append-icon="mdi-magnify"
-                label="Pesquisar"
-                single-line
-                hint="Pesquisar cliente"
-                persistent-hint
-              ></v-text-field>
+              <v-text-field color="purple" autocomplete="off" v-model="searchCliente" @input="getClientesPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar cliente" persistent-hint></v-text-field>
             </div>
             <div v-if="this.clienteSelected.name !== ''" class="mt-3">
               Cliente selecionado:
@@ -37,16 +21,7 @@
               </v-btn>
             </div>
             <div>
-              <v-btn
-                rounded
-                small
-                color="purple"
-                class="mt-3 mr-2"
-                dark
-                v-for="cliente in clientes"
-                v-bind:key="cliente._id"
-                @click="setCliente(cliente)"
-              >{{cliente.name}}</v-btn>
+              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="cliente in clientes" v-bind:key="cliente._id" @click="setCliente(cliente)">{{cliente.name}}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -57,16 +32,7 @@
           <v-card-text>
             <div>Categorias de produto</div>
             <div>
-              <v-btn
-                rounded
-                small
-                color="purple"
-                class="mt-3 mr-2"
-                dark
-                v-for="categoria in categorias"
-                v-bind:key="categoria._id"
-                @click="getProdutos(categoria._id)"
-              >{{categoria.name}}</v-btn>
+              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="categoria in categorias" v-bind:key="categoria._id" @click="getProdutos(categoria._id)">{{categoria.name}}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -85,12 +51,7 @@
             </div>
             <div class="mt-3">
               <p>Pagamento:</p>
-              <v-switch
-                v-model="isPrazo"
-                dense
-                color="purple"
-                :label="`${isPrazo ? 'à prazo' : 'à vista'}`"
-              ></v-switch>
+              <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
             </div>
             <div v-if="isPrazo" class="mb-3 mx-3">
               <v-layout row>
@@ -101,27 +62,11 @@
                   <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-dialog
-                    ref="dialog"
-                    v-model="modalDataParcela"
-                    :return-value.sync="data_atual"
-                    persistent
-                    width="290px"
-                  >
+                  <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
                     <template v-slot:activator="{ on }">
-                      <v-text-field
-                        v-model="data_modificada_formatada"
-                        label="Primeira parcela"
-                        readonly
-                        v-on="on"
-                      ></v-text-field>
+                      <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
                     </template>
-                    <v-date-picker
-                      v-model="data_atual"
-                      :first-day-of-week="1"
-                      locale="pt-br"
-                      scrollable
-                    >
+                    <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
                       <v-spacer></v-spacer>
                       <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
                       <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
@@ -131,15 +76,7 @@
               </v-layout>
             </div>
             <div>
-              <v-chip
-                small
-                pill
-                class="my-2 mr-2 purple"
-                dark
-                v-for="item in cesta"
-                :key="item.produto.index"
-                @click="abrirEdicao(item)"
-              >
+              <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
                 {{item.quantidade}}
                 <v-divider vertical class="mx-2"></v-divider>
                 {{item.produto.name}}
@@ -152,12 +89,7 @@
                 <!-- <v-icon left>mdi-cached</v-icon> -->
                 Limpar
               </v-btn>
-              <v-btn
-                text
-                color="purple"
-                @click="salvarCesta()"
-                :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0"
-              >
+              <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
                 <!-- <v-icon left>mdi-content-save</v-icon> -->
                 Salvar
               </v-btn>
@@ -171,28 +103,10 @@
           <v-card-text>
             <div>
               Produtos
-              <v-text-field
-                color="purple"
-                v-model="searchProduto"
-                @input="getProdutosPesquisa()"
-                append-icon="mdi-magnify"
-                label="Pesquisar"
-                single-line
-                hint="Pesquisar produto"
-                persistent-hint
-              ></v-text-field>
+              <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
             </div>
             <div>
-              <v-btn
-                rounded
-                small
-                color="purple"
-                class="mt-4 mr-2"
-                dark
-                v-for="produto in produtos"
-                v-bind:key="produto._id"
-                @click="addProdutoCesta(produto)"
-              >{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
+              <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -209,13 +123,7 @@
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" md="6">
-                <v-text-field
-                  color="purple"
-                  @input="bindDisabled()"
-                  type="number"
-                  v-model="editedItem.quantidade"
-                  label="Quantidade"
-                ></v-text-field>
+                <v-text-field color="purple" @input="bindDisabled()" type="number" v-model="editedItem.quantidade" label="Quantidade"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field color="purple" v-model="editedItem.valor" label="Valor"></v-text-field>
@@ -307,6 +215,7 @@ export default {
       }
     },
     salvarCesta() {
+      let quantidadeParcelas = this.qntParcelas;
       let itensVenda = [];
       this.cesta.forEach(element => {
         itensVenda.push({
@@ -371,21 +280,93 @@ export default {
                   }
                 })
                 .then(response => {
-                  this.showSnackbar("Compra salva com sucesso");
-                  let lastDate = moment().set({
-                    year: Number(this.data_modificada.split("-")[0]),
-                    month: Number(this.data_modificada.split("-")[1]) - 1,
-                    date: Number(this.data_modificada.split("-")[2]),
-                    timezone: "America/Sao_Paulo"
-                  });
-                  for (let index = 1; index <= this.qntParcelas; index++) {
-                    if (index === 1) {
-                      console.log(`${this.data_modificada_formatada} - R$${(venda.total / this.qntParcelas).toFixed(2)}`);
-                    } else {
-                      lastDate.add(1, "month");
-                      console.log(`${lastDate.format("L").toString().split('/')[1]}/${lastDate.format("L").toString().split('/')[0]}/${lastDate.format("L").toString().split('/')[2]} - R$${(venda.total / this.qntParcelas).toFixed(2)}`);
-                    }
+                  if (venda.isParcelado) {
+                    let idParcela = null;
+                    axios
+                      .post(`${api_url}/split`, {
+                        split: {
+                          period: this.periodo,
+                          amount: venda.total,
+                          splits: null,
+                          sell: response.data
+                        }
+                      })
+                      .then(response => {
+                        idParcela = response.data;
+                        console.log("parcela salva", response.data);
+                      })
+                      .catch(response => {
+                        console.log("falha", response);
+                      })
+                      .finally(() => {
+                        let itemParcela = {
+                          index: 0,
+                          amount: quantidadeParcelas,
+                          date: "",
+                          isPaid: false,
+                          price: 0,
+                          split: idParcela
+                        };
+                        let lastDate = moment().set({
+                          year: Number(this.data_modificada.split("-")[0]),
+                          month: Number(this.data_modificada.split("-")[1]) - 1,
+                          date: Number(this.data_modificada.split("-")[2]),
+                          timezone: "America/Sao_Paulo"
+                        });
+                        // let formatedDate = ;
+
+                        for (
+                          let index = 1;
+                          index <= quantidadeParcelas;
+                          index++
+                        ) {
+                          if (index === 1) {
+                            itemParcela.index = index;
+                            itemParcela.date = this.data_modificada;
+                            itemParcela.price = (
+                              venda.total / quantidadeParcelas
+                            ).toFixed(2);
+                            console.log(itemParcela);
+                            // console.log(
+                            //   `${index} - ${this.data_modificada} - R$${(
+                            //     venda.total / quantidadeParcelas
+                            //   ).toFixed(2)}`
+                            // );
+                          } else {
+                            if (this.periodo === "Mês") {
+                              lastDate.add(1, "month");
+                            } else if (this.periodo === "Quinzena") {
+                              lastDate.add(15, "days");
+                            } else {
+                              lastDate.add(7, "days");
+                            }
+
+                            itemParcela.index = index;
+                            itemParcela.date = `${
+                              lastDate
+                                .format("L")
+                                .toString()
+                                .split("/")[2]
+                            }-${
+                              lastDate
+                                .format("L")
+                                .toString()
+                                .split("/")[0]
+                            }-${
+                              lastDate
+                                .format("L")
+                                .toString()
+                                .split("/")[1]
+                            }`;
+                            itemParcela.price = (
+                              venda.total / quantidadeParcelas
+                            ).toFixed(2);
+                            console.log(itemParcela);
+                          }
+                        }
+                      });
                   }
+                  this.showSnackbar("Compra salva com sucesso");
                 })
                 .catch(response => {
                   console.log("falha", response);
@@ -456,6 +437,8 @@ export default {
       this.searchCliente = "";
       this.searchProduto = "";
       this.isPrazo = false;
+      this.periodo = "Mês";
+      this.qntParcelas = 2;
     },
     getCategorias() {
       axios.get(`${this.api_url}/productcategory`).then(response => {

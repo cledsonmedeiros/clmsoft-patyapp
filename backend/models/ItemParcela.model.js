@@ -5,17 +5,25 @@ const ItemParcelaSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  amount: {
+    type: Number,
+    required: true,
+  },
   date: {
     type: String,
     required: true,
   },
   isPaid: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   price: {
     type: Number,
     required: true,
+  },
+  split: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Parcela',
   },
 });
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const VendaSchema = new mongoose.Schema({
+const ParcelaSchema = new mongoose.Schema({
   period: {
     type: String,
     required: true,
@@ -11,13 +11,17 @@ const VendaSchema = new mongoose.Schema({
   },
   splits: [{
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'ItemParcela',
+    default: null,
   }],
   isAllPaid: {
     type: Boolean,
-    required: true,
+    default: false,
+  },
+  sell: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Venda',
   },
 });
 
-module.exports = mongoose.model('Venda', VendaSchema, 'Venda');
+module.exports = mongoose.model('Parcela', ParcelaSchema, 'Parcela');

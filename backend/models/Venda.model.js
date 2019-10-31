@@ -31,14 +31,18 @@ const VendaSchema = new mongoose.Schema({
   },
   products: [{
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'ItemVenda',
   }],
-  bill_splits: [{
+  split: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'ItemParcela',
-  }],
+    ref: 'Parcela',
+    default: null,
+  },
+  // bill_splits: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   required: true,
+  //   ref: 'ItemParcela',
+  // }],
   isPrazo: {
     type: Boolean,
     required: true,
