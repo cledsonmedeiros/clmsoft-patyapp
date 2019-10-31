@@ -313,7 +313,6 @@ export default {
                           date: Number(this.data_modificada.split("-")[2]),
                           timezone: "America/Sao_Paulo"
                         });
-                        // let formatedDate = ;
 
                         for (
                           let index = 1;
@@ -327,11 +326,6 @@ export default {
                               venda.total / quantidadeParcelas
                             ).toFixed(2);
                             console.log(itemParcela);
-                            // console.log(
-                            //   `${index} - ${this.data_modificada} - R$${(
-                            //     venda.total / quantidadeParcelas
-                            //   ).toFixed(2)}`
-                            // );
                           } else {
                             if (this.periodo === "Mês") {
                               lastDate.add(1, "month");
