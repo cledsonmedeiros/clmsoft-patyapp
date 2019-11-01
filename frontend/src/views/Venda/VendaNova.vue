@@ -215,7 +215,7 @@ export default {
       }
     },
     salvarCesta() {
-      let quantidadeParcelas = this.qntParcelas;
+      let quantidadeParcelas = Number(this.qntParcelas);
       let itensVenda = [];
       this.cesta.forEach(element => {
         itensVenda.push({
@@ -293,7 +293,7 @@ export default {
                       })
                       .then(response => {
                         idParcela = response.data;
-                        console.log("parcela salva", response.data);
+                        // console.log("parcela salva", response.data);
                       })
                       .catch(response => {
                         console.log("falha", response);
@@ -314,6 +314,8 @@ export default {
                           timezone: "America/Sao_Paulo"
                         });
 
+                        let itemParcelasID = [];
+
                         for (
                           let index = 1;
                           index <= quantidadeParcelas;
@@ -325,7 +327,19 @@ export default {
                             itemParcela.price = (
                               venda.total / quantidadeParcelas
                             ).toFixed(2);
-                            console.log(itemParcela);
+                            axios
+                              .post(`${this.api_url}/splititem`, {
+                                splititem: {
+                                  ...itemParcela
+                                }
+                              })
+                              .then(response => {
+                                itemParcelasID.push(response.data._id);
+                              })
+                              .catch(response => {
+                                console.log("falha", response);
+                              });
+                            // console.log(itemParcela);
                           } else {
                             if (this.periodo === "Mês") {
                               lastDate.add(1, "month");
@@ -355,9 +369,36 @@ export default {
                             itemParcela.price = (
                               venda.total / quantidadeParcelas
                             ).toFixed(2);
-                            console.log(itemParcela);
+                            axios
+                              .post(`${this.api_url}/splititem`, {
+                                splititem: {
+                                  ...itemParcela
+                                }
+                              })
+                              .then(response => {
+                                itemParcelasID.push(response.data._id);
+                              })
+                              .catch(response => {
+                                console.log("falha", response);
+                              });
                           }
                         }
+                        setTimeout(() => {
+                          let splitsID = {
+                            splits: itemParcelasID
+                          };
+                          axios
+                            .put(
+                              `${this.api_url}/split/update/${idParcela}`,
+                              splitsID
+                            )
+                            .then(response => {
+                              console.log("deu certo");
+                            })
+                            .catch(response => {
+                              console.log("fodeo");
+                            });
+                        }, 100 * quantidadeParcelas);
                       });
                   }
                   this.showSnackbar("Compra salva com sucesso");

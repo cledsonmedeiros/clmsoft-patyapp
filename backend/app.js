@@ -20,6 +20,7 @@ app.use('/api/v2/productcategory', require('./routes/api/v2/productCategory'));
 app.use('/api/v2/sell', require('./routes/api/v2/sell'));
 app.use('/api/v2/sellitem', require('./routes/api/v2/sellItem'));
 app.use('/api/v2/split', require('./routes/api/v2/split'));
+app.use('/api/v2/splititem', require('./routes/api/v2/splitItem'));
 
 // ENVIRONMENT VARS
 const { PORT, DB_URL, NODE_ENV } = process.env;

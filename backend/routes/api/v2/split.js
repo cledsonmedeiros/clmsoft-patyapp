@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
         model: 'Customer',
       },
     })
+    .populate('splits')
     .then((data) => {
       res.status(200).json(data);
     })
@@ -61,15 +62,15 @@ router.get('/show/:id', (req, res) => {
 });
 
 // UPDATE
-// router.put('/update/:id', (req, res) => {
-//   Parcela.findByIdAndUpdate(req.params.id, req.body, { new: true })
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
+router.put('/update/:id', (req, res) => {
+  Parcela.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 
 // DELETE
 // router.delete('/delete/:id', (req, res) => {
