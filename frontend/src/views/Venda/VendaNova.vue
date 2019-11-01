@@ -257,158 +257,160 @@ export default {
           })
           .catch(response => {
             console.log("falha", response);
-          })
-          .finally(() => {
-            if (itensID.length !== 0) {
-              let api_url =
-                process.env.VUE_APP_ENV === "dev"
-                  ? process.env.VUE_APP_API_URL_LOCAL
-                  : process.env.VUE_APP_API_URL;
-
-              axios
-                .post(`${api_url}/sell`, {
-                  sell: {
-                    date_complete: venda.data.data_completa,
-                    date_day: venda.data.data_dia,
-                    date_month: venda.data.data_mes,
-                    date_year: venda.data.data_ano,
-                    customer: venda.cliente,
-                    total: venda.total,
-                    total_paid: venda.total_pago,
-                    products: itensID,
-                    isPrazo: venda.isParcelado
-                  }
-                })
-                .then(response => {
-                  if (venda.isParcelado) {
-                    let idParcela = null;
-                    axios
-                      .post(`${api_url}/split`, {
-                        split: {
-                          period: this.periodo,
-                          amount: venda.total,
-                          splits: null,
-                          sell: response.data
-                        }
-                      })
-                      .then(response => {
-                        idParcela = response.data;
-                        // console.log("parcela salva", response.data);
-                      })
-                      .catch(response => {
-                        console.log("falha", response);
-                      })
-                      .finally(() => {
-                        let itemParcela = {
-                          index: 0,
-                          amount: quantidadeParcelas,
-                          date: "",
-                          isPaid: false,
-                          price: 0,
-                          split: idParcela
-                        };
-                        let lastDate = moment().set({
-                          year: Number(this.data_modificada.split("-")[0]),
-                          month: Number(this.data_modificada.split("-")[1]) - 1,
-                          date: Number(this.data_modificada.split("-")[2]),
-                          timezone: "America/Sao_Paulo"
-                        });
-
-                        let itemParcelasID = [];
-
-                        for (
-                          let index = 1;
-                          index <= quantidadeParcelas;
-                          index++
-                        ) {
-                          if (index === 1) {
-                            itemParcela.index = index;
-                            itemParcela.date = this.data_modificada;
-                            itemParcela.price = (
-                              venda.total / quantidadeParcelas
-                            ).toFixed(2);
-                            axios
-                              .post(`${this.api_url}/splititem`, {
-                                splititem: {
-                                  ...itemParcela
-                                }
-                              })
-                              .then(response => {
-                                itemParcelasID.push(response.data._id);
-                              })
-                              .catch(response => {
-                                console.log("falha", response);
-                              });
-                            // console.log(itemParcela);
-                          } else {
-                            if (this.periodo === "Mês") {
-                              lastDate.add(1, "month");
-                            } else if (this.periodo === "Quinzena") {
-                              lastDate.add(15, "days");
-                            } else {
-                              lastDate.add(7, "days");
-                            }
-
-                            itemParcela.index = index;
-                            itemParcela.date = `${
-                              lastDate
-                                .format("L")
-                                .toString()
-                                .split("/")[2]
-                            }-${
-                              lastDate
-                                .format("L")
-                                .toString()
-                                .split("/")[0]
-                            }-${
-                              lastDate
-                                .format("L")
-                                .toString()
-                                .split("/")[1]
-                            }`;
-                            itemParcela.price = (
-                              venda.total / quantidadeParcelas
-                            ).toFixed(2);
-                            axios
-                              .post(`${this.api_url}/splititem`, {
-                                splititem: {
-                                  ...itemParcela
-                                }
-                              })
-                              .then(response => {
-                                itemParcelasID.push(response.data._id);
-                              })
-                              .catch(response => {
-                                console.log("falha", response);
-                              });
-                          }
-                        }
-                        setTimeout(() => {
-                          let splitsID = {
-                            splits: itemParcelasID
-                          };
-                          axios
-                            .put(
-                              `${this.api_url}/split/update/${idParcela}`,
-                              splitsID
-                            )
-                            .then(response => {
-                              console.log("deu certo");
-                            })
-                            .catch(response => {
-                              console.log("fodeo");
-                            });
-                        }, 100 * quantidadeParcelas);
-                      });
-                  }
-                  this.showSnackbar("Compra salva com sucesso");
-                })
-                .catch(response => {
-                  console.log("falha", response);
-                });
-            }
           });
       }
+      setTimeout(() => {
+        console.log('aqui');
+        if (itensID.length !== 0) {
+          console.log('netroua aqui');
+
+          let api_url =
+            process.env.VUE_APP_ENV === "dev"
+              ? process.env.VUE_APP_API_URL_LOCAL
+              : process.env.VUE_APP_API_URL;
+
+          axios
+            .post(`${api_url}/sell`, {
+              sell: {
+                // date_complete: `${venda.data.data_ano}/${venda.data.data_mes}/${venda.data.data_dia}`,
+                date_complete: venda.data.data_completa,
+                date_day: venda.data.data_dia,
+                date_month: venda.data.data_mes,
+                date_year: venda.data.data_ano,
+                customer: venda.cliente,
+                total: venda.total,
+                total_paid: venda.total_pago,
+                products: itensID,
+                isPrazo: venda.isParcelado
+              }
+            })
+            .then(response => {
+              console.log("kekel");
+
+              if (venda.isParcelado) {
+                let idParcela = null;
+                axios
+                  .post(`${api_url}/split`, {
+                    split: {
+                      period: this.periodo,
+                      amount: venda.total,
+                      splits: null,
+                      sell: response.data
+                    }
+                  })
+                  .then(response => {
+                    idParcela = response.data;
+                    // console.log("parcela salva", response.data);
+                  })
+                  .catch(response => {
+                    console.log("falha", response);
+                  })
+                  .finally(() => {
+                    let itemParcela = {
+                      index: 0,
+                      amount: quantidadeParcelas,
+                      date: "",
+                      isPaid: false,
+                      price: 0,
+                      split: idParcela
+                    };
+                    let lastDate = moment().set({
+                      year: Number(this.data_modificada.split("-")[0]),
+                      month: Number(this.data_modificada.split("-")[1]) - 1,
+                      date: Number(this.data_modificada.split("-")[2]),
+                      timezone: "America/Sao_Paulo"
+                    });
+
+                    let itemParcelasID = [];
+
+                    for (let index = 1; index <= quantidadeParcelas; index++) {
+                      if (index === 1) {
+                        itemParcela.index = index;
+                        itemParcela.date = this.data_modificada;
+                        itemParcela.price = (
+                          venda.total / quantidadeParcelas
+                        ).toFixed(2);
+                        axios
+                          .post(`${this.api_url}/splititem`, {
+                            splititem: {
+                              ...itemParcela
+                            }
+                          })
+                          .then(response => {
+                            itemParcelasID.push(response.data._id);
+                          })
+                          .catch(response => {
+                            console.log("falha", response);
+                          });
+                        // console.log(itemParcela);
+                      } else {
+                        if (this.periodo === "Mês") {
+                          lastDate.add(1, "month");
+                        } else if (this.periodo === "Quinzena") {
+                          lastDate.add(15, "days");
+                        } else {
+                          lastDate.add(7, "days");
+                        }
+
+                        itemParcela.index = index;
+                        itemParcela.date = `${
+                          lastDate
+                            .format("L")
+                            .toString()
+                            .split("/")[2]
+                        }-${
+                          lastDate
+                            .format("L")
+                            .toString()
+                            .split("/")[0]
+                        }-${
+                          lastDate
+                            .format("L")
+                            .toString()
+                            .split("/")[1]
+                        }`;
+                        itemParcela.price = (
+                          venda.total / quantidadeParcelas
+                        ).toFixed(2);
+                        axios
+                          .post(`${this.api_url}/splititem`, {
+                            splititem: {
+                              ...itemParcela
+                            }
+                          })
+                          .then(response => {
+                            itemParcelasID.push(response.data._id);
+                          })
+                          .catch(response => {
+                            console.log("falha", response);
+                          });
+                      }
+                    }
+                    setTimeout(() => {
+                      let splitsID = {
+                        splits: itemParcelasID
+                      };
+                      axios
+                        .put(
+                          `${this.api_url}/split/update/${idParcela}`,
+                          splitsID
+                        )
+                        .then(response => {
+                          console.log("deu certo");
+                        })
+                        .catch(response => {
+                          console.log("fodeo");
+                        });
+                    }, 100 * quantidadeParcelas);
+                  });
+              }
+              this.showSnackbar("Compra salva com sucesso");
+            })
+            .catch(response => {
+              console.log("falha", response);
+            });
+        }
+      }, itensVenda.length * 150);
       this.limparCestaAposSalvarCompra();
     },
     showSnackbar(message) {

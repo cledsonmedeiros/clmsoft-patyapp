@@ -8,9 +8,6 @@
     <template v-slot:item.total="{ item }">
       {{ item.total.toFixed(2) }}
     </template>
-    <!-- <template v-slot:item.date_complete="{ item }">
-        {{ item.date_complete | moment().format("DD/MM/YYYY") }}
-    </template> -->
     <template v-slot:top>
       <v-toolbar flat color="white">
         <!-- <v-toolbar-title class="mr-5">
