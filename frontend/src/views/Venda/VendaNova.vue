@@ -410,7 +410,7 @@ export default {
               console.log("falha", response);
             });
         }
-      }, itensVenda.length * 250);
+      }, itensVenda.length * 600);
       this.limparCestaAposSalvarCompra();
     },
     showSnackbar(message) {
