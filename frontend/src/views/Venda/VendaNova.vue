@@ -260,9 +260,9 @@ export default {
           });
       }
       setTimeout(() => {
-        console.log('aqui');
+        // console.log('aqui');
         if (itensID.length !== 0) {
-          console.log('netroua aqui');
+          // console.log('netroua aqui');
 
           let api_url =
             process.env.VUE_APP_ENV === "dev"
@@ -285,7 +285,7 @@ export default {
               }
             })
             .then(response => {
-              console.log("kekel");
+              // console.log("kekel");
 
               if (venda.isParcelado) {
                 let idParcela = null;
@@ -410,7 +410,7 @@ export default {
               console.log("falha", response);
             });
         }
-      }, itensVenda.length * 600);
+      }, itensVenda.length * (process.env.VUE_APP_ENV === "dev" ? 150 : 600));
       this.limparCestaAposSalvarCompra();
     },
     showSnackbar(message) {
