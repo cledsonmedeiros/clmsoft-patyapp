@@ -13,7 +13,7 @@
     </template> -->
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title class="mr-5">
+        <!-- <v-toolbar-title class="mr-5">
           <div>
             <v-btn text icon color="purple" @click="open">
               <v-icon>mdi-plus</v-icon>
@@ -22,9 +22,9 @@
               <v-icon>mdi-cached</v-icon>
             </v-btn>
           </div>
-        </v-toolbar-title>
+        </v-toolbar-title> -->
         <div class="flex-grow-1"></div>
-        <v-text-field color="purple" v-model="search" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Clientes" persistent-hint></v-text-field>
+        <v-text-field color="purple" v-model="search" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Vendas" persistent-hint></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
             <v-card-title>
