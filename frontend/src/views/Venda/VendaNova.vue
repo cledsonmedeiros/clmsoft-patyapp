@@ -267,8 +267,9 @@ export default {
 
         ids
           .then(data => {
-            data.forEach(item => {
-              itensID.push(item.data.id);
+            data.forEach((item, index, array) => {
+              itensID.push(item.data._id);
+              axios.get(`${api_url}/products/decreaseamount/${item.data.product}/${item.data.amount}`)
             });
           })
           .finally(() => {
