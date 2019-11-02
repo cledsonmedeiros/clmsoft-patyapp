@@ -282,7 +282,7 @@ export default {
             axios
               .post(`${api_url}/sell`, {
                 sell: {
-                  date_complete: venda.data.data_completa,
+                  date_complete: `${venda.data.data_completa} ${new Date().toLocaleTimeString()}`,
                   date_day: venda.data.data_dia,
                   date_month: venda.data.data_mes,
                   date_year: venda.data.data_ano,
