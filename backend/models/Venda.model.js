@@ -33,20 +33,12 @@ const VendaSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ItemVenda',
   }],
-  // split: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Parcela',
-  //   default: null,
-  // },
-  // bill_splits: [{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   required: true,
-  //   ref: 'ItemParcela',
-  // }],
   isPrazo: {
     type: Boolean,
     required: true,
   },
+}, {
+  timestamps: true,
 });
 
 module.exports = mongoose.model('Venda', VendaSchema, 'Venda');

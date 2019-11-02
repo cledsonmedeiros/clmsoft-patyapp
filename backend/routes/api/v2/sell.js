@@ -6,6 +6,7 @@ const Venda = require('../../../models/Venda.model');
 // INDEX
 router.get('/', (req, res) => {
   Venda.find({})
+    .sort({ createdAt: -1 })
     .populate('customer')
     .populate({
       path: 'products',
