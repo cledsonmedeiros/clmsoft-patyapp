@@ -187,7 +187,7 @@ export default {
   },
   methods: {
     atualizarLista() {
-      axios.get(`${this.api_url}/products`).then(response => {
+      axios.get(`${this.api_url}/products/getall`).then(response => {
         this.produtos = response.data;
       });
     },

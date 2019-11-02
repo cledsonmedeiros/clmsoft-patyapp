@@ -134,4 +134,16 @@ router.get('/decreaseamount/:id/:amount', (req, res) => {
     });
 });
 
+router.get('/getall', (req, res) => {
+  Produto.find({})
+    .populate('owner')
+    .populate('category')
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
 module.exports = router;

@@ -269,7 +269,9 @@ export default {
           .then(data => {
             data.forEach((item, index, array) => {
               itensID.push(item.data._id);
-              axios.get(`${api_url}/products/decreaseamount/${item.data.product}/${item.data.amount}`)
+              axios.get(
+                `${api_url}/products/decreaseamount/${item.data.product}/${item.data.amount}`
+              );
             });
           })
           .finally(() => {
@@ -389,23 +391,16 @@ export default {
                               console.log("falha", response);
                             });
                         }
-                      }
-                      setTimeout(() => {
-                        let splitsID = {
-                          splits: itemParcelasID
-                        };
-                        axios
-                          .put(
+                        setTimeout(() => {
+                          let splitsID = {
+                            splits: itemParcelasID
+                          };
+                          axios.put(
                             `${vm.api_url}/split/update/${idParcela}`,
                             splitsID
-                          )
-                          .then(response => {
-                            console.log("deu certo");
-                          })
-                          .catch(response => {
-                            console.log("fodeo");
-                          });
-                      }, 100 * quantidadeParcelas);
+                          );
+                        }, 100 * quantidadeParcelas);
+                      }
                     });
                 }
                 vm.showSnackbar("Compra salva com sucesso");
