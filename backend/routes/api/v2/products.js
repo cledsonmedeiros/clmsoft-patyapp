@@ -5,7 +5,7 @@ const Produto = require('../../../models/Produto.model');
 
 // INDEX
 router.get('/', (req, res) => {
-  Produto.find({})
+  Produto.find({ "amount": { "$gt": 0 } })
     .populate('owner')
     .populate('category')
     .then((data) => {
