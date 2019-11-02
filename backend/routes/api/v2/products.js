@@ -104,4 +104,34 @@ router.get('/name/:name', (req, res) => {
     });
 });
 
+router.get('/decreaseamount/:id/:amount', (req, res) => {
+  console.log(req.params);
+  Produto.findById(req.params.id)
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          error: 'Product not found',
+        });
+      } else {
+        const amount = {
+          amount: (Number(data.amount) - Number(req.params.amount)),
+        };
+        if (Number(data.amount) < Number(req.params.amount)) {
+          res.status(400).json({ err: "Produto não pode ter estoque negativo" });
+        } else {
+          Produto.findByIdAndUpdate(req.params.id, amount, { new: true })
+            .then((data2) => {
+              res.status(200).json(data2);
+            })
+            .catch((err) => {
+              res.status(400).json(err);
+            });
+        }
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
 module.exports = router;
