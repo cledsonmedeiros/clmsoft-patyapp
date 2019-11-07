@@ -114,7 +114,7 @@
     </div>
     <div v-else>
       <v-layout row>
-                <v-flex xs12 sm6>
+        <v-flex xs12 sm6>
           <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
             <v-card-text>
               <div>
@@ -213,6 +213,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 
@@ -224,6 +227,7 @@ export default {
   name: "VendaNova",
   data() {
     return {
+      overlay: false,
       elevation: 2,
       heightSup: 172,
       heightInf: 348,
@@ -266,6 +270,9 @@ export default {
     };
   },
   methods: {
+    changeOverlay() {
+      this.overlay = !this.overlay;
+    },
     salvarDataParcela(data) {
       this.data_modificada_formatada = `${data.split("-")[2]}/${
         data.split("-")[1]
@@ -565,10 +572,12 @@ export default {
       this.qntParcelas = 2;
     },
     getCategorias() {
+      this.changeOverlay();
       axios.get(`${this.api_url}/productcategory`).then(response => {
         this.categorias = response.data;
         this.categorias.push({ _id: "todos", name: "Todos" });
         this.categorias.push({ _id: "nenhum", name: "Nenhum" });
+        this.changeOverlay();
       });
     },
     getClientesPesquisa() {

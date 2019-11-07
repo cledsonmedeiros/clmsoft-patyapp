@@ -1,63 +1,68 @@
 <template>
-  <v-data-table :headers="headers" :items="vendas" :search="search" sort-by="name" class="elevation-1">
-    <template v-slot:item.isPrazo="{ item }">
-      <v-icon :color="getColor(item.isPrazo)">
-        {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-usd" }}
-      </v-icon>
-    </template>
-    <template v-slot:item.total="{ item }">
-      {{ item.total.toFixed(2) }}
-    </template>
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title class="mr-5">
-          <div>
-            <v-btn text icon color="purple" to="/novavenda">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </div>
-        </v-toolbar-title>
-        <div class="flex-grow-1"></div>
-        <v-text-field color="purple" v-model="search" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Vendas" persistent-hint></v-text-field>
-        <v-dialog v-model="dialog" max-width="500px">
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <div>
+    <v-data-table :headers="headers" :items="vendas" :search="search" sort-by="name" class="elevation-1">
+      <template v-slot:item.isPrazo="{ item }">
+        <v-icon :color="getColor(item.isPrazo)">
+          {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-usd" }}
+        </v-icon>
+      </template>
+      <template v-slot:item.total="{ item }">
+        {{ item.total.toFixed(2) }}
+      </template>
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title class="mr-5">
+            <div>
+              <v-btn text icon color="purple" to="/novavenda">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </div>
+          </v-toolbar-title>
+          <div class="flex-grow-1"></div>
+          <v-text-field color="purple" v-model="search" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Vendas" persistent-hint></v-text-field>
+          <v-dialog v-model="dialog" max-width="500px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field color="purple" v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field color="purple" v-model="editedItem.address" label="Endereço"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field color="purple" v-model="editedItem.contact" v-mask="mascaraTelefone" label="Contato"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field color="purple" v-model="editedItem.cpf" v-mask="mascaraCPF" class="cpf" label="CPF"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-text-field color="purple" v-model="editedItem.name" :rules="nameRules" label="Nome"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-text-field color="purple" v-model="editedItem.address" label="Endereço"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field color="purple" v-model="editedItem.contact" v-mask="mascaraTelefone" label="Contato"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field color="purple" v-model="editedItem.cpf" v-mask="mascaraCPF" class="cpf" label="CPF"></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
 
-            <v-card-actions>
-              <div class="flex-grow-1"></div>
-              <v-btn color="purple" text @click="close">Cancelar</v-btn>
-              <v-btn color="purple" text :disabled="editedItem.name === undefined || editedItem.name.length === 0" @click="save">Salvar</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.action="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-    </template>
-  </v-data-table>
+              <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn color="purple" text @click="close">Cancelar</v-btn>
+                <v-btn color="purple" text :disabled="editedItem.name === undefined || editedItem.name.length === 0" @click="save">Salvar</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      </template>
+    </v-data-table>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+  </div>
 </template>
 
 <script>
@@ -70,6 +75,7 @@ export default {
     mask
   },
   data: () => ({
+    overlay: false,
     mascaraTelefone: "(##) #.####-####",
     mascaraCPF: "###.###.###-##",
     dialog: false,
@@ -119,13 +125,18 @@ export default {
     this.atualizarLista();
   },
   methods: {
+    changeOverlay() {
+      this.overlay = !this.overlay;
+    },
     getColor(bool) {
       if (bool) return "warning";
       else return "green";
     },
     atualizarLista() {
+      this.changeOverlay();
       axios.get(`${this.api_url}/sell`).then(response => {
         this.vendas = response.data;
+        this.changeOverlay();
       });
     },
     editItem(item) {
