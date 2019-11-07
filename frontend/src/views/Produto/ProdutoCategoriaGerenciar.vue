@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="categoriasprodutos" :search="search" sort-by="name" class="elevation-1">
+    <v-data-table :headers="headers" :items="categoriasprodutos" :search="search" sort-by="name" class="elevation-1" v-show="!this.overlay">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title class="mr-5">

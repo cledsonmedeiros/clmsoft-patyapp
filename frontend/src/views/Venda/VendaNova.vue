@@ -5,185 +5,187 @@
       <i class="fas fa-check"></i>
     </v-snackbar>
 
-    <v-layout row>
-      <v-flex xs12 sm6>
-        <v-card class="ma-1" :min-height="heightSup" :elevation="elevation">
-          <v-card-text>
-            <div>
-              Cliente
-              <v-text-field color="purple" autocomplete="off" v-model="searchCliente" @input="getClientesPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar cliente" persistent-hint></v-text-field>
-            </div>
-            <div v-if="this.clienteSelected.name !== ''" class="mt-3">
-              Cliente selecionado:
-              <b>{{clienteSelected.name}}</b>
-              <v-btn text icon color="purple" @click="unsetCliente()">
-                <v-icon small>mdi-close</v-icon>
-              </v-btn>
-            </div>
-            <div>
-              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="cliente in clientes" v-bind:key="cliente._id" @click="setCliente(cliente)">{{cliente.name}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-
-      <v-flex xs12 sm6>
-        <v-card class="ma-1" :min-height="heightSup" :elevation="elevation">
-          <v-card-text>
-            <div>Categorias de produto</div>
-            <div>
-              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="categoria in categorias" v-bind:key="categoria._id" @click="getProdutos(categoria._id)">{{categoria.name}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
-    <div v-if="!isMobile()">
+    <div v-show="!this.overlay">
       <v-layout row>
         <v-flex xs12 sm6>
-          <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
-            <v-card-text class="ma-0">
-              <div>Cesta</div>
+          <v-card class="ma-1" :min-height="heightSup" :elevation="elevation">
+            <v-card-text>
               <div>
-                Total:
-                <b>R$ {{this.total.toFixed(2)}}</b>
-                <br />
+                Cliente
+                <v-text-field color="purple" autocomplete="off" v-model="searchCliente" @input="getClientesPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar cliente" persistent-hint></v-text-field>
               </div>
-              <div class="mt-3">
-                <p>Pagamento:</p>
-                <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
-              </div>
-              <div v-if="isPrazo" class="mb-3 mx-3">
-                <v-layout row>
-                  <v-flex xs12 md3 class="mr-3">
-                    <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 md4 class="mr-3">
-                    <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
-                  </v-flex>
-                  <v-flex xs12 md4>
-                    <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
-                      <template v-slot:activator="{ on }">
-                        <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
-                        <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </v-flex>
-                </v-layout>
+              <div v-if="this.clienteSelected.name !== ''" class="mt-3">
+                Cliente selecionado:
+                <b>{{clienteSelected.name}}</b>
+                <v-btn text icon color="purple" @click="unsetCliente()">
+                  <v-icon small>mdi-close</v-icon>
+                </v-btn>
               </div>
               <div>
-                <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
-                  {{item.quantidade}}
-                  <v-divider vertical class="mx-2"></v-divider>
-                  {{item.produto.name}}
-                  <v-divider vertical class="mx-2"></v-divider>
-                  R$ {{item.produto.price_sell.toFixed(2)}}
-                </v-chip>
-              </div>
-              <div class="mt-3">
-                <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
-                  Limpar
-                </v-btn>
-                <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
-                  Salvar
-                </v-btn>
+                <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="cliente in clientes" v-bind:key="cliente._id" @click="setCliente(cliente)">{{cliente.name}}</v-btn>
               </div>
             </v-card-text>
           </v-card>
         </v-flex>
 
         <v-flex xs12 sm6>
-          <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+          <v-card class="ma-1" :min-height="heightSup" :elevation="elevation">
             <v-card-text>
+              <div>Categorias de produto</div>
               <div>
-                Produtos
-                <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
-              </div>
-              <div>
-                <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
+                <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="categoria in categorias" v-bind:key="categoria._id" @click="getProdutos(categoria._id)">{{categoria.name}}</v-btn>
               </div>
             </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
-    </div>
-    <div v-else>
-      <v-layout row>
-        <v-flex xs12 sm6>
-          <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
-            <v-card-text>
-              <div>
-                Produtos
-                <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
-              </div>
-              <div>
-                <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-flex>
 
-        <v-flex xs12 sm6>
-          <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
-            <v-card-text class="ma-0">
-              <div>Cesta</div>
-              <div>
-                Total:
-                <b>R$ {{this.total.toFixed(2)}}</b>
-                <br />
-              </div>
-              <div class="mt-3">
-                <p>Pagamento:</p>
-                <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
-              </div>
-              <div v-if="isPrazo" class="mb-3 mx-3">
-                <v-layout row>
-                  <v-flex xs12 md3 class="mr-3">
-                    <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 md4 class="mr-3">
-                    <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
-                  </v-flex>
-                  <v-flex xs12 md4>
-                    <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
-                      <template v-slot:activator="{ on }">
-                        <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
-                        <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </v-flex>
-                </v-layout>
-              </div>
-              <div>
-                <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
-                  {{item.quantidade}}
-                  <v-divider vertical class="mx-2"></v-divider>
-                  {{item.produto.name}}
-                  <v-divider vertical class="mx-2"></v-divider>
-                  R$ {{item.produto.price_sell.toFixed(2)}}
-                </v-chip>
-              </div>
-              <div class="mt-3">
-                <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
-                  Limpar
-                </v-btn>
-                <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
-                  Salvar
-                </v-btn>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
+      <div v-if="!isMobile()">
+        <v-layout row>
+          <v-flex xs12 sm6>
+            <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+              <v-card-text class="ma-0">
+                <div>Cesta</div>
+                <div>
+                  Total:
+                  <b>R$ {{this.total.toFixed(2)}}</b>
+                  <br />
+                </div>
+                <div class="mt-3">
+                  <p>Pagamento:</p>
+                  <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
+                </div>
+                <div v-if="isPrazo" class="mb-3 mx-3">
+                  <v-layout row>
+                    <v-flex xs12 md3 class="mr-3">
+                      <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 md4 class="mr-3">
+                      <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
+                    </v-flex>
+                    <v-flex xs12 md4>
+                      <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
+                        <template v-slot:activator="{ on }">
+                          <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
+                          <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
+                        </v-date-picker>
+                      </v-dialog>
+                    </v-flex>
+                  </v-layout>
+                </div>
+                <div>
+                  <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
+                    {{item.quantidade}}
+                    <v-divider vertical class="mx-2"></v-divider>
+                    {{item.produto.name}}
+                    <v-divider vertical class="mx-2"></v-divider>
+                    R$ {{item.produto.price_sell.toFixed(2)}}
+                  </v-chip>
+                </div>
+                <div class="mt-3">
+                  <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
+                    Limpar
+                  </v-btn>
+                  <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
+                    Salvar
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+
+          <v-flex xs12 sm6>
+            <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+              <v-card-text>
+                <div>
+                  Produtos
+                  <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
+                </div>
+                <div>
+                  <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </div>
+      <div v-else>
+        <v-layout row>
+          <v-flex xs12 sm6>
+            <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+              <v-card-text>
+                <div>
+                  Produtos
+                  <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
+                </div>
+                <div>
+                  <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+
+          <v-flex xs12 sm6>
+            <v-card class="ma-1" :min-height="heightInf" :elevation="elevation">
+              <v-card-text class="ma-0">
+                <div>Cesta</div>
+                <div>
+                  Total:
+                  <b>R$ {{this.total.toFixed(2)}}</b>
+                  <br />
+                </div>
+                <div class="mt-3">
+                  <p>Pagamento:</p>
+                  <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
+                </div>
+                <div v-if="isPrazo" class="mb-3 mx-3">
+                  <v-layout row>
+                    <v-flex xs12 md3 class="mr-3">
+                      <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 md4 class="mr-3">
+                      <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
+                    </v-flex>
+                    <v-flex xs12 md4>
+                      <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
+                        <template v-slot:activator="{ on }">
+                          <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
+                          <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
+                        </v-date-picker>
+                      </v-dialog>
+                    </v-flex>
+                  </v-layout>
+                </div>
+                <div>
+                  <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
+                    {{item.quantidade}}
+                    <v-divider vertical class="mx-2"></v-divider>
+                    {{item.produto.name}}
+                    <v-divider vertical class="mx-2"></v-divider>
+                    R$ {{item.produto.price_sell.toFixed(2)}}
+                  </v-chip>
+                </div>
+                <div class="mt-3">
+                  <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
+                    Limpar
+                  </v-btn>
+                  <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
+                    Salvar
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </div>
     </div>
 
     <v-dialog v-model="dialog" max-width="500px">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="vendas" :search="search" sort-by="name" class="elevation-1">
+    <v-data-table :headers="headers" :items="vendas" :search="search" sort-by="name" class="elevation-1" v-show="!this.overlay">
       <template v-slot:item.isPrazo="{ item }">
         <v-icon :color="getColor(item.isPrazo)">
           {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-usd" }}
