@@ -43,10 +43,11 @@
                       v-model="editedItem.name"
                       :rules="nameRules"
                       label="Nome"
+                      @keyup.enter="save"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
-                    <v-text-field color="purple" v-model="editedItem.address" label="Endereço"></v-text-field>
+                    <v-text-field color="purple" v-model="editedItem.address" label="Endereço" @keyup.enter="save"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
@@ -54,6 +55,7 @@
                       v-model="editedItem.contact"
                       v-mask="mascaraTelefone"
                       label="Contato"
+                      @keyup.enter="save"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="6">
@@ -63,6 +65,7 @@
                       v-mask="mascaraCPF"
                       class="cpf"
                       label="CPF"
+                      @keyup.enter="save"
                     ></v-text-field>
                   </v-col>
                 </v-row>

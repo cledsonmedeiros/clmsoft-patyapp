@@ -43,6 +43,7 @@
                       v-model="editedItem.name"
                       :rules="nameRules"
                       label="Nome"
+                      @keyup.enter="save"
                     ></v-text-field>
                   </v-col>
                 </v-row>

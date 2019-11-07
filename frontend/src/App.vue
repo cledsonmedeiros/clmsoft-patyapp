@@ -1,6 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
-    <NavBar></NavBar>
+    <NavBar v-if="['login', 'register'].indexOf($route.name) === -1"></NavBar>
     <v-content class="ma-4" id="appContent">
       <router-view></router-view>
     </v-content>
@@ -8,15 +8,12 @@
 </template>
 
 <script>
-import NavBar from './components/NavBar';
+import NavBar from "./components/NavBar";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    NavBar,
+    NavBar
   },
-  data: () => ({
-    //
-  }),
 };
 </script>

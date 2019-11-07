@@ -35,14 +35,12 @@ router.get('/', (req, res) => {
 // CREATE
 router.post('/', (req, res) => {
   const { sell } = req.body;
-  // console.log(sell);
   const newVenda = new Venda(sell);
   newVenda.save()
     .then((data) => {
       res.status(201).json(data._id);
     })
     .catch((err) => {
-      // console.log(err);
       res.status(400).json(err);
     });
 });
@@ -107,16 +105,33 @@ router.delete('/delete/:id', (req, res) => {
 //     });
 // });
 
-// router.get('/name/:name', (req, res) => {
-//   Venda.find({ "name": { "$regex": req.params.name, "$options": "i" } })
-//     .populate('owner')
-//     .populate('category')
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
+router.get('/owner/:id', (req, res) => {
+  const { id } = req.params;
+  Venda.find({ customer: id })
+    // .sort({ createdAt: -1 })
+    .populate('customer')
+    .populate({
+      path: 'products',
+      model: 'ItemVenda',
+      populate: {
+        path: 'product',
+        model: 'Produto',
+        populate: {
+          path: 'owner',
+          model: 'ProdutoDono',
+        },
+        populate: {
+          path: 'category',
+          model: 'ProdutoCategoria',
+        },
+      },
+    })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 
 module.exports = router;

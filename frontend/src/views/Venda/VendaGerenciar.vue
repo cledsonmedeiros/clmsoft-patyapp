@@ -10,16 +10,13 @@
     </template>
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <!-- <v-toolbar-title class="mr-5">
+        <v-toolbar-title class="mr-5">
           <div>
-            <v-btn text icon color="purple" @click="open">
+            <v-btn text icon color="purple" to="/novavenda">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <v-btn text icon class="mr-10" color="purple" @click="atualizarLista()">
-              <v-icon>mdi-cached</v-icon>
-            </v-btn>
           </div>
-        </v-toolbar-title> -->
+        </v-toolbar-title>
         <div class="flex-grow-1"></div>
         <v-text-field color="purple" v-model="search" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Vendas" persistent-hint></v-text-field>
         <v-dialog v-model="dialog" max-width="500px">
@@ -84,7 +81,6 @@ export default {
       { text: "Cliente", align: "start", value: "customer.name" },
       { text: "Pagamento", align: "end", value: "isPrazo" },
       { text: "Valor", align: "end", value: "total" }
-      // { text: "Ações", value: "action", sortable: false, align: "end" }
     ],
     vendas: [],
     editedIndex: -1,

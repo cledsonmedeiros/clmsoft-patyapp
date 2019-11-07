@@ -105,7 +105,6 @@ router.get('/name/:name', (req, res) => {
 });
 
 router.get('/decreaseamount/:id/:amount', (req, res) => {
-  console.log(req.params);
   Produto.findById(req.params.id)
     .then((data) => {
       if (!data) {
@@ -138,6 +137,36 @@ router.get('/getall', (req, res) => {
   Produto.find({})
     .populate('owner')
     .populate('category')
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
+router.get('/owner/:id', (req, res) => {
+  const { id } = req.params;
+  Produto.find({ owner: id })
+    // .sort({ createdAt: -1 })
+    .populate('owner')
+    .populate('category')
+    // .populate({
+    //   path: 'products',
+    //   model: 'ItemVenda',
+    //   populate: {
+    //     path: 'product',
+    //     model: 'Produto',
+    //     populate: {
+    //       path: 'owner',
+    //       model: 'ProdutoDono',
+    //     },
+    //     populate: {
+    //       path: 'category',
+    //       model: 'ProdutoCategoria',
+    //     },
+    //   },
+    // })
     .then((data) => {
       res.status(200).json(data);
     })

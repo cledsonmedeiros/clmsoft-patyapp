@@ -7,7 +7,7 @@
         <span>App</span>
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
-      <v-btn text="" color="white">
+      <v-btn text="" color="white"@click="goToLogin()" >
         <v-icon left="">mdi-reply</v-icon>
         <span>Sair</span>
       </v-btn>
@@ -45,6 +45,12 @@
 
 <script>
 export default {
+  name: "NavBar",
+  methods:{
+    goToLogin: function(){
+      this.$router.push('/login');
+    }
+  },
   data() {
     return {
       drawer: null,

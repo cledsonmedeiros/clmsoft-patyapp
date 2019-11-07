@@ -6,7 +6,14 @@ const ItemVenda = require('../../../models/ItemVenda.model');
 // INDEX
 router.get('/', (req, res) => {
   ItemVenda.find({})
-    .populate('product')
+    .populate({
+      path: 'product',
+      model: 'Produto',
+      populate: {
+        path: 'owner',
+        model: 'ProdutoDono',
+      },
+    })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -72,23 +79,32 @@ router.delete('/delete/:id', (req, res) => {
 });
 
 // CUSTOM
-// router.get('/category/:id', (req, res) => {
-//   ItemVenda.find({ "category": req.params.id })
-//     .populate('owner')
-//     .populate('category')
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).json({
-//           error: 'Sell not found',
-//         });
-//       } else {
-//         res.status(200).json(data);
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
+router.get('/owner/:id', (req, res) => {
+  const { id } = req.params;
+  ItemVenda.find({
+    // product: id,
+  })
+    .populate({
+      path: 'product',
+      model: 'Produto',
+      populate: {
+        path: 'owner',
+        model: 'ProdutoDono',
+      },
+    })
+    .then((data) => {
+      products = [];
+      data.forEach((element) => {
+        if (String(element.product.owner._id).trim() === String(id).trim()) {
+          products.push(element);
+        }
+      });
+      res.status(200).json(products);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 
 // router.get('/name/:name', (req, res) => {
 //   ItemVenda.find({ "name": { "$regex": req.params.name, "$options": "i" } })
