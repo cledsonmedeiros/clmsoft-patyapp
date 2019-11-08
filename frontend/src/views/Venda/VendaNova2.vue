@@ -1,12 +1,15 @@
 <template>
   <div>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
     <v-snackbar v-model="snackbar" color="green" class="text-center" bottom :timeout="snackbarTimeout">
       {{snackbarMessage}}
       <i class="fas fa-check"></i>
     </v-snackbar>
     <v-container fluid class="grey lighten-5" style="padding: 0" v-show="!this.overlay">
       <v-row>
-         <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
           <v-card :min-height="heightSup" :elevation="elevation">
             <v-card-text>
               <div>
@@ -26,7 +29,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-         <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
           <v-card :min-height="heightSup" :elevation="elevation">
             <v-card-text>
               <div>Categorias de produto</div>
@@ -38,7 +41,7 @@
         </v-col>
       </v-row>
       <v-row>
-         <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
           <v-card :min-height="heightInf" :elevation="elevation">
             <v-card-text>
               <div>
@@ -51,7 +54,7 @@
             </v-card-text>
           </v-card>
         </v-col>
-         <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
           <v-card :min-height="heightInf" :elevation="elevation">
             <v-card-text class="ma-0">
               <div>Cesta</div>
@@ -135,9 +138,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-overlay :value="overlay">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </v-overlay>
   </div>
 </template>
 <script>
@@ -219,6 +219,7 @@ export default {
       }
     },
     salvarCesta: function() {
+      this.changeOverlay();
       var vm = this;
       let quantidadeParcelas = Number(this.qntParcelas);
       let itensVenda = [];
@@ -406,6 +407,7 @@ export default {
                       }
                     });
                 }
+                vm.changeOverlay();
                 vm.showSnackbar("Compra salva com sucesso");
               })
               .catch(response => {
