@@ -16,7 +16,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn color="purple" dark @click="goToHome()">
+            <v-btn color="purple" class="mb-5" dark @click="goToHome()">
               <v-icon left dark>mdi-send</v-icon>
               Login
             </v-btn>
