@@ -58,7 +58,7 @@ export default {
         {
           titulo: "Home",
           icone: "mdi-home",
-          link: "/"
+          link: "/home"
         },
         {
           titulo: "Clientes",
