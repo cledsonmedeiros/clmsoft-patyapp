@@ -150,8 +150,8 @@ export default {
     return {
       overlay: false,
       elevation: 2,
-      heightSup: 172,
-      heightInf: 348,
+      heightSup: this.isMobile() ? 0 : 172,
+      heightInf: this.isMobile() ? 0 : 348,
       categorias: [],
       produtos: [],
       clientes: [],
