@@ -133,6 +133,31 @@ router.get('/decreaseamount/:id/:amount', (req, res) => {
     });
 });
 
+router.get('/increaseamount/:id/:amount', (req, res) => {
+  Produto.findById(req.params.id)
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          error: 'Product not found',
+        });
+      } else {
+        const amount = {
+          amount: (Number(data.amount) + Number(req.params.amount)),
+        };
+        Produto.findByIdAndUpdate(req.params.id, amount, { new: true })
+          .then((data2) => {
+            res.status(200).json(data2);
+          })
+          .catch((err) => {
+            res.status(400).json(err);
+          });
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
 router.get('/getall', (req, res) => {
   Produto.find({})
     .populate('owner')

@@ -26,7 +26,6 @@ router.get('/', (req, res) => {
 // CREATE
 router.post('/', (req, res) => {
   const { sellItem } = req.body;
-  // console.log(sellItem);
   const newItemVenda = new ItemVenda(sellItem);
   newItemVenda.save()
     .then((data) => {
@@ -36,9 +35,6 @@ router.post('/', (req, res) => {
       res.status(400).json(err);
     })
     .finally(() => {
-      // console.log(`https://api.patyapp.clmsoft.com.br/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
-      // axios.get(`https://api.patyapp.clmsoft.com.br/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
-      // console.log(`http://localhost:15000/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
       axios.get(`http://localhost:15000/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
     });
 });
