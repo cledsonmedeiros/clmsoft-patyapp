@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
   const newParcela = new Parcela(split);
   newParcela.save()
     .then((data) => {
-      res.status(201).json(data._id);
+      res.status(201).json(data);
     })
     .catch((err) => {
       res.status(400).json(err);

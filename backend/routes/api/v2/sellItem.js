@@ -1,6 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
+const axios = require('axios');
 const ItemVenda = require('../../../models/ItemVenda.model');
 
 // INDEX
@@ -25,46 +26,22 @@ router.get('/', (req, res) => {
 // CREATE
 router.post('/', (req, res) => {
   const { sellItem } = req.body;
+  // console.log(sellItem);
   const newItemVenda = new ItemVenda(sellItem);
   newItemVenda.save()
     .then((data) => {
-      // res.status(201).json({ id: data._id });
       res.status(201).json(data);
     })
     .catch((err) => {
       res.status(400).json(err);
+    })
+    .finally(() => {
+      // console.log(`https://api.patyapp.clmsoft.com.br/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
+      // axios.get(`https://api.patyapp.clmsoft.com.br/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
+      // console.log(`http://localhost:15000/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
+      axios.get(`http://localhost:15000/api/v2/products/decreaseamount/${sellItem.product}/${sellItem.amount}`);
     });
 });
-
-// READ
-// router.get('/show/:id', (req, res) => {
-//   ItemVenda.findById(req.params.id)
-//     .populate('customer')
-//     .populate('produto')
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).json({
-//           error: 'Sell not found',
-//         });
-//       } else {
-//         res.status(200).json(data);
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
-
-// UPDATE
-// router.put('/update/:id', (req, res) => {
-//   ItemVenda.findByIdAndUpdate(req.params.id, req.body, { new: true })
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
 
 // DELETE
 router.delete('/delete/:id', (req, res) => {

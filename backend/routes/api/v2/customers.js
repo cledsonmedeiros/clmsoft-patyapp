@@ -1,11 +1,12 @@
 const express = require('express');
 
 const router = express.Router();
-const Customer = require('../../../models/Customer.model');
+const Cliente = require('../../../models/Cliente.model');
+
 
 // INDEX
 router.get('/', (req, res) => {
-  Customer.find({})
+  Cliente.find({})
     .then((data) => {
       res.status(200).json(data);
     })
@@ -17,8 +18,8 @@ router.get('/', (req, res) => {
 // CREATE
 router.post('/', (req, res) => {
   const { customer } = req.body;
-  const newCustomer = new Customer(customer);
-  newCustomer.save()
+  const newCliente = new Cliente(customer);
+  newCliente.save()
     .then((data) => {
       res.status(201).json(data);
     })
@@ -29,11 +30,11 @@ router.post('/', (req, res) => {
 
 // READ
 router.get('/show/:id', (req, res) => {
-  Customer.findById(req.params.id)
+  Cliente.findById(req.params.id)
     .then((data) => {
       if (!data) {
         res.status(404).json({
-          error: 'Customer not found',
+          error: 'Cliente not found',
         });
       } else {
         res.status(200).json(data);
@@ -46,7 +47,7 @@ router.get('/show/:id', (req, res) => {
 
 // UPDATE
 router.put('/update/:id', (req, res) => {
-  Customer.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  Cliente.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -57,7 +58,7 @@ router.put('/update/:id', (req, res) => {
 
 // DELETE
 router.delete('/delete/:id', (req, res) => {
-  Customer.findByIdAndDelete(req.params.id)
+  Cliente.findByIdAndDelete(req.params.id)
     .then((data) => {
       res.status(200).json(data);
     })
@@ -69,7 +70,7 @@ router.delete('/delete/:id', (req, res) => {
 // CUSTOM
 router.get('/name/:name', (req, res) => {
   // res.send(req.params.name)
-  Customer.find({ "name": { "$regex": req.params.name, "$options": "i" } })
+  Cliente.find({ "name": { "$regex": req.params.name, "$options": "i" } })
     .then((data) => {
       res.status(200).json(data);
     })

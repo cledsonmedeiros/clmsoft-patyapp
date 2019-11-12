@@ -24,9 +24,9 @@ router.get('/', (req, res) => {
 
 // CREATE
 router.post('/', (req, res) => {
-  const { splititem } = req.body;
-  // console.log(splititem);
-  const newItemParcela = new ItemParcela(splititem);
+  const { splitItem } = req.body;
+  console.log(splitItem);
+  const newItemParcela = new ItemParcela(splitItem);
   newItemParcela.save()
     .then((data) => {
       res.status(201).json(data);

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const ItemVendaSchema = new mongoose.Schema({
+  sell: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Venda',
+  },
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Produto',

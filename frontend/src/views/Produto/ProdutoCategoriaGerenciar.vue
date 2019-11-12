@@ -101,10 +101,10 @@ export default {
       this.overlay = !this.overlay;
     },
     atualizarLista() {
-      this.changeOverlay();
+      this.overlay = true;
       axios.get(`${this.api_url}/productcategory`).then(response => {
         this.categoriasprodutos = response.data;
-        this.changeOverlay();
+        this.overlay = false;
       });
     },
     editItem(item) {
@@ -148,6 +148,7 @@ export default {
       }, 300);
     },
     save() {
+      this.overlay = true;
       if (this.editedIndex > -1) {
         let oldCategoriaProduto = {
           _id: this.categoriasprodutos[this.editedIndex]._id,
@@ -184,6 +185,7 @@ export default {
           })
           .then(response => {
             this.atualizarLista();
+            // this.overlay = false;
             this.$toast.open({
               message: "Categoria de produto criada com sucesso",
               type: "success",

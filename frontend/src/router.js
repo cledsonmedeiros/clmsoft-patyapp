@@ -48,7 +48,7 @@ export default new Router({
     {
       path: '/novavenda',
       name: 'novavenda',
-      component: () => import(/* webpackChunkName: "about" */ './views/Venda/VendaNova2.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/Venda/VendaNova.vue'),
     },
     {
       path: '/login',

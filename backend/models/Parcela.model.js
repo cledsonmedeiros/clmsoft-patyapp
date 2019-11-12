@@ -9,11 +9,6 @@ const ParcelaSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  splits: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ItemParcela',
-    default: null,
-  }],
   isAllPaid: {
     type: Boolean,
     default: false,

@@ -19,7 +19,7 @@ const VendaSchema = new mongoose.Schema({
   },
   customer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Customer',
+    ref: 'Cliente',
   },
   total: {
     type: Number,
@@ -29,13 +29,13 @@ const VendaSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  products: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'ItemVenda',
-  }],
   isPrazo: {
     type: Boolean,
     required: true,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
 }, {
   timestamps: true,

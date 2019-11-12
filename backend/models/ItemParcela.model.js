@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ItemParcelaSchema = new mongoose.Schema({
-  index: {
+  current: {
     type: Number,
     required: true,
   },

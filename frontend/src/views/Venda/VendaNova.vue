@@ -1,115 +1,116 @@
 <template>
-  <div class="mx-2" v-show="!this.overlay">
-    <v-snackbar v-model="snackbar" color="green" class="text-center" bottom :timeout="snackbarTimeout">
+  <div>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" class="text-center" bottom :timeout="snackbarTimeout">
       {{snackbarMessage}}
       <i class="fas fa-check"></i>
     </v-snackbar>
-    <v-layout row>
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
-          <v-card-text>
-            <div>
-              Cliente
-              <v-text-field color="purple" autocomplete="off" v-model="searchCliente" @input="getClientesPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar cliente" persistent-hint></v-text-field>
-            </div>
-            <div v-if="this.clienteSelected.name !== ''" class="mt-3">
-              Cliente selecionado:
-              <b>{{clienteSelected.name}}</b>
-              <v-btn text icon color="purple" @click="unsetCliente()">
-                <v-icon small>mdi-close</v-icon>
-              </v-btn>
-            </div>
-            <div>
-              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="cliente in clientes" v-bind:key="cliente._id" @click="setCliente(cliente)">{{cliente.name}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
-          <v-card-text>
-            <div>Categorias de produto</div>
-            <div>
-              <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="categoria in categorias" v-bind:key="categoria._id" @click="getProdutos(categoria._id)">{{categoria.name}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
-    <v-layout row>
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
-          <v-card-text>
-            <div>
-              Produtos
-              <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
-            </div>
-            <div>
-              <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-
-      <v-flex xs12>
-        <v-card class="ma-1" :elevation="elevation">
-          <v-card-text class="ma-0">
-            <div>Cesta</div>
-            <div>
-              Total:
-              <b>R$ {{this.total.toFixed(2)}}</b>
-              <br />
-            </div>
-            <div class="mt-3">
-              <p>Pagamento:</p>
-              <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
-            </div>
-            <div v-if="isPrazo" class="mb-3 mx-3">
-              <v-layout row>
-                <v-flex xs12 md3 class="mr-3">
-                  <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
-                </v-flex>
-                <v-flex xs12 md4 class="mr-3">
-                  <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
-                </v-flex>
-                <v-flex xs12 md4>
-                  <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
-                    <template v-slot:activator="{ on }">
-                      <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
-                    </template>
-                    <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
-                      <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
-                    </v-date-picker>
-                  </v-dialog>
-                </v-flex>
-              </v-layout>
-            </div>
-            <div>
-              <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
-                {{item.quantidade}}
-                <v-divider vertical class="mx-2"></v-divider>
-                {{item.produto.name}}
-                <v-divider vertical class="mx-2"></v-divider>
-                R$ {{item.produto.price_sell.toFixed(2)}}
-              </v-chip>
-            </div>
-            <div class="mt-3">
-              <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
-                Limpar
-              </v-btn>
-              <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
-                Salvar
-              </v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
+    <v-container fluid class="grey lighten-5" style="padding: 0" v-show="!this.overlay">
+      <v-row>
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+          <v-card :min-height="heightSup" :elevation="elevation">
+            <v-card-text>
+              <div>
+                Cliente
+                <v-text-field color="purple" autocomplete="off" v-model="searchCliente" @input="getClientesPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar cliente" persistent-hint></v-text-field>
+              </div>
+              <div v-if="this.clienteSelected.name !== ''" class="mt-3">
+                Cliente selecionado:
+                <b>{{clienteSelected.name}}</b>
+                <v-btn text icon color="purple" @click="unsetCliente()">
+                  <v-icon small>mdi-close</v-icon>
+                </v-btn>
+              </div>
+              <div>
+                <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="cliente in clientes" v-bind:key="cliente._id" @click="setCliente(cliente)">{{cliente.name}}</v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+          <v-card :min-height="heightSup" :elevation="elevation">
+            <v-card-text>
+              <div>Categorias de produto</div>
+              <div>
+                <v-btn rounded small color="purple" class="mt-3 mr-2" dark v-for="categoria in categorias" v-bind:key="categoria._id" @click="getProdutos(categoria._id)">{{categoria.name}}</v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+          <v-card :min-height="heightInf" :elevation="elevation">
+            <v-card-text>
+              <div>
+                Produtos
+                <v-text-field color="purple" v-model="searchProduto" @input="getProdutosPesquisa()" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
+              </div>
+              <div>
+                <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" v-bind:key="produto._id" @click="addProdutoCesta(produto)">{{produto.name}} - R$ {{produto.price_sell.toFixed(2)}}</v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" xs="12" md="6" style="padding-top: 0;">
+          <v-card :min-height="heightInf" :elevation="elevation">
+            <v-card-text class="ma-0">
+              <div>Cesta</div>
+              <div>
+                Total:
+                <b>R$ {{this.total.toFixed(2)}}</b>
+                <br />
+              </div>
+              <div class="mt-3">
+                <p>Pagamento:</p>
+                <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
+              </div>
+              <div v-if="isPrazo" class="mb-3 mx-3">
+                <v-layout row>
+                  <v-flex xs12 md3 class="mr-3">
+                    <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 md4 class="mr-3">
+                    <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
+                  </v-flex>
+                  <v-flex xs12 md4>
+                    <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
+                      </template>
+                      <v-date-picker v-model="data_atual" :first-day-of-week="1" locale="pt-br" scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn text color="primary" @click="modalDataParcela = false">Fechar</v-btn>
+                        <v-btn text color="primary" @click="salvarDataParcela(data_atual)">Salvar</v-btn>
+                      </v-date-picker>
+                    </v-dialog>
+                  </v-flex>
+                </v-layout>
+              </div>
+              <div>
+                <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
+                  {{item.quantidade}}
+                  <v-divider vertical class="mx-2"></v-divider>
+                  {{item.produto.name}}
+                  <v-divider vertical class="mx-2"></v-divider>
+                  R$ {{item.produto.price_sell.toFixed(2)}}
+                </v-chip>
+              </div>
+              <div class="mt-3">
+                <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
+                  Limpar
+                </v-btn>
+                <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
+                  Salvar
+                </v-btn>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -137,15 +138,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-overlay :value="overlay">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
-    </v-overlay>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 import moment from "moment";
+import { log } from "util";
 
 export default {
   name: "VendaNova",
@@ -153,8 +151,8 @@ export default {
     return {
       overlay: false,
       elevation: 2,
-      heightSup: 172,
-      heightInf: 348,
+      heightSup: this.isMobile() ? 0 : 172,
+      heightInf: this.isMobile() ? 0 : 348,
       categorias: [],
       produtos: [],
       clientes: [],
@@ -164,6 +162,7 @@ export default {
       searchCliente: "",
       snackbar: false,
       snackbarMessage: "",
+      snackbarColor: "green",
       snackbarTimeout: 2000,
       clienteSelected: {
         _id: "",
@@ -222,206 +221,103 @@ export default {
       }
     },
     salvarCesta: function() {
-      var vm = this;
-      let quantidadeParcelas = Number(this.qntParcelas);
-      let itensVenda = [];
-      this.cesta.forEach(element => {
-        itensVenda.push({
-          produto: element.produto._id,
-          quantidade: element.quantidade,
-          preco: element.produto.price_sell,
-          total: element.total
-        });
-      });
-
-      let venda = {
-        data: {
-          data_completa: new Date().toLocaleDateString(),
-          data_dia: new Date().toLocaleDateString().split("/")[0],
-          data_mes: new Date().toLocaleDateString().split("/")[1],
-          data_ano: new Date().toLocaleDateString().split("/")[2]
-        },
-        cliente: this.clienteSelected._id,
-        isParcelado: this.isPrazo,
-        total: this.total,
-        total_pago: 0
-      };
-
-      var itensID = [];
-
-      async function fetchItensIDs() {
-        // console.log(vm.snackbar);
-        let api_url =
-          process.env.VUE_APP_ENV === "dev"
-            ? process.env.VUE_APP_API_URL_LOCAL
-            : process.env.VUE_APP_API_URL;
-
-        const ids = Promise.all(
-          itensVenda.map(({ produto, quantidade, preco, total }) => {
-            return axios.post(`${api_url}/sellitem`, {
+      this.overlay = true;
+      let idVenda = null;
+      axios
+        .post(`${this.api_url}/sell`, {
+          sell: {
+            date_complete: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+            date_day: new Date().toLocaleDateString().split("/")[0],
+            date_month: new Date().toLocaleDateString().split("/")[1],
+            date_year: new Date().toLocaleDateString().split("/")[2],
+            customer: this.clienteSelected._id,
+            total: this.total,
+            total_paid: this.total,
+            isPrazo: this.isPrazo
+          }
+        })
+        .then(response => {
+          idVenda = response.data._id;
+          this.cesta.forEach(item => {
+            return axios.post(`${this.api_url}/sellitem`, {
               sellItem: {
-                product: produto,
-                price: preco,
-                amount: quantidade,
-                total: total
+                sell: response.data._id,
+                product: item.produto._id,
+                price: item.produto.price_sell,
+                amount: item.quantidade,
+                total: item.total
               }
             });
-          })
-        );
-
-        ids
-          .then(data => {
-            data.forEach((item, index, array) => {
-              itensID.push(item.data._id);
-              axios.get(
-                `${api_url}/products/decreaseamount/${item.data.product}/${item.data.amount}`
-              );
-            });
-          })
-          .finally(() => {
-            let api_url =
-              process.env.VUE_APP_ENV === "dev"
-                ? process.env.VUE_APP_API_URL_LOCAL
-                : process.env.VUE_APP_API_URL;
+          });
+        })
+        .catch(() => {
+          this.showSnackbar("Falha ao salvar compra", "red");
+          console.log("falha ao salvar à vista");
+        })
+        .finally(() => {
+          if (this.isPrazo) {
+            let idParcela = null;
             axios
-              .post(`${api_url}/sell`, {
-                sell: {
-                  date_complete: `${
-                    venda.data.data_completa
-                  } ${new Date().toLocaleTimeString()}`,
-                  date_day: venda.data.data_dia,
-                  date_month: venda.data.data_mes,
-                  date_year: venda.data.data_ano,
-                  customer: venda.cliente,
-                  total: venda.total,
-                  total_paid: venda.total_pago,
-                  products: itensID,
-                  isPrazo: venda.isParcelado
+              .post(`${this.api_url}/split`, {
+                split: {
+                  period: this.periodo,
+                  amount: this.total,
+                  sell: idVenda
                 }
               })
               .then(response => {
-                if (venda.isParcelado) {
-                  let idParcela = null;
-                  axios
-                    .post(`${api_url}/split`, {
-                      split: {
-                        period: vm.periodo,
-                        amount: venda.total,
-                        splits: null,
-                        sell: response.data
-                      }
-                    })
-                    .then(response => {
-                      idParcela = response.data;
-                    })
-                    .catch(response => {
-                      console.log("falha", response);
-                    })
-                    .finally(() => {
-                      let itemParcela = {
-                        index: 0,
-                        amount: quantidadeParcelas,
-                        date: "",
-                        isPaid: false,
-                        price: 0,
-                        split: idParcela
-                      };
-                      let lastDate = moment().set({
-                        year: Number(vm.data_modificada.split("-")[0]),
-                        month: Number(vm.data_modificada.split("-")[1]) - 1,
-                        date: Number(vm.data_modificada.split("-")[2]),
-                        timezone: "America/Sao_Paulo"
-                      });
-                      let itemParcelasID = [];
-                      for (
-                        let index = 1;
-                        index <= quantidadeParcelas;
-                        index++
-                      ) {
-                        if (index === 1) {
-                          itemParcela.index = index;
-                          itemParcela.date = vm.data_modificada;
-                          itemParcela.price = (
-                            venda.total / quantidadeParcelas
-                          ).toFixed(2);
-                          axios
-                            .post(`${vm.api_url}/splititem`, {
-                              splititem: {
-                                ...itemParcela
-                              }
-                            })
-                            .then(response => {
-                              itemParcelasID.push(response.data._id);
-                            })
-                            .catch(response => {
-                              console.log("falha", response);
-                            });
-                        } else {
-                          if (vm.periodo === "Mês") {
-                            lastDate.add(1, "month");
-                          } else if (vm.periodo === "Quinzena") {
-                            lastDate.add(15, "days");
-                          } else {
-                            lastDate.add(7, "days");
-                          }
-                          itemParcela.index = index;
-                          itemParcela.date = `${
-                            lastDate
-                              .format("L")
-                              .toString()
-                              .split("/")[2]
-                          }-${
-                            lastDate
-                              .format("L")
-                              .toString()
-                              .split("/")[0]
-                          }-${
-                            lastDate
-                              .format("L")
-                              .toString()
-                              .split("/")[1]
-                          }`;
-                          itemParcela.price = (
-                            venda.total / quantidadeParcelas
-                          ).toFixed(2);
-                          axios
-                            .post(`${vm.api_url}/splititem`, {
-                              splititem: {
-                                ...itemParcela
-                              }
-                            })
-                            .then(response => {
-                              itemParcelasID.push(response.data._id);
-                            })
-                            .catch(response => {
-                              console.log("falha", response);
-                            });
-                        }
-                        setTimeout(() => {
-                          let splitsID = {
-                            splits: itemParcelasID
-                          };
-                          axios.put(
-                            `${vm.api_url}/split/update/${idParcela}`,
-                            splitsID
-                          );
-                        }, 100 * quantidadeParcelas);
-                      }
-                    });
-                }
-                vm.showSnackbar("Compra salva com sucesso");
+                idParcela = response.data._id;
               })
-              .catch(response => {
-                console.log("falha", response);
-              });
-          });
-      }
+              .catch(() => {
+                console.log("Falha ao cadastrar parcela");
+              })
+              .finally(() => {
+                let dataMoment = moment().set({
+                  year: Number(this.data_modificada.split("-")[0]),
+                  month: Number(this.data_modificada.split("-")[1]) - 1,
+                  date: Number(this.data_modificada.split("-")[2]),
+                  timezone: "America/Sao_Paulo"
+                });
+                let datasParcelas = [];
+                datasParcelas.push(this.data_modificada_formatada);
+                for (let index = 1; index < this.qntParcelas; index++) {
+                  if (this.periodo === "Mês") {
+                    dataMoment.add(1, "month");
+                  } else if (this.periodo === "Quinzena") {
+                    dataMoment.add(15, "days");
+                  } else {
+                    dataMoment.add(7, "days");
+                  }
+                  const date = dataMoment
+                    .format("L")
+                    .toString()
+                    .split("/");
+                  datasParcelas.push(`${date[1]}/${date[0]}/${date[2]}`);
+                }
 
-      fetchItensIDs();
-      this.limparCestaAposSalvarCompra();
+                datasParcelas.forEach((element, index) => {
+                  return axios.post(`${this.api_url}/splititem`, {
+                      splitItem: {
+                        current: index + 1,
+                        amount: datasParcelas.length,
+                        date: element,
+                        price: (Number(this.total) / datasParcelas.length).toFixed(2),
+                        split: idParcela
+                      }
+                    })
+                });
+                this.limparCestaAposSalvarCompra();
+              });
+          } else {
+            this.limparCestaAposSalvarCompra();
+          }
+        });
+      this.overlay = false;
+      this.showSnackbar("Compra salva com sucesso");
     },
-    showSnackbar(message) {
+    showSnackbar(message, color = "green") {
       this.snackbar = true;
+      this.snackbarColor = color;
       this.snackbarMessage = message;
       setTimeout(() => {
         this.snackbarMessage = "";
