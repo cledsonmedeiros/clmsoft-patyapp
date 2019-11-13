@@ -54,9 +54,7 @@ router.delete('/delete/:id', (req, res) => {
 // CUSTOM
 router.get('/owner/:id', (req, res) => {
   const { id } = req.params;
-  ItemVenda.find({
-    // product: id,
-  })
+  ItemVenda.find({})
     .populate({
       path: 'product',
       model: 'Produto',
@@ -79,16 +77,23 @@ router.get('/owner/:id', (req, res) => {
     });
 });
 
-// router.get('/name/:name', (req, res) => {
-//   ItemVenda.find({ "name": { "$regex": req.params.name, "$options": "i" } })
-//     .populate('owner')
-//     .populate('category')
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
+router.get('/sell/:id', (req, res) => {
+  const { id } = req.params;
+  ItemVenda.find({ sell: id })
+    // .populate({
+    //   path: 'product',
+    //   model: 'Produto',
+    //   populate: {
+    //     path: 'owner',
+    //     model: 'ProdutoDono',
+    //   },
+    // })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 
 module.exports = router;

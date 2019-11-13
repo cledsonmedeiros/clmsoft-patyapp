@@ -37,29 +37,22 @@ router.post('/', (req, res) => {
 });
 
 // READ
-// router.get('/show/:id', (req, res) => {
-//   ItemParcela.findById(req.params.id)
-//     .populate({
-//       path: 'sell',
-//       model: 'Venda',
-//       populate: {
-//         path: 'customer',
-//         model: 'Customer',
-//       },
-//     })
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).json({
-//           error: 'Sell not found',
-//         });
-//       } else {
-//         res.status(200).json(data);
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(400).json(err);
-//     });
-// });
+router.get('/show/:id', (req, res) => {
+  ItemParcela.find({ split: req.params.id })
+    .sort({ current: 1 })
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          error: 'Split item not found',
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 
 // UPDATE
 // router.put('/update/:id', (req, res) => {

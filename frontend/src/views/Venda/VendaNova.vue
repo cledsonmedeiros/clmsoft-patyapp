@@ -286,7 +286,7 @@ export default {
                   } else if (this.periodo === "Quinzena") {
                     dataMoment.add(15, "days");
                   } else {
-                    dataMoment.add(7, "days");
+                    dataMoment.add(1, "week");
                   }
                   const date = dataMoment
                     .format("L")

@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
       model: 'Venda',
       populate: {
         path: 'customer',
-        model: 'Customer',
+        model: 'Cliente',
       },
     })
     .populate('splits')
@@ -44,7 +44,7 @@ router.get('/show/:id', (req, res) => {
       model: 'Venda',
       populate: {
         path: 'customer',
-        model: 'Customer',
+        model: 'Cliente',
       },
     })
     .then((data) => {
@@ -84,6 +84,29 @@ router.put('/update/:id', (req, res) => {
 // });
 
 // CUSTOM
+router.get('/sell/:id', (req, res) => {
+  Parcela.findOne({ sell: req.params.id })
+    .populate({
+      path: 'sell',
+      model: 'Venda',
+      populate: {
+        path: 'customer',
+        model: 'Cliente',
+      },
+    })
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          error: 'Sell not found',
+        });
+      } else {
+        res.status(200).json(data);
+      }
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
 // router.get('/category/:id', (req, res) => {
 //   Parcela.find({ "category": req.params.id })
 //     .populate('owner')
