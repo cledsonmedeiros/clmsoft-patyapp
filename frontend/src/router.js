@@ -8,52 +8,52 @@ export default new Router({
     {
       path: '/',
       // name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
     },
     {
       path: '/home',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue'),
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
     },
     {
       path: '*/',
       name: '404',
-      component: () => import(/* webpackChunkName: "about" */ './views/404.vue'),
+      component: () => import(/* webpackChunkName: "404" */ './views/404.vue'),
     },
     {
       path: '/clientes',
       name: 'clientes',
-      component: () => import(/* webpackChunkName: "about" */ './views/Cliente/ClienteGerenciar.vue'),
+      component: () => import(/* webpackChunkName: "clientes" */ './views/Cliente/ClienteGerenciar.vue'),
     },
     {
       path: '/produtos',
       name: 'produtos',
-      component: () => import(/* webpackChunkName: "about" */ './views/Produto/ProdutoGerenciar.vue'),
+      component: () => import(/* webpackChunkName: "produtos" */ './views/Produto/ProdutoGerenciar.vue'),
     },
     {
       path: '/donosdeprodutos',
       name: 'donosdeprodutos',
-      component: () => import(/* webpackChunkName: "about" */ './views/Produto/ProdutoDonoGerenciar.vue'),
+      component: () => import(/* webpackChunkName: "donosdeprodutos" */ './views/Produto/ProdutoDonoGerenciar.vue'),
     },
     {
       path: '/categoriasdeprodutos',
       name: 'categoriasdeprodutos',
-      component: () => import(/* webpackChunkName: "about" */ './views/Produto/ProdutoCategoriaGerenciar.vue'),
+      component: () => import(/* webpackChunkName: "categoriasdeprodutos" */ './views/Produto/ProdutoCategoriaGerenciar.vue'),
     },
     {
       path: '/vendas',
       name: 'vendas',
-      component: () => import(/* webpackChunkName: "about" */ './views/Venda/VendaGerenciar.vue'),
+      component: () => import(/* webpackChunkName: "vendas" */ './views/Venda/VendaGerenciar.vue'),
     },
     {
       path: '/novavenda',
       name: 'novavenda',
-      component: () => import(/* webpackChunkName: "about" */ './views/Venda/VendaNova.vue'),
+      component: () => import(/* webpackChunkName: "novavenda" */ './views/Venda/VendaNova.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "about" */ './views/Forms/Login.vue'),
+      component: () => import(/* webpackChunkName: "login" */ './views/Forms/Login.vue'),
     },
   ],
 });
