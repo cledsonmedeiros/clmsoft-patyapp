@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Navbar></Navbar>
     <v-dialog v-model="modal" persistent>
       <v-card>
         <v-card-title>
@@ -9,16 +10,16 @@
           <v-container>
             <v-row>
               <v-col cols="12" sm="12" md="6">
-                <v-text-field label="Nome" v-model="clienteAtual.nome"></v-text-field>
+                <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="6">
-                <v-text-field label="CPF" v-model="clienteAtual.cpf" v-mask="['###.###.###-##']"></v-text-field>
+                <v-text-field label="CPF" v-model="itemAtual.cpf" @keyup.enter="salvarItem()" v-mask="['###.###.###-##']" autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="6">
-                <v-text-field label="Endereço" v-model="clienteAtual.endereco"></v-text-field>
+                <v-text-field label="Endereço" v-model="itemAtual.endereco" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="6">
-                <v-text-field label="Telefone" v-model="clienteAtual.telefone" v-mask="['(##) ####-####', '(##) #####-####']"></v-text-field>
+                <v-text-field label="Telefone" v-model="itemAtual.telefone" @keyup.enter="salvarItem()" v-mask="['(##) ####-####', '(##) #####-####']" autocomplete="off"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -26,7 +27,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
-          <v-btn color="primary" text @click="salvarCliente()">Salvar</v-btn>
+          <v-btn color="primary" text @click="salvarItem()">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -34,7 +35,7 @@
       <v-card-title>
         <v-layout row wrap>
           <v-flex xs12 sm6 class="d-flex align-center pl-4">
-            <h1 class="headline">Lista de clientes</h1>
+            <h1 class="headline">Clientes</h1>
             <v-btn small elevation="1" color="primary" class="ml-2" @click="abrirModal()">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -46,10 +47,10 @@
       </v-card-title>
       <v-data-table :headers="cabecalhos" :items="clientes" sort-by="nome" :search="pesquisar">
         <template v-slot:item.action="{ item }">
-          <v-icon small color="info" @click="abrirLivro(item)">
+          <v-icon small color="info" @click="abrirItem(item)">
             mdi-pencil
           </v-icon>
-          <v-icon small color="error" class="ml-1" @click="deletarCliente(item)">
+          <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
             mdi-close
           </v-icon>
         </template>
@@ -62,26 +63,28 @@
 import Vue from "vue";
 import Toast from "@/components/layout/Toast";
 import { mask } from "vue-the-mask";
+import Navbar from "@/components/layout/Navbar";
 
 export default {
-  name: "Usuarios",
+  name: "Clientes",
   directives: {
     mask
   },
   components: {
-    Toast
+    Toast,
+    Navbar
   },
   data() {
     return {
       tituloModal: "",
       toastAtivo: false,
-      toastMensagem: "Lielson",
+      toastMensagem: "PatyApp",
       toastCor: "green",
       toastTempo: 2500,
       modal: false,
       pesquisar: "",
-      novo: false,
-      clienteAtual: {
+      novoItem: false,
+      itemAtual: {
         nome: "",
         cpf: "",
         endereco: "",
@@ -99,10 +102,10 @@ export default {
     };
   },
   created() {
-    this.getClientes();
+    this.listarItens();
   },
   methods: {
-    getClientes() {
+    listarItens() {
       Vue.axios
         .get("cliente")
         .then(response => {
@@ -116,49 +119,72 @@ export default {
     abrirModal() {
       this.tituloModal = "Cadastrar cliente";
       this.modal = true;
-      this.novo = true;
+      this.novoItem = true;
     },
-    abrirLivro(item) {
+    abrirItem(item) {
       this.tituloModal = "Editar cliente";
-      this.clienteAtual.nome = item.nome;
-      this.clienteAtual.cpf = item.cpf;
-      this.clienteAtual.endereco = item.endereco;
-      this.clienteAtual.telefone = item.telefone;
-      this.clienteAtual.id = item._id;
+      this.itemAtual.nome = item.nome;
+      this.itemAtual.cpf = item.cpf;
+      this.itemAtual.endereco = item.endereco;
+      this.itemAtual.telefone = item.telefone;
+      this.itemAtual.id = item._id;
       this.modal = true;
     },
     fecharModal() {
       this.modal = false;
-      this.novo = false;
+      this.novoItem = false;
       setTimeout(() => {
-        this.clienteAtual.nome = "";
-        this.clienteAtual.cpf = "";
-        this.clienteAtual.endereco = "";
-        this.clienteAtual.telefone = "";
-        this.clienteAtual.id = "";
+        this.itemAtual.nome = "";
+        this.itemAtual.cpf = "";
+        this.itemAtual.endereco = "";
+        this.itemAtual.telefone = "";
+        this.itemAtual.id = "";
       }, 1000);
     },
-    salvarCliente() {
-      if (this.novo) {
-        delete this.clienteAtual.id;
+    salvarItem() {
+      if (this.novoItem) {
+        delete this.itemAtual.id;
+
+        if(this.itemAtual.cpf.length === 0){
+        delete this.itemAtual.cpf;
+        }
+
+        if(this.itemAtual.telefone.length === 0){
+        delete this.itemAtual.telefone;
+        }
+
+        if(this.itemAtual.endereco.length === 0){
+        delete this.itemAtual.endereco;
+        }
+
         Vue.axios
-          .post(`cliente`, { ...this.clienteAtual })
+          .post(`cliente`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Cliente criado com sucesso");
             this.fecharModal();
-            this.getClientes();
+            this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar cliente", "red");
+          .catch((err) => {            
+            if(err.response.data.isJoi){
+              console.log(err.response.data.details[0].type);
+              if(err.response.data.details[0].type === 'any.empty'){
+                this.mostrarToast("O nome do cliente é obrigatório", "red");    
+              }
+              if(err.response.data.details[0].type === 'string.min'){
+                this.mostrarToast("O nome do cliente deve possuir 2 ou mais caracteres", "red");    
+              }
+            }else{
+              this.mostrarToast("Falha ao criar cliente", "red");
+            }
             this.fecharModal();
           });
       } else {
         Vue.axios
-          .put(`cliente/${this.clienteAtual.id}`, { ...this.clienteAtual })
+          .put(`cliente/${this.itemAtual.id}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Cliente editado com sucesso");
             this.fecharModal();
-            this.getClientes();
+            this.listarItens();
           })
           .catch(() => {
             this.mostrarToast("Falha ao editar cliente", "red");
@@ -166,13 +192,13 @@ export default {
           });
       }
     },
-    deletarCliente(item) {
+    deletarItem(item) {
       Vue.axios
         .delete(`cliente/${item._id}`)
         .then(() => {
           this.mostrarToast("Cliente deletado com sucesso");
           this.fecharModal();
-          this.getClientes();
+          this.listarItens();
         })
         .catch(() => {
           this.mostrarToast("Falha ao deletar cliente", "red");

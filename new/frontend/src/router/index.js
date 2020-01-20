@@ -36,6 +36,9 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = `${to.meta.titulo} - PatyApp`
+  if (to.path === '/' && localStorage.userID !== undefined) {
+    router.push('/home');
+  }
   next()
 })
 

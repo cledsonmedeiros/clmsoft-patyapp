@@ -20,6 +20,7 @@ const clienteSchema = new mongoose.Schema(
       type: String,
       trim: true,
       unique: true,
+      sparse: true,
       dropDups: true,
     },
   },
