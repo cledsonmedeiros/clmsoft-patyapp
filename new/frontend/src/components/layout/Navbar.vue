@@ -3,10 +3,6 @@
     <v-app-bar app dense color="primary" dark>
       <v-app-bar-nav-icon @click.stop="menu = !menu"></v-app-bar-nav-icon>
       <v-toolbar-title disabled><span class="font-weight-bold">Paty</span><span class="font-weight-light">App</span></v-toolbar-title>
-      <!-- <div class="d-flex align-center">
-        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png" transition="scale-transition" width="40" />
-      </div> -->
-
       <v-spacer></v-spacer>
 
       <v-btn text @click="realizarLogout()">

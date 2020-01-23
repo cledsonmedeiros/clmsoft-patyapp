@@ -10,7 +10,7 @@
         <v-card-text>
           <v-form>
             <v-text-field label="Usuário" v-model="usuario.usuario" prepend-icon="mdi-account" type="text" />
-            <v-text-field label="Senha" v-model="usuario.senha" prepend-icon="mdi-lock" type="password" @keydown.enter="autenticarUsuario()"/>
+            <v-text-field label="Senha" v-model="usuario.senha" prepend-icon="mdi-lock" type="password" @keydown.enter="autenticarUsuario()" />
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -20,10 +20,6 @@
         </v-card-actions>
       </v-card>
     </v-col>
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" class="text-center" bottom :timeout="snackbar.timeout">
-      {{snackbar.message}}
-      <i class="fas fa-check"></i>
-    </v-snackbar>
   </v-row>
 </template>
 <script>
@@ -36,12 +32,6 @@ export default {
       usuario: {
         usuario: "",
         senha: ""
-      },
-      snackbar: {
-        show: false,
-        message: "",
-        color: "green",
-        timeout: 2500
       }
     };
   },
@@ -50,27 +40,26 @@ export default {
       Vue.axios
         .post("usuario/login", { ...this.usuario })
         .then(response => {
-          // console.log(response.data);
           localStorage.setItem("userUsername", response.data.usuario);
           localStorage.setItem("userName", response.data.nome);
           localStorage.setItem("userID", response.data._id);
-          this.$router.push('/home');
-          // this.mostrarToast("Sucesso");
+          this.$router.push("/home");
           this.usuario.login = "";
           this.usuario.senha = "";
         })
         .catch(() => {
           this.usuario.senha = "";
-          this.mostrarToast("Falha", "red");
+          this.mostrarToast("Credenciais incorretas", "error");
         });
     },
-    mostrarToast(message, color = "green") {
-      this.snackbar.show = true;
-      this.snackbar.color = color;
-      this.snackbar.message = message;
-      setTimeout(() => {
-        this.snackbar.message = "";
-      }, this.snackbar.timeout + 100);
+    mostrarToast(msg, tipo = "success") {
+      this.$toast.open({
+        message: msg,
+        type: tipo,
+        position: "bottom",
+        duration: 3000,
+        dismissible: true
+      });
     }
   }
 };

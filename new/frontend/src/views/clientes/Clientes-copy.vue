@@ -3,23 +3,20 @@
     <v-data-table :headers="headers" :items="clientes" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer class="elevation-1" :page-count="numeroPaginas"></v-data-table>
     <div class="text-center pt-2">
       <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
-      <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" return-object single-line item-text="valor" item-value="valor" @change="listarItens()"></v-select>
+      <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "clientes",
   data() {
     return {
-      numeroElementos: [
-        {valor: '3'}, 
-        {valor: '5'}, 
-        {valor: '10'}, 
-      ],
+      numeroElementos: ["3", "5", "10"],
       paginaAtual: 1,
       numeroPaginas: 1,
-      itensPorPagina: 5,
+      itensPorPagina: "5",
       headers: [
         {
           text: "Nome",
@@ -35,15 +32,16 @@ export default {
     this.listarItens();
   },
   methods: {
-    listarItens() {
+    listarItens(n = false) {
+      console.log(n);
       this.$axios
-        .get(`cliente?page=${this.paginaAtual}&limit=${this.itensPorPagina}`)
+        .get(`cliente?page=${n ? 1 : this.paginaAtual}&limit=${this.itensPorPagina}`)
         .then(response => {
           this.clientes = response.data.docs;
-          this.paginaAtual = response.data.page;
+          this.paginaAtual = n ? 1 : response.data.page;
           this.numeroPaginas = response.data.totalPages;
-          this.itensPorPagina = response.data.limit;
-        })
+          this.itensPorPagina = String(response.data.limit);
+        });
     }
   }
 };

@@ -26,7 +26,7 @@ const routes = [
     meta: {
       titulo: "Clientes"
     },
-    component: () => import(/* webpackChunkName: "clientes" */ '@/views/clientes/Clientes-copy.vue')
+    component: () => import(/* webpackChunkName: "clientes" */ '@/views/clientes/Clientes.vue')
   }
 ]
 
