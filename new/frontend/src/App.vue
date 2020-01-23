@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navbar v-if="show"></Navbar>
+    <Navbar v-if="this.$route.name !== 'login'"></Navbar>
     <v-content>
       <v-container fluid :class="this.$route.name === 'login' ? 'fill-height' : ''">
         <router-view></router-view>
@@ -17,20 +17,9 @@ export default {
   name: "App",
   components: { Navbar },
   data() {
-    return {
-      show: false
-    };
+    return {};
   },
-  methods: {
-    getRoute(){
-      this.show = this.$route.name !== 'login'
-      // console.log( ['login', 'register'].indexOf(this.$route.name) !== -1)
-      console.log(this.$route.name !== 'login');
-      
-    }
-  },
-  created() {
-    this.getRoute()
-  }
+  methods: {},
+  created() {}
 };
 </script>

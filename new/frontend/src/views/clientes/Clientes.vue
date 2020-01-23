@@ -6,7 +6,7 @@
           <span class="headline">{{tituloModal}}</span>
         </v-card-title>
         <v-card-text>
-          <v-container>
+          <v-container fluid>
             <v-row>
               <v-col cols="12" sm="12" md="6">
                 <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>

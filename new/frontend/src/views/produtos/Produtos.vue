@@ -1,13 +1,12 @@
 <template>
   <div>
-    <Navbar></Navbar>
     <v-dialog v-model="modal" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">{{tituloModal}}</span>
         </v-card-title>
         <v-card-text>
-          <v-container>
+          <v-container fluid>
             <v-row>
               <v-col cols="12" sm="12" md="6">
                 <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
@@ -45,42 +44,41 @@
           </v-flex>
         </v-layout>
       </v-card-title>
-      <v-data-table :headers="cabecalhos" :items="clientes" sort-by="nome" :search="pesquisar">
-        <template v-slot:item.action="{ item }">
-          <v-icon small color="info" @click="abrirItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
-            mdi-close
-          </v-icon>
-        </template>
-      </v-data-table>
+      <div>
+        <v-data-table :headers="cabecalhos" :items="clientes" sort-by="nome" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
+          <template v-slot:item.action="{ item }">
+            <v-icon small color="info" @click="abrirItem(item)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
+              mdi-close
+            </v-icon>
+          </template>
+        </v-data-table>
+        <div class="text-center pt-5 mx-5">
+          <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
+          <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
+        </div>
+      </div>
     </v-card>
-    <Toast :ativo="toastAtivo" :mensagem="toastMensagem" :cor="toastCor" :tempo="toastTempo"></Toast>
   </div>
 </template>
 <script>
-// import Vue from "vue";
-import Toast from "@/components/layout/Toast";
 import { mask } from "vue-the-mask";
-import Navbar from "@/components/layout/Navbar";
 
 export default {
   name: "Clientes",
   directives: {
     mask
   },
-  components: {
-    Toast,
-    Navbar
-  },
+  components: {},
   data() {
     return {
+      numeroElementos: ["3", "5", "10"],
+      paginaAtual: 1,
+      numeroPaginas: 1,
+      itensPorPagina: "5",
       tituloModal: "",
-      toastAtivo: false,
-      toastMensagem: "PatyApp",
-      toastCor: "green",
-      toastTempo: 3000,
       modal: false,
       pesquisar: "",
       novoItem: false,
@@ -105,14 +103,21 @@ export default {
     this.listarItens();
   },
   methods: {
-    listarItens() {
+    listarItens(n = false) {
       this.$axios
-        .get("cliente")
+        .get(
+          `cliente?page=${n ? 1 : this.paginaAtual}&limit=${
+            this.itensPorPagina
+          }`
+        )
         .then(response => {
-          this.clientes = response.data;
+          this.clientes = response.data.docs;
+          this.paginaAtual = n ? 1 : response.data.page;
+          this.numeroPaginas = response.data.totalPages;
+          this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados", "red");
+          this.mostrarToast("Falha ao recuperar dados", "error");
           this.fecharModal();
         });
     },
@@ -166,18 +171,17 @@ export default {
           })
           .catch(err => {
             if (err.response.data.isJoi) {
-              console.log(err.response.data.details[0].type);
               if (err.response.data.details[0].type === "any.empty") {
-                this.mostrarToast("O nome do cliente é obrigatório", "red");
+                this.mostrarToast("O nome do cliente é obrigatório", "error");
               }
               if (err.response.data.details[0].type === "string.min") {
                 this.mostrarToast(
                   "O nome do cliente deve possuir 2 ou mais caracteres",
-                  "red"
+                  "error"
                 );
               }
             } else {
-              this.mostrarToast("Falha ao criar cliente", "red");
+              this.mostrarToast("Falha ao criar cliente", "error");
             }
             this.fecharModal();
           });
@@ -190,7 +194,7 @@ export default {
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao editar cliente", "red");
+            this.mostrarToast("Falha ao editar cliente", "error");
             this.fecharModal();
           });
       }
@@ -205,18 +209,19 @@ export default {
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao deletar cliente", "red");
+            this.mostrarToast("Falha ao deletar cliente", "error");
             this.fecharModal();
           });
       }
     },
-    mostrarToast(msg, cor = "green") {
-      this.toastAtivo = true;
-      this.toastMensagem = msg;
-      this.toastCor = cor;
-      setInterval(() => {
-        this.toastAtivo = false;
-      }, this.toastTempo + 100);
+    mostrarToast(msg, tipo = "success") {
+      this.$toast.open({
+        message: msg,
+        type: tipo,
+        position: "bottom",
+        duration: 3000,
+        dismissible: true
+      });
     }
   }
 };
