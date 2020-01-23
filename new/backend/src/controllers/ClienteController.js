@@ -3,10 +3,10 @@ const Cliente = require('../models/ClienteModel');
 
 module.exports = {
   async index (req, res) {
-    // const { page = 1 } = req.query;
+    const { page = 1, limit = 3 } = req.query;
     try {
-      // const clientes = await Cliente.paginate({}, { page, limit: 5 });
-      const clientes = await Cliente.find({}).sort({createdAt: 'asc'});
+      const clientes = await Cliente.paginate({}, { page, limit });
+      // const clientes = await Cliente.find({}).sort({createdAt: 'asc'});
       return res.status(200).json(clientes);
     } catch (error) {
       return res.status(500).json(error);

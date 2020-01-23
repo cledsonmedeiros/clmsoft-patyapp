@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
+// import Vue from "vue";
 import Toast from "@/components/layout/Toast";
 import { mask } from "vue-the-mask";
 import Navbar from "@/components/layout/Navbar";
@@ -80,7 +80,7 @@ export default {
       toastAtivo: false,
       toastMensagem: "PatyApp",
       toastCor: "green",
-      toastTempo: 2500,
+      toastTempo: 3000,
       modal: false,
       pesquisar: "",
       novoItem: false,
@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     listarItens() {
-      Vue.axios
+      this.$axios
         .get("cliente")
         .then(response => {
           this.clientes = response.data;
@@ -145,41 +145,44 @@ export default {
       if (this.novoItem) {
         delete this.itemAtual.id;
 
-        if(this.itemAtual.cpf.length === 0){
-        delete this.itemAtual.cpf;
+        if (this.itemAtual.cpf.length === 0) {
+          delete this.itemAtual.cpf;
         }
 
-        if(this.itemAtual.telefone.length === 0){
-        delete this.itemAtual.telefone;
+        if (this.itemAtual.telefone.length === 0) {
+          delete this.itemAtual.telefone;
         }
 
-        if(this.itemAtual.endereco.length === 0){
-        delete this.itemAtual.endereco;
+        if (this.itemAtual.endereco.length === 0) {
+          delete this.itemAtual.endereco;
         }
 
-        Vue.axios
+        this.$axios
           .post(`cliente`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Cliente criado com sucesso");
             this.fecharModal();
             this.listarItens();
           })
-          .catch((err) => {            
-            if(err.response.data.isJoi){
+          .catch(err => {
+            if (err.response.data.isJoi) {
               console.log(err.response.data.details[0].type);
-              if(err.response.data.details[0].type === 'any.empty'){
-                this.mostrarToast("O nome do cliente é obrigatório", "red");    
+              if (err.response.data.details[0].type === "any.empty") {
+                this.mostrarToast("O nome do cliente é obrigatório", "red");
               }
-              if(err.response.data.details[0].type === 'string.min'){
-                this.mostrarToast("O nome do cliente deve possuir 2 ou mais caracteres", "red");    
+              if (err.response.data.details[0].type === "string.min") {
+                this.mostrarToast(
+                  "O nome do cliente deve possuir 2 ou mais caracteres",
+                  "red"
+                );
               }
-            }else{
+            } else {
               this.mostrarToast("Falha ao criar cliente", "red");
             }
             this.fecharModal();
           });
       } else {
-        Vue.axios
+        this.$axios
           .put(`cliente/${this.itemAtual.id}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Cliente editado com sucesso");
@@ -193,17 +196,19 @@ export default {
       }
     },
     deletarItem(item) {
-      Vue.axios
-        .delete(`cliente/${item._id}`)
-        .then(() => {
-          this.mostrarToast("Cliente deletado com sucesso");
-          this.fecharModal();
-          this.listarItens();
-        })
-        .catch(() => {
-          this.mostrarToast("Falha ao deletar cliente", "red");
-          this.fecharModal();
-        });
+      if (confirm(`Deseja realmente deletar o cliente ${item.nome}?`)) {
+        this.$axios
+          .delete(`cliente/${item._id}`)
+          .then(() => {
+            this.mostrarToast("Cliente deletado com sucesso");
+            this.fecharModal();
+            this.listarItens();
+          })
+          .catch(() => {
+            this.mostrarToast("Falha ao deletar cliente", "red");
+            this.fecharModal();
+          });
+      }
     },
     mostrarToast(msg, cor = "green") {
       this.toastAtivo = true;
@@ -211,7 +216,7 @@ export default {
       this.toastCor = cor;
       setInterval(() => {
         this.toastAtivo = false;
-      }, this.toastTempo);
+      }, this.toastTempo + 100);
     }
   }
 };
