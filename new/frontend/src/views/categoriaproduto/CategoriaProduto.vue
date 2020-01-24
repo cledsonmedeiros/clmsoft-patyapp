@@ -8,17 +8,8 @@
         <v-card-text>
           <v-container fluid>
             <v-row>
-              <v-col cols="12" sm="12" md="6">
+              <v-col cols="12" sm="12">
                 <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="12" md="6">
-                <v-text-field label="CPF" v-model="itemAtual.cpf" @keyup.enter="salvarItem()" v-mask="['###.###.###-##']" autocomplete="off"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="12" md="6">
-                <v-text-field label="Endereço" v-model="itemAtual.endereco" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="12" md="6">
-                <v-text-field label="Telefone" v-model="itemAtual.telefone" @keyup.enter="salvarItem()" v-mask="['(##) ####-####', '(##) #####-####']" autocomplete="off"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -34,7 +25,7 @@
       <v-card-title>
         <v-layout row wrap>
           <v-flex xs12 sm6 class="d-flex align-center pl-4">
-            <h1 class="headline">Clientes</h1>
+            <h1 class="headline">Categorias de produto</h1>
             <v-btn small elevation="1" color="primary" class="ml-2" @click="abrirModal()">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -45,7 +36,7 @@
         </v-layout>
       </v-card-title>
       <div>
-        <v-data-table :headers="cabecalhos" :items="clientes" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
+        <v-data-table :headers="cabecalhos" :items="categoriasprodutos" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
           <template v-slot:item.action="{ item }">
             <v-icon small color="info" @click="abrirItem(item)">
               mdi-pencil
@@ -64,13 +55,9 @@
   </div>
 </template>
 <script>
-import { mask } from "vue-the-mask";
 
 export default {
-  name: "Clientes",
-  directives: {
-    mask
-  },
+  name: "CategoriaProduto",
   components: {},
   data() {
     return {
@@ -84,17 +71,11 @@ export default {
       novoItem: false,
       itemAtual: {
         nome: "",
-        cpf: "",
-        endereco: "",
-        telefone: "",
         id: ""
       },
-      clientes: [],
+      categoriasprodutos: [],
       cabecalhos: [
         { text: "Nome", align: "left", value: "nome" },
-        { text: "CPF", value: "cpf" },
-        { text: "Endereço", value: "endereco" },
-        { text: "Telefone", value: "telefone" },
         { text: "Ação", value: "action", align: "right", sortable: false }
       ]
     };
@@ -106,12 +87,12 @@ export default {
     listarItens(n = false) {
       this.$axios
         .get(
-          `cliente?page=${n ? 1 : this.paginaAtual}&limit=${
+          `categoriaproduto?page=${n ? 1 : this.paginaAtual}&limit=${
             this.itensPorPagina
           }`
         )
         .then(response => {
-          this.clientes = response.data.docs;
+          this.categoriasprodutos = response.data.docs;
           this.paginaAtual = n ? 1 : response.data.page;
           this.numeroPaginas = response.data.totalPages;
           this.itensPorPagina = String(response.data.limit);
@@ -122,16 +103,13 @@ export default {
         });
     },
     abrirModal() {
-      this.tituloModal = "Cadastrar cliente";
+      this.tituloModal = "Cadastrar categoria";
       this.modal = true;
       this.novoItem = true;
     },
     abrirItem(item) {
-      this.tituloModal = "Editar cliente";
+      this.tituloModal = "Editar categoria";
       this.itemAtual.nome = item.nome;
-      this.itemAtual.cpf = item.cpf;
-      this.itemAtual.endereco = item.endereco;
-      this.itemAtual.telefone = item.telefone;
       this.itemAtual.id = item._id;
       this.modal = true;
     },
@@ -140,9 +118,6 @@ export default {
       this.novoItem = false;
       setTimeout(() => {
         this.itemAtual.nome = "";
-        this.itemAtual.cpf = "";
-        this.itemAtual.endereco = "";
-        this.itemAtual.telefone = "";
         this.itemAtual.id = "";
       }, 1000);
     },
@@ -150,66 +125,42 @@ export default {
       if (this.novoItem) {
         delete this.itemAtual.id;
 
-        if (this.itemAtual.cpf.length === 0) {
-          delete this.itemAtual.cpf;
-        }
-
-        if (this.itemAtual.telefone.length === 0) {
-          delete this.itemAtual.telefone;
-        }
-
-        if (this.itemAtual.endereco.length === 0) {
-          delete this.itemAtual.endereco;
-        }
-
         this.$axios
-          .post(`cliente`, { ...this.itemAtual })
+          .post(`categoriaproduto`, { ...this.itemAtual })
           .then(() => {
-            this.mostrarToast("Cliente criado com sucesso");
-            this.fecharModal();
-            this.listarItens();
-          })
-          .catch(err => {
-            if (err.response.data.isJoi) {
-              if (err.response.data.details[0].type === "any.empty") {
-                this.mostrarToast("O nome do cliente é obrigatório", "error");
-              }
-              if (err.response.data.details[0].type === "string.min") {
-                this.mostrarToast(
-                  "O nome do cliente deve possuir 2 ou mais caracteres",
-                  "error"
-                );
-              }
-            } else {
-              this.mostrarToast("Falha ao criar cliente", "error");
-            }
-            this.fecharModal();
-          });
-      } else {
-        this.$axios
-          .put(`cliente/${this.itemAtual.id}`, { ...this.itemAtual })
-          .then(() => {
-            this.mostrarToast("Cliente editado com sucesso");
+            this.mostrarToast("Categoria de produto criada com sucesso");
             this.fecharModal();
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao editar cliente", "error");
+            this.mostrarToast("Falha ao criar categoria de produto", "error");
+            this.fecharModal();
+          });
+      } else {
+        this.$axios
+          .put(`categoriaproduto/${this.itemAtual.id}`, { ...this.itemAtual })
+          .then(() => {
+            this.mostrarToast("Categoria de produto editada com sucesso");
+            this.fecharModal();
+            this.listarItens();
+          })
+          .catch(() => {
+            this.mostrarToast("Falha ao editar categoria de produto", "error");
             this.fecharModal();
           });
       }
     },
     deletarItem(item) {
-      if (confirm(`Deseja realmente deletar o cliente ${item.nome}?`)) {
+      if (confirm(`Deseja realmente deletar a categoria ${item.nome}?`)) {
         this.$axios
-          .delete(`cliente/${item._id}`)
+          .delete(`categoriaproduto/${item._id}`)
           .then(() => {
-            this.mostrarToast("Cliente deletado com sucesso");
+            this.mostrarToast("Categoria de produto deletada com sucesso");
             this.fecharModal();
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao deletar cliente", "error");
+            this.mostrarToast("Falha ao deletar categoria de produto", "error");
             this.fecharModal();
           });
       }

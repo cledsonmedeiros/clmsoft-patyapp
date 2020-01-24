@@ -27,6 +27,14 @@ const routes = [
       titulo: "Clientes"
     },
     component: () => import(/* webpackChunkName: "clientes" */ '@/views/clientes/Clientes.vue')
+  },
+  {
+    path: '/categoriaproduto',
+    name: 'categoriaproduto',
+    meta: {
+      titulo: "Categorias de Produto"
+    },
+    component: () => import(/* webpackChunkName: "categoriaproduto" */ '@/views/categoriaproduto/CategoriaProduto.vue')
   }
 ]
 

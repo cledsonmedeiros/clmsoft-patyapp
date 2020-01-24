@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const Cliente = require('../models/ClienteModel');
+const Produto = require('../models/ProdutoModel');
 
 module.exports = {
   async index (req, res) {
@@ -8,10 +8,11 @@ module.exports = {
       sort: {
         nome: 'asc',
       },
+      populate: 'categoria',
     };
     try {
-      const clientes = await Cliente.paginate({}, options, { page, limit });
-      return res.status(200).json(clientes);
+      const produtos = await Produto.paginate({}, options, { page, limit });
+      return res.status(200).json(produtos);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -19,10 +20,11 @@ module.exports = {
   store (req, res, next) {
     const data = req.body;
     const schema = Joi.object().keys({
-      nome: Joi.string().min(2).required(),
-      telefone: Joi.string().min(14).max(16),
-      endereco: Joi.string(),
-      cpf: Joi.string().min(14).max(14),
+      nome: Joi.string().required(),
+      quantidade: Joi.number().required(),
+      categoria: Joi.string().required(),
+      preco_compra: Joi.number().required(),
+      preco_revenda: Joi.number().required(),
     });
 
     Joi.validate(data, schema, { abortEarly: false }, async (err, value) => {
@@ -30,8 +32,8 @@ module.exports = {
         return res.status(400).json(err);
       }
       try {
-        const cliente = await Cliente.create(req.body);
-        return res.status(201).send(cliente);
+        const produto = await Produto.create(req.body);
+        return res.status(201).send(produto);
       } catch (error) {
         return res.status(400).json(error);
       }
@@ -39,39 +41,39 @@ module.exports = {
   },
   async show (req, res) {
     try {
-      const cliente = await Cliente.findById({
+      const produto = await Produto.findById({
         _id: req.params.id,
-      });
-      if (!cliente) {
+      }).populate('categoria');
+      if (!produto) {
         return res.status(404).json({
-          error: 'Cliente não encontrado',
+          error: 'Produto não encontrado',
         });
       }
-      return res.json(cliente);
+      return res.json(produto);
     } catch (error) {
       return res.status(400).json(error);
     }
   },
   async update (req, res) {
     try {
-      const cliente = await Cliente.findByIdAndUpdate(req.params.id, req.body, {
+      const produto = await Produto.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
-      await cliente.save();
-      return res.status(201).json(cliente);
+      await produto.save();
+      return res.status(201).json(produto);
     } catch (error) {
       return res.status(400).json(error);
     }
   },
   async destroy (req, res) {
     try {
-      const cliente = await Cliente.findById(req.params.id);
-      if (!cliente) {
+      const produto = await Produto.findById(req.params.id);
+      if (!produto) {
         return res.status(404).send({
-          error: 'Cliente não encontrado',
+          error: 'Produto não encontrado',
         });
       }
-      await cliente.remove();
+      await produto.remove();
       return res.status(200).send();
     } catch (error) {
       return res.status(400).json(error);

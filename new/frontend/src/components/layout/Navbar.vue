@@ -68,6 +68,7 @@ export default {
       itensMenu: [
         { rota: "/home", icone: "mdi-home", titulo: "Home" },
         { rota: "/clientes", icone: "mdi-account-group", titulo: "Clientes" },
+        { rota: "/categoriaproduto", icone: "mdi-format-list-bulleted-type", titulo: "Categorias de produto" },
         { rota: "/produtos", icone: "mdi-view-dashboard", titulo: "Produtos" },
       ]
     };
