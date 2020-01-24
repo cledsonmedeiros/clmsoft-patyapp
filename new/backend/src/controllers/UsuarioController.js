@@ -3,9 +3,7 @@ const Usuario = require('../models/UsuarioModel');
 
 module.exports = {
   async index (req, res) {
-    // const { page = 1 } = req.query;
     try {
-      // const usuarios = await Usuario.paginate({}, { page, limit: 5 });
       const usuarios = await Usuario.find({});
       return res.status(200).json(usuarios);
     } catch (error) {

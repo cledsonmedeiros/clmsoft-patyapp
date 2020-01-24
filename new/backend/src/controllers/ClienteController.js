@@ -3,14 +3,15 @@ const Cliente = require('../models/ClienteModel');
 
 module.exports = {
   async index (req, res) {
-    const { page = 1, limit = 5 } = req.query;
     const options = {
       sort: {
         nome: 'asc',
       },
+      page: Number(req.query.page),
+      limit: Number(req.query.limit),
     };
     try {
-      const clientes = await Cliente.paginate({}, options, { page, limit });
+      const clientes = await Cliente.paginate({}, options);
       return res.status(200).json(clientes);
     } catch (error) {
       return res.status(500).json(error);

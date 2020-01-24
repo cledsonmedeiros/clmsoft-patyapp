@@ -3,14 +3,15 @@ const CategoriaProduto = require('../models/CategoriaProdutoModel');
 
 module.exports = {
   async index (req, res) {
-    const { page = 1, limit = 5 } = req.query;
     const options = {
       sort: {
         nome: 'asc',
       },
+      page: Number(req.query.page),
+      limit: Number(req.query.limit),
     };
     try {
-      const categorias = await CategoriaProduto.paginate({}, options, { page, limit });
+      const categorias = await CategoriaProduto.paginate({}, options);
       return res.status(200).json(categorias);
     } catch (error) {
       return res.status(500).json(error);

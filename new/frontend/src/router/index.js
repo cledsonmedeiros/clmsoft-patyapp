@@ -34,7 +34,15 @@ const routes = [
     meta: {
       titulo: "Categorias de Produto"
     },
-    component: () => import(/* webpackChunkName: "categoriaproduto" */ '@/views/categoriaproduto/CategoriaProduto.vue')
+    component: () => import(/* webpackChunkName: "categoriasproduto" */ '@/views/categoriaproduto/CategoriasProduto.vue')
+  },
+  {
+    path: '/produtos',
+    name: 'produtos',
+    meta: {
+      titulo: "Produtos"
+    },
+    component: () => import(/* webpackChunkName: "produtos" */ '@/views/produtos/Produtos.vue')
   }
 ]
 
@@ -46,6 +54,9 @@ router.beforeEach((to, from, next) => {
   document.title = `${to.meta.titulo} - PatyApp`
   if (to.path === '/' && localStorage.userID !== undefined) {
     router.push('/home');
+  }
+  if (to.path !== '/' && localStorage.userID === undefined) {
+    router.push('/');
   }
   next()
 })
