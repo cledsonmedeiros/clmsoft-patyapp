@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const CategoriaProduto = require('../models/CategoriaProdutoModel');
+const Categoria = require('../models/CategoriaModel');
 
 module.exports = {
   async index (req, res) {
@@ -11,7 +11,7 @@ module.exports = {
       limit: Number(req.query.limit),
     };
     try {
-      const categorias = await CategoriaProduto.paginate({}, options);
+      const categorias = await Categoria.paginate({}, options);
       return res.status(200).json(categorias);
     } catch (error) {
       return res.status(500).json(error);
@@ -28,7 +28,7 @@ module.exports = {
         return res.status(400).json(err);
       }
       try {
-        const categoria = await CategoriaProduto.create(req.body);
+        const categoria = await Categoria.create(req.body);
         return res.status(201).send(categoria);
       } catch (error) {
         return res.status(400).json(error);
@@ -37,7 +37,7 @@ module.exports = {
   },
   async show (req, res) {
     try {
-      const categoria = await CategoriaProduto.findById({
+      const categoria = await Categoria.findById({
         _id: req.params.id,
       });
       if (!categoria) {
@@ -52,7 +52,7 @@ module.exports = {
   },
   async update (req, res) {
     try {
-      const categoria = await CategoriaProduto.findByIdAndUpdate(req.params.id, req.body, {
+      const categoria = await Categoria.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
       await categoria.save();
@@ -63,7 +63,7 @@ module.exports = {
   },
   async destroy (req, res) {
     try {
-      const categoria = await CategoriaProduto.findById(req.params.id);
+      const categoria = await Categoria.findById(req.params.id);
       if (!categoria) {
         return res.status(404).send({
           error: 'Categoria de produto não encontrada',
@@ -84,7 +84,7 @@ module.exports = {
       limit: Number(req.query.limit),
     };
     try {
-      const categorias = await CategoriaProduto.find({});
+      const categorias = await Categoria.find({});
       return res.status(200).json(categorias);
     } catch (error) {
       return res.status(500).json(error);

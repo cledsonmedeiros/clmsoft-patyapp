@@ -7,11 +7,6 @@ import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/index.css';
 import VueCurrencyInput from 'vue-currency-input'
 
-// const pluginOptions = {
-//   /* see config reference */
-//   globalOptions: { currency: 'BRL', locale: 'pt-BR', auto-decimal-mode: true }
-// }
-
 Vue.use(VueToast);
 Vue.use(VueCurrencyInput)
 

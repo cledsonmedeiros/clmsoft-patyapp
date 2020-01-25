@@ -17,21 +17,6 @@
       <v-list nav dense>
         <v-list-item-group active-class="primary--text">
 
-          <v-list-item to="/novavenda">
-            <v-list-item-title>
-              <v-icon small class="mr-2">mdi-shopify</v-icon>
-              <span>Nova venda</span>
-            </v-list-item-title>
-          </v-list-item>
-
-        </v-list-item-group>
-      </v-list>
-
-      <v-divider></v-divider>
-
-      <v-list nav dense>
-        <v-list-item-group active-class="primary--text">
-
           <v-list-item :to="item.rota" v-for="item in itensMenu" :key="item.rota">
             <v-list-item-title>
               <v-icon small class="mr-2">{{item.icone}}</v-icon>

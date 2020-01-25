@@ -10,8 +10,8 @@ import router from '../router';
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  baseURL: 'http://localhost:15000/v1',
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
+  // baseURL: 'http://localhost:15000/v1',
+  baseURL: process.env.VUE_APP_ENV === 'dev' ? process.env.VUE_APP_API_URL_DEV : process.env.VUE_APP_API_URL_PROD
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

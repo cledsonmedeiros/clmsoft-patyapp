@@ -1,11 +1,11 @@
 const routes = require('express').Router();
-const CategoriaProdutoController = require('../../controllers/CategoriaProdutoController');
+const CategoriaController = require('../../controllers/CategoriaController');
 
-routes.get('/', CategoriaProdutoController.index);
-routes.get('/todas', CategoriaProdutoController.getAll);
-routes.get('/:id', CategoriaProdutoController.show);
-routes.post('/', CategoriaProdutoController.store);
-routes.put('/:id', CategoriaProdutoController.update);
-routes.delete('/:id', CategoriaProdutoController.destroy);
+routes.get('/', CategoriaController.index);
+routes.get('/todas', CategoriaController.getAll);
+routes.get('/:id', CategoriaController.show);
+routes.post('/', CategoriaController.store);
+routes.put('/:id', CategoriaController.update);
+routes.delete('/:id', CategoriaController.destroy);
 
 module.exports = routes;
