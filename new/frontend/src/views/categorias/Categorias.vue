@@ -25,7 +25,7 @@
       <v-card-title>
         <v-layout row wrap>
           <v-flex xs12 sm6 class="d-flex align-center pl-4">
-            <h1 class="headline">Categorias de produto</h1>
+            <h1 class="headline">Categorias</h1>
             <v-btn small elevation="1" color="primary" class="ml-2" @click="abrirModal()">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -48,7 +48,7 @@
         </v-data-table>
         <div class="text-center pt-5 mx-5">
           <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
-          <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
+          <v-select :items="numeroElementos" label="Itens por página" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
         </div>
       </div>
     </v-card>
@@ -87,7 +87,7 @@ export default {
     listarItens(n = false) {
       this.$axios
         .get(
-          `categoriaproduto?page=${n ? 1 : this.paginaAtual}&limit=${
+          `categoria?page=${n ? 1 : this.paginaAtual}&limit=${
             this.itensPorPagina
           }`
         )
@@ -126,7 +126,7 @@ export default {
         delete this.itemAtual.id;
 
         this.$axios
-          .post(`categoriaproduto`, { ...this.itemAtual })
+          .post(`categoria`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Categoria de produto criada com sucesso");
             this.fecharModal();
@@ -138,7 +138,7 @@ export default {
           });
       } else {
         this.$axios
-          .put(`categoriaproduto/${this.itemAtual.id}`, { ...this.itemAtual })
+          .put(`categoria/${this.itemAtual.id}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Categoria de produto editada com sucesso");
             this.fecharModal();
@@ -153,7 +153,7 @@ export default {
     deletarItem(item) {
       if (confirm(`Deseja realmente deletar a categoria ${item.nome}?`)) {
         this.$axios
-          .delete(`categoriaproduto/${item._id}`)
+          .delete(`categoria/${item._id}`)
           .then(() => {
             this.mostrarToast("Categoria de produto deletada com sucesso");
             this.fecharModal();

@@ -9,25 +9,19 @@
           <v-container fluid>
             <v-row>
               <v-col cols="12" sm="12" md="9">
-                <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-text-field label="Nome" v-model="itemAtual.nome" clearable autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="3">
-                <v-text-field label="Quantidade" v-model="itemAtual.quantidade" type="number" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-text-field label="Quantidade" v-model="itemAtual.quantidade" type="number" clearable autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="4">
-                <v-text-field label="Categoria" v-model="itemAtual.categoria" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-autocomplete v-model="itemAtual.categoria" :loading="carregandoCategorias" :items="categorias" :search-input.sync="pesquisaCategoria" cache-items hide-no-data clearable item-text="nome" item-value="_id" label="Categoria"></v-autocomplete>
               </v-col>
               <v-col cols="12" sm="12" md="4">
-                <!-- <v-text-field label="Preço de compra" v-model="itemAtual.preco_compra" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field> -->
-                <v-text-field label="Preço de compra" v-model.lazy="itemAtual.preco_compra" v-money="money" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-text-field label="Preço de compra" v-model.lazy="itemAtual.preco_compra" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
               </v-col>
-              <!-- <v-col cols="12" sm="12" md="4">
-                <v-text-field label="Preço de revenda" v-model="itemAtual.preco_revenda" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
-              </v-col>
-              {{Number(String(itemAtual.preco_revenda).split(' ')[1].replace(/\./g, '').replace(',', '.'))}}
-              -->
               <v-col cols="12" sm="12" md="4">
-                <v-text-field label="Preço de revenda" v-model.lazy="itemAtual.preco_revenda" v-money="money" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-text-field label="Preço de revenda" v-model.lazy="itemAtual.preco_revenda" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -72,7 +66,7 @@
         </v-data-table>
         <div class="text-center pt-5 mx-5">
           <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
-          <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
+          <v-select :items="numeroElementos" label="Itens por página" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
         </div>
       </div>
     </v-card>
@@ -80,22 +74,22 @@
 </template>
 <script>
 import { mask } from "vue-the-mask";
-import { VMoney } from "v-money";
 
 export default {
   name: "Produtos",
   directives: {
     mask,
-    money: VMoney
   },
   components: {},
   data() {
     return {
+      carregandoCategorias: false,
+      categorias: [],
+      pesquisaCategoria: "",
       price: 0,
       money: {
         decimal: ",",
         thousands: ".",
-        prefix: "R$ ",
         precision: 2
       },
       numeroElementos: ["3", "5", "10"],
@@ -127,6 +121,7 @@ export default {
   },
   created() {
     this.listarItens();
+    this.listarCategorias();
   },
   methods: {
     listarItens(n = false) {
@@ -143,7 +138,18 @@ export default {
           this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados", "error");
+          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
+          this.fecharModal();
+        });
+    },
+    listarCategorias() {
+      this.$axios
+        .get(`categoria/todas`)
+        .then(response => {
+          this.categorias = response.data;
+        })
+        .catch(() => {
+          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
           this.fecharModal();
         });
     },
@@ -157,8 +163,10 @@ export default {
       this.itemAtual.nome = item.nome;
       this.itemAtual.quantidade = item.quantidade;
       this.itemAtual.categoria = item.categoria._id;
-      this.itemAtual.preco_compra = item.preco_compra;
-      this.itemAtual.preco_revenda = item.preco_revenda;
+      this.itemAtual.preco_compra = `R$ ${String(Number(item.preco_compra.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})).split('R$')[1].trim()}`;
+      this.itemAtual.preco_revenda = `R$ ${String(Number(item.preco_revenda.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})).split('R$')[1].trim()}`;
+      // this.itemAtual.preco_compra = item.preco_compra;
+      // this.itemAtual.preco_revenda = item.preco_revenda;
       this.itemAtual.id = item._id;
       this.modal = true;
     },
@@ -175,6 +183,23 @@ export default {
       }, 1000);
     },
     salvarItem() {
+      this.itemAtual.preco_compra = Number(
+        String(this.itemAtual.preco_compra)
+          .split("R$")[1]
+          .trim()
+          .split(".")
+          .join("")
+          .replace(",", ".")
+      );
+      this.itemAtual.preco_revenda = Number(
+        String(this.itemAtual.preco_revenda)
+          .split("R$")[1]
+          .trim()
+          .split(".")
+          .join("")
+          .replace(",", ".")
+      );
+
       if (this.novoItem) {
         delete this.itemAtual.id;
 

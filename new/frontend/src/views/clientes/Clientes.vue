@@ -57,7 +57,7 @@
         </v-data-table>
         <div class="text-center pt-5 mx-5">
           <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
-          <v-select :items="numeroElementos" label="Número de itens" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
+          <v-select :items="numeroElementos" label="Itens por página" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
         </div>
       </div>
     </v-card>

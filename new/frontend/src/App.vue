@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navbar v-if="this.$route.name !== 'login'"></Navbar>
+    <NavigationBar v-if="this.$route.name !== 'login'"></NavigationBar>
     <v-content>
       <v-container fluid :class="this.$route.name === 'login' ? 'fill-height' : ''">
         <router-view></router-view>
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import Navbar from "@/components/layout/Navbar";
+import NavigationBar from "@/components/layout/NavigationBar";
 
 export default {
   name: "App",
-  components: { Navbar },
+  components: { NavigationBar },
   data() {
     return {};
   },
