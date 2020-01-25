@@ -18,10 +18,10 @@
                 <v-autocomplete v-model="itemAtual.categoria" :loading="carregandoCategorias" :items="categorias" :search-input.sync="pesquisaCategoria" cache-items hide-no-data clearable item-text="nome" item-value="_id" label="Categoria"></v-autocomplete>
               </v-col>
               <v-col cols="12" sm="12" md="4">
-                <v-text-field label="Preço de compra" v-model.lazy="itemAtual.preco_compra" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
+                <v-text-field label="Preço de compra" v-model="itemAtual.preco_compra" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="4">
-                <v-text-field label="Preço de revenda" v-model.lazy="itemAtual.preco_revenda" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
+                <v-text-field label="Preço de revenda" v-model="itemAtual.preco_revenda" v-currency="{currency: 'BRL', locale: 'pt-BR'}" clearable autocomplete="off"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -78,7 +78,7 @@ import { mask } from "vue-the-mask";
 export default {
   name: "Produtos",
   directives: {
-    mask,
+    mask
   },
   components: {},
   data() {
@@ -159,16 +159,18 @@ export default {
       this.novoItem = true;
     },
     abrirItem(item) {
+      this.modal = true;
       this.tituloModal = "Editar produto";
       this.itemAtual.nome = item.nome;
       this.itemAtual.quantidade = item.quantidade;
       this.itemAtual.categoria = item.categoria._id;
-      this.itemAtual.preco_compra = `R$ ${String(Number(item.preco_compra.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})).split('R$')[1].trim()}`;
-      this.itemAtual.preco_revenda = `R$ ${String(Number(item.preco_revenda.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})).split('R$')[1].trim()}`;
-      // this.itemAtual.preco_compra = item.preco_compra;
-      // this.itemAtual.preco_revenda = item.preco_revenda;
       this.itemAtual.id = item._id;
-      this.modal = true;
+      setTimeout(() => {
+        this.itemAtual.preco_compra =
+          "R$ " + String(item.preco_compra.toFixed(2)).replace(".", ",");
+        this.itemAtual.preco_revenda =
+          "R$ " + String(item.preco_revenda.toFixed(2)).replace(".", ",");
+      }, 100);
     },
     fecharModal() {
       this.modal = false;
