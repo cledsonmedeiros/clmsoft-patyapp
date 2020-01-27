@@ -12,13 +12,19 @@ const vendaSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    isConcluida: {
+      type: Boolean,
+      required: true,
+    },
     cliente: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'cliente',
+      required: false,
     },
     vendedor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'usuario',
+      required: true,
     },
     total: {
       type: Number,

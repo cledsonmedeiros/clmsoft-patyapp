@@ -14,7 +14,7 @@ const produtoSchema = new mongoose.Schema(
     },
     categoria: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'categoriaProduto',
+      ref: 'categoria',
     },
     preco_compra: {
       type: Number,

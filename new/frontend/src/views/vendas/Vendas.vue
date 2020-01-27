@@ -16,11 +16,13 @@
       </v-card-title>
       <div>
         <v-data-table :headers="cabecalhos" :items="produtos" sort-by="nome" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
-          <template v-slot:item.preco_compra="{ item }">
-            {{ Number(item.preco_compra.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
+          <template v-slot:item.isPrazo="{ item }">
+            <v-icon :color="item.isPrazo ? 'orange' : 'green'">
+              {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-brl" }}
+            </v-icon>
           </template>
-          <template v-slot:item.preco_revenda="{ item }">
-            {{ Number(item.preco_revenda.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
+          <template v-slot:item.total="{ item }">
+            {{ Number(item.total.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
           </template>
           <template v-slot:item.action="{ item }">
             <v-icon small color="info" @click="abrirItem(item)">
@@ -43,13 +45,14 @@
 import { mask } from "vue-the-mask";
 
 export default {
-  name: "Produtos",
+  name: "Vendas",
   directives: {
     mask
   },
   components: {},
   data() {
     return {
+      endPoint: "venda",
       carregandoCategorias: false,
       categorias: [],
       pesquisaCategoria: "",
@@ -77,11 +80,11 @@ export default {
       },
       produtos: [],
       cabecalhos: [
-        { text: "Nome", align: "left", value: "nome" },
-        { text: "Quantidade", value: "quantidade" },
-        { text: "Categoria", value: "categoria.nome" },
-        { text: "Preço de compra", value: "preco_compra" },
-        { text: "Preço de revenda", value: "preco_revenda" },
+        { text: "Data", align: "left", value: "data" },
+        { text: "Cliente", value: "cliente.nome" },
+        { text: "Vendido por", value: "vendedor.nome" },
+        { text: "Tipo", value: "isPrazo" },
+        { text: "Total", value: "total" },
         { text: "Ação", value: "action", align: "right", sortable: false }
       ]
     };
@@ -94,7 +97,7 @@ export default {
     listarItens(n = false) {
       this.$axios
         .get(
-          `produto?page=${n ? 1 : this.paginaAtual}&limit=${
+          `${this.endPoint}?page=${n ? 1 : this.paginaAtual}&limit=${
             this.itensPorPagina
           }`
         )
@@ -121,21 +124,15 @@ export default {
         });
     },
     novaVenda() {
-      this.$router.push('/novavenda');
+      this.$router.push("/novavenda");
     },
     abrirItem(item) {
       this.modal = true;
-      this.tituloModal = "Editar produto";
+      this.tituloModal = "Editar venda";
       this.itemAtual.nome = item.nome;
       this.itemAtual.quantidade = item.quantidade;
       this.itemAtual.categoria = item.categoria._id;
       this.itemAtual.id = item._id;
-      setTimeout(() => {
-        this.itemAtual.preco_compra =
-          "R$ " + String(item.preco_compra.toFixed(2)).replace(".", ",");
-        this.itemAtual.preco_revenda =
-          "R$ " + String(item.preco_revenda.toFixed(2)).replace(".", ",");
-      }, 100);
     },
     fecharModal() {
       this.modal = false;
@@ -171,41 +168,41 @@ export default {
         delete this.itemAtual.id;
 
         this.$axios
-          .post(`produto`, { ...this.itemAtual })
+          .post(`${this.endPoint}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Produto criado com sucesso");
             this.fecharModal();
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao criar produto", "error");
+            this.mostrarToast("Falha ao criar venda", "error");
             this.fecharModal();
           });
       } else {
         this.$axios
-          .put(`produto/${this.itemAtual.id}`, { ...this.itemAtual })
+          .put(`${this.endPoint}/${this.itemAtual.id}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Produto editado com sucesso");
             this.fecharModal();
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao editar produto", "error");
+            this.mostrarToast("Falha ao editar venda", "error");
             this.fecharModal();
           });
       }
     },
     deletarItem(item) {
-      if (confirm(`Deseja realmente deletar o produto ${item.nome}?`)) {
+      if (confirm(`Deseja realmente deletar o venda ${item.nome}?`)) {
         this.$axios
-          .delete(`produto/${item._id}`)
+          .delete(`${this.endPoint}/${item._id}`)
           .then(() => {
             this.mostrarToast("Produto deletado com sucesso");
             this.fecharModal();
             this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao deletar produto", "error");
+            this.mostrarToast("Falha ao deletar venda", "error");
             this.fecharModal();
           });
       }

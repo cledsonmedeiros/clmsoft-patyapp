@@ -76,13 +76,6 @@ module.exports = {
     }
   },
   async getAll (req, res) {
-    const options = {
-      sort: {
-        nome: 'asc',
-      },
-      page: Number(req.query.page),
-      limit: Number(req.query.limit),
-    };
     try {
       const categorias = await Categoria.find({});
       return res.status(200).json(categorias);

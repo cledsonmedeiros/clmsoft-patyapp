@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const categoriaProdutoSchema = new mongoose.Schema(
+const categoriaSchema = new mongoose.Schema(
   {
     nome: {
       type: String,
@@ -15,10 +15,10 @@ const categoriaProdutoSchema = new mongoose.Schema(
   },
 );
 
-categoriaProdutoSchema.plugin(mongoosePaginate);
+categoriaSchema.plugin(mongoosePaginate);
 
-// categoriaProdutoSchema.pre('save', function () {})
+// categoriaSchema.pre('save', function () {})
 
-// categoriaProdutoSchema.pre('remove', function () {})
+// categoriaSchema.pre('remove', function () {})
 
-module.exports = mongoose.model('categoriaProduto', categoriaProdutoSchema, 'categoriaProduto');
+module.exports = mongoose.model('categoria', categoriaSchema, 'categoria');

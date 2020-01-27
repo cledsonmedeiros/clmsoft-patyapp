@@ -5,7 +5,7 @@ module.exports = {
   async index (req, res) {
     const options = {
       sort: {
-        nome: 'asc',
+        createdAt: 'desc',
       },
       page: Number(req.query.page),
       limit: Number(req.query.limit),
@@ -16,7 +16,7 @@ module.exports = {
         },
         {
           path: 'vendedor',
-          select: 'nome usuario',
+          select: 'nome',
         },
       ],
     };
@@ -32,7 +32,8 @@ module.exports = {
     const schema = Joi.object().keys({
       data: Joi.string().required(),
       isPrazo: Joi.boolean().required(),
-      cliente: Joi.string().required(),
+      isConcluida: Joi.boolean().required(),
+      cliente: Joi.string().allow(null),
       vendedor: Joi.string().required(),
       total: Joi.number().required(),
     });
