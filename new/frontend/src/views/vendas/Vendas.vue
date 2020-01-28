@@ -193,11 +193,11 @@ export default {
       }
     },
     deletarItem(item) {
-      if (confirm(`Deseja realmente deletar o venda ${item.nome}?`)) {
+      if (confirm(`Deseja realmente deletar a venda?`)) {
         this.$axios
           .delete(`${this.endPoint}/${item._id}`)
           .then(() => {
-            this.mostrarToast("Produto deletado com sucesso");
+            this.mostrarToast("Venda deletada com sucesso");
             this.fecharModal();
             this.listarItens();
           })

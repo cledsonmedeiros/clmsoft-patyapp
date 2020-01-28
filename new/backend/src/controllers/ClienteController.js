@@ -87,14 +87,6 @@ module.exports = {
     }
   },
   async getByName (req, res) {
-    // Cliente.find({ nome: { "$regex": req.params.nome, $options: "i" } })
-    //   .then((data) => {
-    //     res.status(200).json(data);
-    //   })
-    //   .catch((err) => {
-    //     res.status(400).json(err);
-    //   });
-
     try {
       const clientes = await Cliente.find({ nome: { "$regex": req.params.nome, $options: "i" } }).sort({ nome: 'asc' }).select('nome');
       return res.status(200).json(clientes);

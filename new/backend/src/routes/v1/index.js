@@ -7,5 +7,7 @@ routes.use('/usuario', require('./usuario'));
 routes.use('/categoria', require('./categoria'));
 routes.use('/produto', require('./produto'));
 routes.use('/venda', require('./venda'));
+routes.use('/item', require('./item'));
+routes.use('/parcela', require('./parcela'));
 
 module.exports = routes;

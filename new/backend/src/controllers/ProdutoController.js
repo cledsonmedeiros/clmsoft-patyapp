@@ -80,4 +80,54 @@ module.exports = {
       return res.status(400).json(error);
     }
   },
+  async getByName (req, res) {
+    try {
+      const produtos = await Produto.find({ nome: { "$regex": req.params.nome, $options: "i" }, quantidade: { $gt: 0 }, }).sort({ nome: 'asc' });
+      return res.status(200).json(produtos);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async alterarQuantidade (req, res) {
+    const produtoID = req.params.id;
+    const produtoOperacao = req.params.operacao;
+    const produtoQuantidade = Number(req.params.quantidade);
+
+    try {
+      const produto = await Produto.findById({
+        _id: produtoID,
+      });
+      if (!produto) {
+        return res.status(404).json({
+          error: 'Produto não encontrado',
+        });
+      } else {
+
+        let novaQtd = 0;
+        if (produtoOperacao === 'mais') {
+          novaQtd = produto.quantidade + produtoQuantidade
+        } else {
+          novaQtd = produto.quantidade - produtoQuantidade
+        }
+
+        if (novaQtd < 0) {
+          return res.status(404).json({
+            error: 'Produto não pode ter quantidade negativa',
+          });
+        } else {
+          try {
+            const produto = await Produto.findByIdAndUpdate(produtoID, { quantidade: novaQtd }, {
+              new: true,
+            });
+            await produto.save();
+            return res.status(201).json(produto);
+          } catch (error) {
+            return res.status(400).json(error);
+          }
+        }
+      }
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  },
 };
