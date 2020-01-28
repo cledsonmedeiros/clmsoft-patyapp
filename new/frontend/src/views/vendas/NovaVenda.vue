@@ -162,6 +162,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "NovaVenda",
   data() {
@@ -213,13 +214,13 @@ export default {
     },
     pesquisaCliente(nome) {
       if (nome !== null && nome !== undefined && nome.length > 0) {
-        axios.get(`cliente/nome/${nome}`).then(response => {
+        this.$axios.get(`cliente/nome/${nome}`).then(response => {
           this.clientes = response.data;
         });
       }
     },
     isPrazo(valor) {
-      axios
+      this.$axios
         .put(`venda/${this.itemAtual._id}`, { isPrazo: valor })
         .then(() => {
           return;
@@ -231,7 +232,7 @@ export default {
     pesquisaProduto(nome) {
       let prods = [];
       if (nome !== null && nome !== undefined && nome.length > 0) {
-        axios.get(`produto/nome/${nome}`).then(response => {
+        this.$axios.get(`produto/nome/${nome}`).then(response => {
           this.produtos = response.data;
         });
       }
@@ -252,9 +253,63 @@ export default {
   methods: {
     finalizarVenda() {
       if (!this.isPrazo) {
-        axios
+        this.$axios
           .put(`venda/${this.itemAtual._id}`, {
             isConcluida: true,
+            total: this.totalCesta
+          })
+          .then(() => {
+            this.mostrarToast("Venda finalizada");
+            this.$router.push("/vendas");
+            return;
+          })
+          .catch(() => {
+            this.mostrarToast("Falha ao alterar tipo venda", "error");
+          });
+      } else {
+        let dataMoment = moment().set({
+          year: Number(this.data_modificada.split("-")[0]),
+          month: Number(this.data_modificada.split("-")[1]) - 1,
+          date: Number(this.data_modificada.split("-")[2]),
+          timezone: "America/Sao_Paulo"
+        });
+        let datasParcelas = [];
+        datasParcelas.push(this.data_modificada_formatada);
+        for (let index = 1; index < this.qntParcelas; index++) {
+          if (this.periodo === "Mês") {
+            dataMoment.add(1, "month");
+          } else if (this.periodo === "Quinzena") {
+            dataMoment.add(15, "days");
+          } else {
+            dataMoment.add(1, "week");
+          }
+          const date = dataMoment
+            .format("L")
+            .toString()
+            .split("/");
+          datasParcelas.push(`${date[1]}/${date[0]}/${date[2]}`);
+        }
+
+        // console.log(datasParcelas)
+        datasParcelas.forEach((element, index) => {
+          this.$axios
+            .post(`parcela/`, {
+              venda: this.itemAtual._id,
+              data: element,
+              valor: this.totalCesta / datasParcelas.length,
+              isPaga: false
+            })
+            .then(() => {
+              return;
+            })
+            .catch(() => {
+              this.mostrarToast("Falha ao criar parcelas", "error");
+            });
+        });
+
+        this.$axios
+          .put(`venda/${this.itemAtual._id}`, {
+            isConcluida: false,
             total: this.totalCesta
           })
           .then(() => {
