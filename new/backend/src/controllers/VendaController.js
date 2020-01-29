@@ -92,7 +92,7 @@ module.exports = {
   },
   async getByCliente (req, res) {
     try {
-      const vendas = await Venda.find({ cliente: req.params.cliente }).sort({ createdAt: 'desc' });
+      const vendas = await Venda.find({ cliente: req.params.id }).sort({ createdAt: 'desc' });
       return res.status(200).json(vendas);
     } catch (error) {
       return res.status(500).json(error);

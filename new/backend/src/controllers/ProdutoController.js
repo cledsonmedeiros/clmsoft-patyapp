@@ -130,4 +130,12 @@ module.exports = {
       return res.status(400).json(error);
     }
   },
+  async getByCategoria (req, res) {
+    try {
+      const produtos = await Produto.find({ categoria: req.params.id }).sort({ nome: 'asc' });
+      return res.status(200).json(produtos);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
 };
