@@ -15,6 +15,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
+          <v-btn color="primary" text @click="deletarItem(itemAtual)" v-if="!novoItem" :disabled="categoriaTemProdutos">{{categoriaTemProdutos ? 'Não pode deletar' : 'Deletar'}}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
           <v-btn color="primary" text @click="salvarItem()">Salvar</v-btn>
@@ -55,12 +56,12 @@
   </div>
 </template>
 <script>
-
 export default {
   name: "CategoriaProduto",
   components: {},
   data() {
     return {
+      categoriaTemProdutos: true,
       numeroElementos: ["3", "5", "10"],
       paginaAtual: 1,
       numeroPaginas: 1,
@@ -107,7 +108,22 @@ export default {
       this.modal = true;
       this.novoItem = true;
     },
+    checarProduto(idCategoria) {
+      this.$axios
+        .get(`produto/categoria/${idCategoria}`)
+        .then(response => {
+          if (response.data.length !== 0) {
+            this.categoriaTemProdutos = true;
+          } else {
+            this.categoriaTemProdutos = false;
+          }
+        })
+        .catch(() => {
+          this.mostrarToast("Falha ao recuperar vendas do cliente", "error");
+        });
+    },
     abrirItem(item) {
+      this.checarProduto(item._id);
       this.tituloModal = "Editar categoria";
       this.itemAtual.nome = item.nome;
       this.itemAtual.id = item._id;
@@ -118,6 +134,7 @@ export default {
       this.novoItem = false;
       setTimeout(() => {
         this.itemAtual.nome = "";
+        this.categoriaTemProdutos = true;
         this.itemAtual.id = "";
       }, 1000);
     },
@@ -153,7 +170,7 @@ export default {
     deletarItem(item) {
       if (confirm(`Deseja realmente deletar a categoria ${item.nome}?`)) {
         this.$axios
-          .delete(`categoria/${item._id}`)
+          .delete(`categoria/${item.id}`)
           .then(() => {
             this.mostrarToast("Categoria de produto deletada com sucesso");
             this.fecharModal();
