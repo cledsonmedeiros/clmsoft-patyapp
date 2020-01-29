@@ -30,7 +30,6 @@
                   <v-flex xs12 md2 class="text-center">
                     <div class="caption grey--text">Ação</div>
                     <v-btn color="primary" :disabled="parcela.isPaga" @click="receberParcela(parcela)">Receber</v-btn>
-                    <!-- <v-btn color="primary" @click="diffDatas(parcela.data)">Teste</v-btn> -->
                   </v-flex>
                 </v-layout>
               </v-card>
@@ -74,9 +73,9 @@
             <v-icon small color="info" @click="abrirItem(item)" v-if="item.isPrazo">
               mdi-eye
             </v-icon>
-            <!-- <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
+            <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
               mdi-close
-            </v-icon> -->
+            </v-icon>
           </template>
         </v-data-table>
         <div class="text-center pt-5 mx-5">
@@ -99,23 +98,6 @@ export default {
   components: {},
   data() {
     return {
-      cards: [
-        {
-          title: "Pre-fab homes",
-          src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
-          flex: 12
-        },
-        {
-          title: "Favorite road trips",
-          src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
-          flex: 6
-        },
-        {
-          title: "Best airlines",
-          src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
-          flex: 6
-        }
-      ],
       endPoint: "venda",
       carregandoCategorias: false,
       categorias: [],
@@ -171,7 +153,6 @@ export default {
       return days;
     },
     receberParcela(parcela) {
-      // console.log(parcela);
       this.$axios
         .get(`parcela/receber/${parcela._id}`)
         .then(response => {
@@ -179,28 +160,20 @@ export default {
             .get(`parcela/venda/${this.itemAbertoID}`)
             .then(response => {
               this.parcelas = response.data;
-              // this.modalParcelas = true;
-              this.mostrarToast("Parcela recebida");
+              this.mostrarToast("Parcela recebida com sucesso");
             })
             .catch(() => {
-              this.mostrarToast(
-                "Falha ao recuperar dados das parcelas",
-                "error"
-              );
-              // this.fecharModal();
+              this.mostrarToast("Falha ao listar parcelas", "error");
             });
         })
         .catch(() => {
           this.mostrarToast("Falha ao receber parcela", "error");
-          // this.fecharModal();
         });
     },
     listarItens(n = false) {
       this.$axios
         .get(
-          `${this.endPoint}?page=${n ? 1 : this.paginaAtual}&limit=${
-            this.itensPorPagina
-          }`
+          `venda?page=${n ? 1 : this.paginaAtual}&limit=${this.itensPorPagina}`
         )
         .then(response => {
           this.produtos = response.data.docs;
@@ -209,7 +182,7 @@ export default {
           this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
+          this.mostrarToast("Falha ao listar vendas", "error");
           this.fecharModal();
         });
     },
@@ -220,7 +193,7 @@ export default {
           this.categorias = response.data;
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
+          this.mostrarToast("Falha ao listar categorias", "error");
           this.fecharModal();
         });
     },
@@ -236,11 +209,8 @@ export default {
           this.modalParcelas = true;
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados das parcelas", "error");
-          // this.fecharModal();
+          this.mostrarToast("Falha ao listar parcelas", "error");
         });
-      // this.modalDetalhar = true;
-      // this.tituloModal = "Editar venda";
     },
     fecharModal() {
       this.modal = false;
@@ -276,7 +246,7 @@ export default {
         delete this.itemAtual.id;
 
         this.$axios
-          .post(`${this.endPoint}`, { ...this.itemAtual })
+          .post(`venda`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Produto criado com sucesso");
             this.fecharModal();
@@ -288,7 +258,7 @@ export default {
           });
       } else {
         this.$axios
-          .put(`${this.endPoint}/${this.itemAtual.id}`, { ...this.itemAtual })
+          .put(`venda/${this.itemAtual.id}`, { ...this.itemAtual })
           .then(() => {
             this.mostrarToast("Produto editado com sucesso");
             this.fecharModal();
@@ -302,17 +272,78 @@ export default {
     },
     deletarItem(item) {
       if (confirm(`Deseja realmente deletar a venda?`)) {
+        let idVenda = item._id;
+        let parcelado = item.isPrazo;
+
+        let idItens = [];
+
         this.$axios
-          .delete(`${this.endPoint}/${item._id}`)
-          .then(() => {
-            this.mostrarToast("Venda deletada com sucesso");
-            this.fecharModal();
-            this.listarItens();
+          .get(`item/venda/${idVenda}`)
+          .then(response => {
+            idItens = response.data;
+            this.$axios
+              .delete(`item/venda/${idVenda}`)
+              .then(() => {
+                idItens.forEach((itemVenda, indexItemVenda) => {
+                  this.$axios
+                    .get(
+                      `produto/${itemVenda.produto._id}/quantidade/mais/${itemVenda.quantidade}`
+                    )
+                    .then(() => {
+                      return;
+                    })
+                    .catch(() => {
+                      this.mostrarToast(
+                        "Falha ao alterar quantidade do produto",
+                        "error"
+                      );
+                    });
+                });
+              })
+              .catch(() => {
+                this.mostrarToast("Falha ao deletar item de venda", "error");
+              });
           })
           .catch(() => {
-            this.mostrarToast("Falha ao deletar venda", "error");
-            this.fecharModal();
+            this.mostrarToast("Falha ao listar itens de venda", "error");
           });
+
+        if (parcelado) {
+          this.$axios
+            .delete(`parcela/venda/${idVenda}`)
+            .then(() => {
+              this.$axios
+                .delete(`venda/${idVenda}`)
+                .then(() => {
+                  this.mostrarToast("Venda deletada com sucesso");
+                  this.fecharModal();
+                  this.listarItens();
+                })
+                .catch(() => {
+                  this.mostrarToast(
+                    "Falha ao deletar parcelas da venda",
+                    "error"
+                  );
+                  this.fecharModal();
+                });
+            })
+            .catch(() => {
+              this.mostrarToast("Falha ao deletar venda", "error");
+              this.fecharModal();
+            });
+        } else {
+          this.$axios
+            .delete(`venda/${idVenda}`)
+            .then(() => {
+              this.mostrarToast("Venda deletada com sucesso");
+              this.fecharModal();
+              this.listarItens();
+            })
+            .catch(() => {
+              this.mostrarToast("Falha ao deletar parcelas da venda", "error");
+              this.fecharModal();
+            });
+        }
       }
     },
     mostrarToast(msg, tipo = "success") {

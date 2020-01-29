@@ -58,6 +58,14 @@ module.exports = {
       return res.status(400).json(error);
     }
   },
+  async destroyMany (req, res) {
+    try {
+      await Parcela.deleteMany({ venda: req.params.id });
+      return res.status(200).send();
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  },
   async destroy (req, res) {
     try {
       const parcela = await Parcela.findById(req.params.id);

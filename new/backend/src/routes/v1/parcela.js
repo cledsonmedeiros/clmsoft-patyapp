@@ -8,5 +8,6 @@ routes.get('/:id', ParcelaController.show);
 routes.post('/', ParcelaController.store);
 routes.put('/:id', ParcelaController.update);
 routes.delete('/:id', ParcelaController.destroy);
+routes.delete('/venda/:id', ParcelaController.destroyMany);
 
 module.exports = routes;
