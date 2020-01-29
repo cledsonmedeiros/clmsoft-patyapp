@@ -27,6 +27,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
+          <v-btn color="primary" text :disabled="produtoTemItens" v-if="!novoItem" @click="deletarItem(itemAtual)">{{produtoTemItens ? 'Não pode deletar' : 'Deletar'}}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
           <v-btn color="primary" text @click="salvarItem()">Salvar</v-btn>
@@ -83,6 +84,7 @@ export default {
   components: {},
   data() {
     return {
+      produtoTemItens: true,
       carregandoCategorias: false,
       categorias: [],
       pesquisaCategoria: "",
@@ -138,7 +140,7 @@ export default {
           this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
+          this.mostrarToast("Falha ao recuperar produtos", "error");
           this.fecharModal();
         });
     },
@@ -149,7 +151,7 @@ export default {
           this.categorias = response.data;
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados dos produtos", "error");
+          this.mostrarToast("Falha ao recuperar categorias", "error");
           this.fecharModal();
         });
     },
@@ -158,7 +160,22 @@ export default {
       this.modal = true;
       this.novoItem = true;
     },
+    checarItem(idItem) {
+      this.$axios
+        .get(`item/produto/${idItem}`)
+        .then(response => {
+          if (response.data.length !== 0) {
+            this.produtoTemItens = true;
+          } else {
+            this.produtoTemItens = false;
+          }
+        })
+        .catch(() => {
+          this.mostrarToast("Falha ao recuperar itens de produto", "error");
+        });
+    },
     abrirItem(item) {
+      this.checarItem(item._id);
       this.modal = true;
       this.tituloModal = "Editar produto";
       this.itemAtual.nome = item.nome;
@@ -176,6 +193,7 @@ export default {
       this.modal = false;
       this.novoItem = false;
       setTimeout(() => {
+        this.produtoTemItens = false;
         this.itemAtual.nome = "";
         this.itemAtual.quantidade = "";
         this.itemAtual.categoria = "";
@@ -233,7 +251,7 @@ export default {
     deletarItem(item) {
       if (confirm(`Deseja realmente deletar o produto ${item.nome}?`)) {
         this.$axios
-          .delete(`produto/${item._id}`)
+          .delete(`produto/${item.id}`)
           .then(() => {
             this.mostrarToast("Produto deletado com sucesso");
             this.fecharModal();

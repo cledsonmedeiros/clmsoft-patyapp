@@ -81,7 +81,15 @@ module.exports = {
   },
   async getByVenda (req, res) {
     try {
-      const itens = await Item.find({ venda: req.params.venda }).sort({ createdAt: 'asc' }).populate('produto');
+      const itens = await Item.find({ venda: req.params.id }).sort({ createdAt: 'asc' }).populate('produto');
+      return res.status(200).json(itens);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async getByProduto (req, res) {
+    try {
+      const itens = await Item.find({ produto: req.params.id }).sort({ nome: 'asc' });
       return res.status(200).json(itens);
     } catch (error) {
       return res.status(500).json(error);
