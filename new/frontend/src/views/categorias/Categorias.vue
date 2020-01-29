@@ -42,9 +42,6 @@
             <v-icon small color="info" @click="abrirItem(item)">
               mdi-pencil
             </v-icon>
-            <!-- <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
-              mdi-close
-            </v-icon> -->
           </template>
         </v-data-table>
         <div class="text-center pt-5 mx-5">
