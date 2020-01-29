@@ -9,6 +9,7 @@ import VueCurrencyInput from 'vue-currency-input'
 
 Vue.use(VueToast);
 Vue.use(VueCurrencyInput)
+Vue.use(require('vue-moment'));
 
 Vue.config.productionTip = false
 

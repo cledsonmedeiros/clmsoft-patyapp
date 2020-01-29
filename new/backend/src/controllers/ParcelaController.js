@@ -16,6 +16,7 @@ module.exports = {
       venda: Joi.string().required(),
       data: Joi.string().required(),
       valor: Joi.number().required(),
+      ordem: Joi.number().required(),
       isPaga: Joi.boolean().required(),
     });
 
@@ -84,7 +85,7 @@ module.exports = {
   },
   async getByVenda (req, res) {
     try {
-      const parcelas = await Parcela.find({ venda: req.params.venda }).sort({ createdAt: 'asc' });
+      const parcelas = await Parcela.find({ venda: req.params.venda }).sort({ ordem: 'asc' });
       return res.status(200).json(parcelas);
     } catch (error) {
       return res.status(500).json(error);

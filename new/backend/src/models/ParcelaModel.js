@@ -17,6 +17,10 @@ const parcelaSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    ordem: {
+      type: Number,
+      required: true,
+    },
     isPaga: {
       type: Boolean,
       required: true,

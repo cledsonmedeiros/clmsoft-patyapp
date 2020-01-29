@@ -46,7 +46,7 @@
                     <v-card-text>
                       <div>
                         Produtos
-                        <v-text-field color="purple" v-model="pesquisaProduto" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint></v-text-field>
+                        <v-text-field color="purple" v-model="pesquisaProduto" append-icon="mdi-magnify" label="Pesquisar" single-line hint="Pesquisar produto" persistent-hint autocomplete="off"></v-text-field>
                       </div>
                       <div>
                         <v-btn rounded small color="purple" class="mt-4 mr-2" dark v-for="produto in produtos" @click="abrirItemCesta(produto)" v-bind:key="produto._id">{{produto.nome}} - {{Number(produto.preco_revenda.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</v-btn>
@@ -297,7 +297,8 @@ export default {
               venda: this.itemAtual._id,
               data: element,
               valor: this.totalCesta / datasParcelas.length,
-              isPaga: false
+              isPaga: false,
+              ordem: index
             })
             .then(() => {
               return;
