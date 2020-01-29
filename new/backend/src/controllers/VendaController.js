@@ -90,4 +90,12 @@ module.exports = {
       return res.status(400).json(error);
     }
   },
+  async getByCliente (req, res) {
+    try {
+      const vendas = await Venda.find({ cliente: req.params.cliente }).sort({ createdAt: 'desc' });
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
 };

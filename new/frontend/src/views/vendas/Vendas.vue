@@ -46,7 +46,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <template>
+    <v-card>
       <v-card-title>
         <v-layout row wrap>
           <v-flex xs12 sm6 class="d-flex align-center pl-4">
@@ -84,7 +84,7 @@
           <v-select :items="numeroElementos" label="Itens por página" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
         </div>
       </div>
-    </template>
+    </v-card>
   </div>
 </template>
 <script>
@@ -162,7 +162,9 @@ export default {
   },
   methods: {
     diffDatas(data) {
-      var data_formatada = `${data.split("/")[2]}-${data.split("/")[1]}-${data.split("/")[0]}`
+      var data_formatada = `${data.split("/")[2]}-${data.split("/")[1]}-${
+        data.split("/")[0]
+      }`;
       var m = moment(data_formatada); // YYYY-MM-DD
       var today = moment().startOf("day");
       var days = Math.round(moment.duration(today - m).asDays());

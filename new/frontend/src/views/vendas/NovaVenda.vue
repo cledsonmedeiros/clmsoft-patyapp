@@ -38,7 +38,7 @@
           <v-card elevation="0" v-if="passo === 1">
             <v-autocomplete v-model="itemAtual.cliente" :loading="carregandoClientes" :items="clientes" @change="habilitarBtnAvancar(passo)" :search-input.sync="pesquisaCliente" cache-items hide-no-data clearable item-text="nome" item-value="_id" label="Cliente" autocomplete="off" flat></v-autocomplete>
           </v-card>
-          <v-card v-if="passo === 2" elevation="0">
+          <v-card v-if="passo === 2" elevation="0" class="mb-2">
             <v-container fluid class="px-1" style="padding: 0">
               <v-row>
                 <v-col cols="12" xs="12" style="padding-top: 0;">
@@ -84,22 +84,21 @@
           <v-card v-if="passo === 3" elevation="0">
             <v-container fluid class="px-1" style="padding: 0">
               <v-row>
-                <v-col cols="12" xs="12" style="padding-top: 0;">
+                <v-col cols="12" xs="12" style="padding-top: 0; padding-bottom: 0;">
                   <v-card elevation="0">
-                    <v-card-text class="ma-0">
-                      <div>
-                        <p>Pagamento:</p>
-                        <v-switch v-model="isPrazo" dense color="purple" :label="`${isPrazo ? 'à prazo' : 'à vista'}`"></v-switch>
-                      </div>
-                      <div v-if="isPrazo" class="mb-3 mx-3">
+                    <v-card-text class="ma-0" style="padding-bottom: 0px;">
+                      <div class="mx-3">
                         <v-layout row>
-                          <v-flex xs12 md3 class="mr-3">
+                          <v-flex xs12 :md3="isPrazo" class="pr-3">
+                            <v-select :items="metodosPagamento" v-model="isPrazo" label="Método" item-text="nome" item-value="valor"></v-select>
+                          </v-flex>
+                          <v-flex v-if="isPrazo" xs12 md3 class="pr-3">
                             <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
                           </v-flex>
-                          <v-flex xs12 md4 class="mr-3">
+                          <v-flex v-if="isPrazo" xs12 md3 class="pr-3">
                             <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
                           </v-flex>
-                          <v-flex xs12 md4>
+                          <v-flex v-if="isPrazo" xs12 md3>
                             <v-dialog ref="dialog" v-model="modalDataParcela" :return-value.sync="data_atual" persistent width="290px">
                               <template v-slot:activator="{ on }">
                                 <v-text-field v-model="data_modificada_formatada" label="Primeira parcela" readonly v-on="on"></v-text-field>
@@ -113,23 +112,6 @@
                           </v-flex>
                         </v-layout>
                       </div>
-                      <div>
-                        <!-- <v-chip small pill class="my-2 mr-2 purple" dark v-for="item in cesta" :key="item.produto.index" @click="abrirEdicao(item)">
-                          {{item.quantidade}}
-                          <v-divider vertical class="mx-2"></v-divider>
-                          {{item.produto.name}}
-                          <v-divider vertical class="mx-2"></v-divider>
-                          R$ {{item.produto.price_sell.toFixed(2)}}
-                        </v-chip> -->
-                      </div>
-                      <div class="mt-3">
-                        <!-- <v-btn text color="purple" @click="limparCesta()" :disabled="this.cesta.length === 0">
-                          Limpar
-                        </v-btn>
-                        <v-btn text color="purple" @click="salvarCesta()" :disabled="this.cesta.length === 0 || this.clienteSelected._id.length === 0">
-                          Salvar
-                        </v-btn> -->
-                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -137,23 +119,19 @@
             </v-container>
           </v-card>
 
-          <v-row>
-            <v-container>
-              <v-layout text-center wrap>
-                <v-flex xs12 md4>
-                  <v-btn color="error" dark class="mt-3" @click="cancelarVendaAtual()">Cancelar</v-btn>
-                </v-flex>
-                <v-flex xs12 md4>
-                  <v-btn color="primary" class="mt-3" v-if="passoAtual !== 1" @click="anteriorPasso(passo)">Voltar</v-btn>
-                </v-flex>
-                <v-flex xs12 md4>
-                  <!-- <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn> -->
-                  <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)">Avançar</v-btn>
-                  <v-btn color="primary" class="mt-3" v-if="passoAtual === 3" @click="finalizarVenda()">Finalizar</v-btn>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-row>
+          <v-layout text-center wrap>
+            <v-flex xs12 md4>
+              <v-btn class="mb-2" color="error" dark @click="cancelarVendaAtual()">Cancelar</v-btn>
+            </v-flex>
+            <v-flex xs12 md4>
+              <v-btn class="mb-2" color="primary" v-if="passoAtual !== 1" @click="anteriorPasso(passo)">Voltar</v-btn>
+            </v-flex>
+            <v-flex xs12 md4>
+              <!-- <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn> -->
+              <v-btn class="mb-2" color="primary" v-if="passoAtual !== 3" @click="proximoPasso(passo)">Avançar</v-btn>
+              <v-btn class="mb-2" color="primary" v-if="passoAtual === 3" @click="finalizarVenda()">Finalizar</v-btn>
+            </v-flex>
+          </v-layout>
 
         </v-stepper-content>
       </v-stepper-items>
@@ -173,6 +151,10 @@ export default {
       modalDataParcela: false,
       periodo: "Mês",
       periodos: ["Semana", "Quinzena", "Mês"],
+      metodosPagamento: [
+        { nome: "À vista", valor: false },
+        { nome: "Parcelado", valor: true }
+      ],
       qntParcelas: 2,
       isPrazo: false,
       endPoint: "venda",

@@ -24,6 +24,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
+          <v-btn color="primary" text :disabled="clienteTemVendas" @click="deletarItem(itemAtual)">{{clienteTemVendas ? 'Não pode deletar' : 'Deletar'}}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
           <v-btn color="primary" text @click="salvarItem()">Salvar</v-btn>
@@ -50,9 +51,6 @@
             <v-icon small color="info" @click="abrirItem(item)">
               mdi-pencil
             </v-icon>
-            <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
-              mdi-close
-            </v-icon>
           </template>
         </v-data-table>
         <div class="text-center pt-5 mx-5">
@@ -74,6 +72,7 @@ export default {
   components: {},
   data() {
     return {
+      clienteTemVendas: true,
       numeroElementos: ["3", "5", "10"],
       paginaAtual: 1,
       numeroPaginas: 1,
@@ -117,7 +116,7 @@ export default {
           this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados", "error");
+          this.mostrarToast("Falha ao recuperar clientes", "error");
           this.fecharModal();
         });
     },
@@ -126,7 +125,22 @@ export default {
       this.modal = true;
       this.novoItem = true;
     },
+    checarVenda(idCliente) {
+      this.$axios
+        .get(`venda/cliente/${idCliente}`)
+        .then(response => {
+          if (response.data.length !== 0) {
+            this.clienteTemVendas = true;
+          } else {
+            this.clienteTemVendas = false;
+          }
+        })
+        .catch(() => {
+          this.mostrarToast("Falha ao recuperar vendas do cliente", "error");
+        });
+    },
     abrirItem(item) {
+      this.checarVenda(item._id);
       this.tituloModal = "Editar cliente";
       this.itemAtual.nome = item.nome;
       this.itemAtual.cpf = item.cpf;
@@ -139,6 +153,7 @@ export default {
       this.modal = false;
       this.novoItem = false;
       setTimeout(() => {
+        this.clienteTemVendas = false;
         this.itemAtual.nome = "";
         this.itemAtual.cpf = "";
         this.itemAtual.endereco = "";
@@ -202,7 +217,7 @@ export default {
     deletarItem(item) {
       if (confirm(`Deseja realmente deletar o cliente ${item.nome}?`)) {
         this.$axios
-          .delete(`cliente/${item._id}`)
+          .delete(`cliente/${item.id}`)
           .then(() => {
             this.mostrarToast("Cliente deletado com sucesso");
             this.fecharModal();
