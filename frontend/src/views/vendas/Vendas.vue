@@ -61,7 +61,7 @@
             <v-col cols="12" sm="12">
               <v-card class="purple--lighten-1">
                 <v-layout row wrap class="pa-3">
-                  <v-spacer>  </v-spacer>
+                  <v-spacer></v-spacer>
                   <v-flex xs12 md3 class="text-center">
                     <div class="caption grey--text">Total</div>
                     <div>{{Number(itemAbertoTotal.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
@@ -198,12 +198,32 @@ export default {
               this.parcelas = response.data;
               this.mostrarToast("Parcela recebida com sucesso");
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao listar parcelas", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao listar parcelas", "error");
+              }
             });
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao receber parcela", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao receber parcela", "error");
+          }
         });
     },
     listarItens(n = false) {
@@ -217,8 +237,18 @@ export default {
           this.numeroPaginas = response.data.totalPages;
           this.itensPorPagina = String(response.data.limit);
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao listar vendas", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar vendas", "error");
+          }
           this.fecharModal();
         });
     },
@@ -239,12 +269,32 @@ export default {
               this.itensVenda = response2.data;
               this.modalParcelas = true;
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao listar itens de venda", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao listar itens de venda", "error");
+              }
             });
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao listar parcelas", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar parcelas", "error");
+          }
         });
     },
     fecharModal() {
@@ -282,8 +332,18 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao criar venda", "error");
+            }
             this.fecharModal();
           });
       } else {
@@ -294,8 +354,18 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao editar venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao editar venda", "error");
+            }
             this.fecharModal();
           });
       }
@@ -322,20 +392,53 @@ export default {
                     .then(() => {
                       return;
                     })
-                    .catch(() => {
-                      this.mostrarToast(
-                        "Falha ao alterar quantidade do produto",
-                        "error"
-                      );
+                    .catch(err => {
+                      if (err.response.status === 403) {
+                        this.mostrarToast("Sessão expirada", "error");
+                        localStorage.clear();
+                        this.$router.push("/");
+                      } else if (err.response.status === 400) {
+                        this.mostrarToast(
+                          "Credenciais não informadas",
+                          "error"
+                        );
+                        localStorage.clear();
+                        this.$router.push("/");
+                      } else {
+                        this.mostrarToast(
+                          "Falha ao alterar quantidade do produto",
+                          "error"
+                        );
+                      }
                     });
                 });
               })
-              .catch(() => {
-                this.mostrarToast("Falha ao deletar item de venda", "error");
+              .catch(err => {
+                if (err.response.status === 403) {
+                  this.mostrarToast("Sessão expirada", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else if (err.response.status === 400) {
+                  this.mostrarToast("Credenciais não informadas", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else {
+                  this.mostrarToast("Falha ao deletar item de venda", "error");
+                }
               });
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao listar itens de venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao listar itens de venda", "error");
+            }
           });
 
         if (parcelado) {
@@ -349,16 +452,36 @@ export default {
                   this.fecharModal();
                   this.listarItens();
                 })
-                .catch(() => {
-                  this.mostrarToast(
-                    "Falha ao deletar parcelas da venda",
-                    "error"
-                  );
+                .catch(err => {
+                  if (err.response.status === 403) {
+                    this.mostrarToast("Sessão expirada", "error");
+                    localStorage.clear();
+                    this.$router.push("/");
+                  } else if (err.response.status === 400) {
+                    this.mostrarToast("Credenciais não informadas", "error");
+                    localStorage.clear();
+                    this.$router.push("/");
+                  } else {
+                    this.mostrarToast(
+                      "Falha ao deletar parcelas da venda",
+                      "error"
+                    );
+                  }
                   this.fecharModal();
                 });
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao deletar venda", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao deletar venda", "error");
+              }
               this.fecharModal();
             });
         } else {
@@ -369,8 +492,21 @@ export default {
               this.fecharModal();
               this.listarItens();
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao deletar parcelas da venda", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast(
+                  "Falha ao deletar parcelas da venda",
+                  "error"
+                );
+              }
               this.fecharModal();
             });
         }

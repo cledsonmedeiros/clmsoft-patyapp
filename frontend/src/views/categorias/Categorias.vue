@@ -102,8 +102,18 @@ export default {
           this.numeroPaginas = response.data.totalPages;
           this.itensPorPagina = String(response.data.limit);
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar categorias", "error");
+          }
           this.fecharModal();
         });
     },
@@ -125,8 +135,18 @@ export default {
             this.categoriaTemProdutos = false;
           }
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar vendas do cliente", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar vendas do cliente", "error");
+          }
         });
     },
     abrirItem(item) {
@@ -157,8 +177,21 @@ export default {
               this.fecharModal();
               this.listarItens();
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao criar categoria de produto", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast(
+                  "Falha ao criar categoria de produto",
+                  "error"
+                );
+              }
               this.fecharModal();
             });
         }
@@ -170,8 +203,21 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao editar categoria de produto", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast(
+                "Falha ao editar categoria de produto",
+                "error"
+              );
+            }
             this.fecharModal();
           });
       }
@@ -185,8 +231,21 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao deletar categoria de produto", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast(
+                "Falha ao deletar categoria de produto",
+                "error"
+              );
+            }
             this.fecharModal();
           });
       }

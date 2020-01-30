@@ -148,7 +148,7 @@ export default {
             this.usuarioTemVendas = false;
           }
         })
-        .catch(() => {
+        .catch(err => {
           this.mostrarToast("Falha ao listar vendas do usuario", "error");
         });
     },
@@ -197,7 +197,7 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
+          .catch(err => {
             this.mostrarToast("Falha ao editar usuario", "error");
             this.fecharModal();
           });
@@ -212,7 +212,7 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
+          .catch(err => {
             this.mostrarToast("Falha ao deletar usuario", "error");
             this.fecharModal();
           });

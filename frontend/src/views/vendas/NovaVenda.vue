@@ -127,7 +127,7 @@
               <v-btn class="mb-2" color="primary" v-if="passoAtual !== 1" @click="anteriorPasso(passo)">Voltar</v-btn>
             </v-flex>
             <v-flex xs12 md4>
-              <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn>
+              <v-btn color="primary" class="mb-2" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn>
               <v-btn class="mb-2" color="primary" v-if="passoAtual === 3" @click="finalizarVenda()">Finalizar</v-btn>
             </v-flex>
           </v-layout>
@@ -206,8 +206,18 @@ export default {
         .then(() => {
           return;
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao alterar tipo venda", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao atualizar tipo da venda", "error");
+          }
         });
     },
     pesquisaProduto(nome) {
@@ -218,23 +228,32 @@ export default {
         });
       }
     },
-    cesta(val){
-      if(val.length === 0){
-        this.estadoBtn = true
+    cesta(val) {
+      if (val.length === 0) {
+        this.estadoBtn = true;
       } else {
-        this.estadoBtn = false
+        this.estadoBtn = false;
       }
-      
     },
     "itemAtual.cliente"(cliente) {
       if (cliente !== null && cliente !== undefined && cliente.length === 24) {
         this.$axios
-          .put(`${this.endPoint}/${this.itemAtual._id}`, { ...this.itemAtual })
+          .put(`venda/${this.itemAtual._id}`, { ...this.itemAtual })
           .then(() => {
             return;
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao atualizar cliente da venda", "error");
+            }
           });
       }
     }
@@ -252,8 +271,18 @@ export default {
             this.$router.push("/vendas");
             return;
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao alterar tipo venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao atualizar tipo da venda", "error");
+            }
           });
       } else {
         let dataMoment = moment().set({
@@ -291,8 +320,18 @@ export default {
             .then(() => {
               return;
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao criar parcelas", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao criar parcelas", "error");
+              }
             });
         });
 
@@ -306,8 +345,18 @@ export default {
             this.$router.push("/vendas");
             return;
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao alterar tipo venda", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao atualizar tipo da venda", "error");
+            }
           });
       }
     },
@@ -362,26 +411,56 @@ export default {
             .then(() => {
               return;
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao atualizar estoque", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao atualizar estoque", "error");
+              }
             });
         });
         this.$axios
           .delete(`item/venda/${this.itemAtual._id}`)
           .then(response => {
             this.$axios
-              .delete(`${this.endPoint}/${this.itemAtual._id}`, {
+              .delete(`venda/${this.itemAtual._id}`, {
                 ...this.itemAtual
               })
               .then(response => {
                 window.history.back();
               })
-              .catch(() => {
-                this.mostrarToast("Falha ao cancelar venda", "error");
+              .catch(err => {
+                if (err.response.status === 403) {
+                  this.mostrarToast("Sessão expirada", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else if (err.response.status === 400) {
+                  this.mostrarToast("Credenciais não informadas", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else {
+                  this.mostrarToast("Falha ao cancelar venda", "error");
+                }
               });
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao limpar cesta", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao limpar cesta", "error");
+            }
           });
       }
     },
@@ -391,11 +470,18 @@ export default {
         .then(response => {
           this.clientes = response.data;
         })
-        .catch(() => {
-          this.mostrarToast(
-            "Falha ao recuperar dados listarClienteTodos",
-            "error"
-          );
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar clientes", "error");
+          }
         });
     },
     listarCesta() {
@@ -410,8 +496,18 @@ export default {
             });
           }
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados listarCesta", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar itens da venda", "error");
+          }
         });
     },
     habilitarBtnAvancar(passo) {
@@ -473,12 +569,32 @@ export default {
               this.pesquisaProduto = "";
               this.produtos = [];
             })
-            .catch(() => {
-              this.mostrarToast("Falha ao atualizar estoque", "error");
+            .catch(err => {
+              if (err.response.status === 403) {
+                this.mostrarToast("Sessão expirada", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else if (err.response.status === 400) {
+                this.mostrarToast("Credenciais não informadas", "error");
+                localStorage.clear();
+                this.$router.push("/");
+              } else {
+                this.mostrarToast("Falha ao atualizar estoque", "error");
+              }
             });
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao adicionar item", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao adicionar item", "error");
+          }
         });
     },
     verificarCestaAntesAddItem() {
@@ -524,12 +640,32 @@ export default {
                 this.modalItemCesta = false;
                 this.mostrarToast("Item deletado");
               })
-              .catch(() => {
-                this.mostrarToast("Falha ao atualizar estoque", "error");
+              .catch(err => {
+                if (err.response.status === 403) {
+                  this.mostrarToast("Sessão expirada", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else if (err.response.status === 400) {
+                  this.mostrarToast("Credenciais não informadas", "error");
+                  localStorage.clear();
+                  this.$router.push("/");
+                } else {
+                  this.mostrarToast("Falha ao atualizar estoque", "error");
+                }
               });
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao deletar item", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao deletar item", "error");
+            }
           });
       }
     },
@@ -542,8 +678,18 @@ export default {
             this.modalItemCesta = false;
             this.mostrarToast("Cesta limpada com sucesso");
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao limpar cesta", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao limpar cesta", "error");
+            }
           });
       }
     }
@@ -562,7 +708,7 @@ export default {
     };
 
     this.$axios
-      .post(`${this.endPoint}`, { ...novaVenda })
+      .post(`venda`, { ...novaVenda })
       .then(response => {
         this.itemAtual._id = response.data._id;
         this.itemAtual.data = response.data.data;
@@ -572,8 +718,18 @@ export default {
         this.itemAtual.total = response.data.total;
         this.listarCesta();
       })
-      .catch(() => {
-        this.mostrarToast("Falha ao criar venda", "error");
+      .catch(err => {
+        if (err.response.status === 403) {
+          this.mostrarToast("Sessão expirada", "error");
+          localStorage.clear();
+          this.$router.push("/");
+        } else if (err.response.status === 400) {
+          this.mostrarToast("Credenciais não informadas", "error");
+          localStorage.clear();
+          this.$router.push("/");
+        } else {
+          this.mostrarToast("Falha ao criar venda", "error");
+        }
       });
   }
 };

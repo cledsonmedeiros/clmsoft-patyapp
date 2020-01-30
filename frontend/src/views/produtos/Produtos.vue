@@ -136,8 +136,18 @@ export default {
           this.numeroPaginas = response.data.totalPages;
           this.itensPorPagina = String(response.data.limit);
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar produtos", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar produtos", "error");
+          }
           this.fecharModal();
         });
     },
@@ -147,8 +157,18 @@ export default {
         .then(response => {
           this.categorias = response.data;
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar categorias", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar categorias", "error");
+          }
           this.fecharModal();
         });
     },
@@ -170,8 +190,18 @@ export default {
             this.produtoTemItens = false;
           }
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao recuperar itens de produto", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar itens de produto", "error");
+          }
         });
     },
     abrirItem(item) {
@@ -230,8 +260,18 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar produto", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao criar produto", "error");
+            }
             this.fecharModal();
           });
       } else {
@@ -242,8 +282,18 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao editar produto", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao editar produto", "error");
+            }
             this.fecharModal();
           });
       }
@@ -257,8 +307,18 @@ export default {
             this.fecharModal();
             this.listarItens();
           })
-          .catch(() => {
-            this.mostrarToast("Falha ao deletar produto", "error");
+          .catch(err => {
+            if (err.response.status === 403) {
+              this.mostrarToast("Sessão expirada", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else if (err.response.status === 400) {
+              this.mostrarToast("Credenciais não informadas", "error");
+              localStorage.clear();
+              this.$router.push("/");
+            } else {
+              this.mostrarToast("Falha ao deletar produto", "error");
+            }
             this.fecharModal();
           });
       }
