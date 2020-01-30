@@ -3,7 +3,7 @@
     <v-dialog v-model="modalParcelas" persistent>
       <v-card class="mx-auto">
         <v-container fluid>
-          <v-row dense>
+          <v-row dense v-if="parcelas.length > 0">
             <v-col v-for="(parcela, index) in parcelas" :key="parcela._id" cols="12" sm="12">
               <v-card>
                 <v-layout row wrap class="pa-3">
@@ -35,11 +35,46 @@
               </v-card>
             </v-col>
           </v-row>
+          <v-row dense v-if="itensVenda.length > 0">
+            <v-col v-for="item in itensVenda" :key="item._id" cols="12" sm="12">
+              <v-card class="purple--lighten-1">
+                <v-layout row wrap class="pa-3">
+                  <v-flex xs12 md3 class="text-center">
+                    <div class="caption grey--text">Produto</div>
+                    <div>{{item.produto.nome}}</div>
+                  </v-flex>
+                  <v-flex xs12 md3 class="text-center">
+                    <div class="caption grey--text">Quantidade</div>
+                    <div>{{item.quantidade}}</div>
+                  </v-flex>
+                  <v-flex xs12 md3 class="text-center">
+                    <div class="caption grey--text">Preço</div>
+                    <div>{{Number(item.preco.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
+                  </v-flex>
+                  <v-flex xs12 md3 class="text-center">
+                    <div class="caption grey--text">Subtotal</div>
+                    <div>{{Number((item.preco * item.quantidade).toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="12">
+              <v-card class="purple--lighten-1">
+                <v-layout row wrap class="pa-3">
+                  <v-spacer>  </v-spacer>
+                  <v-flex xs12 md3 class="text-center">
+                    <div class="caption grey--text">Total</div>
+                    <div>{{Number(itemAbertoTotal.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-container>
         <v-card-actions>
           <v-layout>
             <v-flex xs12 class="text-center">
-              <v-btn class="text-center mb-3" text color="primary" @click="modalParcelas = false">Fechar</v-btn>
+              <v-btn class="text-center mb-3" text color="primary" @click="fecharModal()">Fechar</v-btn>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -60,7 +95,7 @@
         </v-layout>
       </v-card-title>
       <div>
-        <v-data-table :headers="cabecalhos" :items="produtos" sort-by="nome" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
+        <v-data-table :headers="cabecalhos" :items="vendas" sort-by="nome" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
           <template v-slot:item.isPrazo="{ item }">
             <v-icon :color="item.isPrazo ? 'orange' : 'green'">
               {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-brl" }}
@@ -70,7 +105,7 @@
             {{ Number(item.total.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
           </template>
           <template v-slot:item.action="{ item }">
-            <v-icon small color="info" @click="abrirItem(item)" v-if="item.isPrazo">
+            <v-icon small color="info" @click="abrirItem(item)">
               mdi-eye
             </v-icon>
             <v-icon small color="error" class="ml-1" @click="deletarItem(item)">
@@ -98,9 +133,11 @@ export default {
   components: {},
   data() {
     return {
+      itemAbertoTotal: 0,
       endPoint: "venda",
       carregandoCategorias: false,
       categorias: [],
+      itensVenda: [],
       pesquisaCategoria: "",
       price: 0,
       money: {
@@ -125,7 +162,7 @@ export default {
         preco_revenda: "",
         id: ""
       },
-      produtos: [],
+      vendas: [],
       parcelas: [],
       cabecalhos: [
         { text: "Data", align: "left", value: "data" },
@@ -140,7 +177,6 @@ export default {
   },
   created() {
     this.listarItens();
-    this.listarCategorias();
   },
   methods: {
     diffDatas(data) {
@@ -176,7 +212,7 @@ export default {
           `venda?page=${n ? 1 : this.paginaAtual}&limit=${this.itensPorPagina}`
         )
         .then(response => {
-          this.produtos = response.data.docs;
+          this.vendas = response.data.docs;
           this.paginaAtual = n ? 1 : response.data.page;
           this.numeroPaginas = response.data.totalPages;
           this.itensPorPagina = String(response.data.limit);
@@ -186,43 +222,37 @@ export default {
           this.fecharModal();
         });
     },
-    listarCategorias() {
-      this.$axios
-        .get(`categoria/todas`)
-        .then(response => {
-          this.categorias = response.data;
-        })
-        .catch(() => {
-          this.mostrarToast("Falha ao listar categorias", "error");
-          this.fecharModal();
-        });
-    },
     novaVenda() {
       this.$router.push("/novavenda");
     },
     abrirItem(item) {
+      this.itemAbertoTotal = item.total;
       this.itemAbertoID = item._id;
       this.$axios
         .get(`parcela/venda/${item._id}`)
         .then(response => {
           this.parcelas = response.data;
-          this.modalParcelas = true;
+
+          this.$axios
+            .get(`item/venda/${item._id}`)
+            .then(response2 => {
+              this.itensVenda = response2.data;
+              this.modalParcelas = true;
+            })
+            .catch(() => {
+              this.mostrarToast("Falha ao listar itens de venda", "error");
+            });
         })
         .catch(() => {
           this.mostrarToast("Falha ao listar parcelas", "error");
         });
     },
     fecharModal() {
-      this.modal = false;
-      this.novoItem = false;
-      setTimeout(() => {
-        this.itemAtual.nome = "";
-        this.itemAtual.quantidade = "";
-        this.itemAtual.categoria = "";
-        this.itemAtual.preco_compra = "";
-        this.itemAtual.preco_revenda = "";
-        this.itemAtual.id = "";
-      }, 1000);
+      this.itemAbertoID = "";
+      this.itemAbertoTotal = 0;
+      this.modalParcelas = false;
+      this.parcelas = [];
+      this.itensVenda = [];
     },
     salvarItem() {
       this.itemAtual.preco_compra = Number(

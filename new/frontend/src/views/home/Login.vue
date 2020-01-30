@@ -9,7 +9,7 @@
         </v-toolbar>
         <v-card-text>
           <v-form>
-            <v-text-field label="Usuário" v-model="usuario.usuario" prepend-icon="mdi-account" type="text" />
+            <v-text-field label="Usuário" v-model="usuario.usuario" prepend-icon="mdi-account" type="text" autocomplete="off"/>
             <v-text-field label="Senha" v-model="usuario.senha" prepend-icon="mdi-lock" type="password" @keydown.enter="autenticarUsuario()" />
           </v-form>
         </v-card-text>

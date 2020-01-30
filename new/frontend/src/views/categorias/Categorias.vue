@@ -9,7 +9,7 @@
           <v-container fluid>
             <v-row>
               <v-col cols="12" sm="12">
-                <v-text-field label="Nome" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+                <v-text-field label="Nome" v-model="itemAtual.nome" id="nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -18,7 +18,7 @@
           <v-btn color="primary" text @click="deletarItem(itemAtual)" v-if="!novoItem" :disabled="categoriaTemProdutos">{{categoriaTemProdutos ? 'Não pode deletar' : 'Deletar'}}</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
-          <v-btn color="primary" text @click="salvarItem()">Salvar</v-btn>
+          <v-btn color="primary" text @click="salvarItem()" :disabled="itemAtual.nome.length === 0">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -56,6 +56,13 @@
 export default {
   name: "CategoriaProduto",
   components: {},
+  // mounted() {
+  //   window.addEventListener("keypress", e => {
+  //     console.log(e);
+
+  //     console.log(String.fromCharCode(e.keyCode));
+  //   });
+  // },
   data() {
     return {
       categoriaTemProdutos: true,
@@ -101,6 +108,9 @@ export default {
         });
     },
     abrirModal() {
+      setTimeout(() => {
+        document.getElementById("nome").focus();
+      }, 1);
       this.tituloModal = "Cadastrar categoria";
       this.modal = true;
       this.novoItem = true;
@@ -137,19 +147,21 @@ export default {
     },
     salvarItem() {
       if (this.novoItem) {
-        delete this.itemAtual.id;
+        if (this.itemAtual.nome.length > 1) {
+          delete this.itemAtual.id;
 
-        this.$axios
-          .post(`categoria`, { ...this.itemAtual })
-          .then(() => {
-            this.mostrarToast("Categoria de produto criada com sucesso");
-            this.fecharModal();
-            this.listarItens();
-          })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar categoria de produto", "error");
-            this.fecharModal();
-          });
+          this.$axios
+            .post(`categoria`, { ...this.itemAtual })
+            .then(() => {
+              this.mostrarToast("Categoria de produto criada com sucesso");
+              this.fecharModal();
+              this.listarItens();
+            })
+            .catch(() => {
+              this.mostrarToast("Falha ao criar categoria de produto", "error");
+              this.fecharModal();
+            });
+        }
       } else {
         this.$axios
           .put(`categoria/${this.itemAtual.id}`, { ...this.itemAtual })

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const usuarioSchema = new mongoose.Schema(
   {
@@ -26,7 +26,7 @@ const usuarioSchema = new mongoose.Schema(
   },
 );
 
-// usuarioSchema.plugin(mongoosePaginate);
+usuarioSchema.plugin(mongoosePaginate);
 
 // usuarioSchema.pre('save', function () {})
 

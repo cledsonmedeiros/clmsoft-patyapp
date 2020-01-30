@@ -9,7 +9,7 @@
           <v-container fluid>
             <v-row>
               <v-col cols="12" sm="12" md="9">
-                <v-text-field label="Nome" v-model="itemAtual.nome" clearable autocomplete="off"></v-text-field>
+                <v-text-field label="Nome" id="nome" v-model="itemAtual.nome" clearable autocomplete="off"></v-text-field>
               </v-col>
               <v-col cols="12" sm="12" md="3">
                 <v-text-field label="Quantidade" v-model="itemAtual.quantidade" type="number" clearable autocomplete="off"></v-text-field>
@@ -153,6 +153,9 @@ export default {
         });
     },
     abrirModal() {
+      setTimeout(() => {
+        document.getElementById("nome").focus();
+      }, 1);
       this.tituloModal = "Cadastrar produto";
       this.modal = true;
       this.novoItem = true;

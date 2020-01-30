@@ -36,7 +36,7 @@
       <v-stepper-items>
         <v-stepper-content v-for="passo in quantidadePassos" :key="`${passo}-content`" :step="passo">
           <v-card elevation="0" v-if="passo === 1">
-            <v-autocomplete v-model="itemAtual.cliente" :loading="carregandoClientes" :items="clientes" @change="habilitarBtnAvancar(passo)" :search-input.sync="pesquisaCliente" cache-items hide-no-data clearable item-text="nome" item-value="_id" label="Cliente" autocomplete="off" flat></v-autocomplete>
+            <v-autocomplete v-model="itemAtual.cliente" id="cliente" :loading="carregandoClientes" :items="clientes" @change="habilitarBtnAvancar(passo)" :search-input.sync="pesquisaCliente" cache-items hide-no-data clearable item-text="nome" item-value="_id" label="Cliente" autocomplete="off" flat></v-autocomplete>
           </v-card>
           <v-card v-if="passo === 2" elevation="0" class="mb-2">
             <v-container fluid class="px-1" style="padding: 0">
@@ -127,8 +127,8 @@
               <v-btn class="mb-2" color="primary" v-if="passoAtual !== 1" @click="anteriorPasso(passo)">Voltar</v-btn>
             </v-flex>
             <v-flex xs12 md4>
-              <!-- <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn> -->
-              <v-btn class="mb-2" color="primary" v-if="passoAtual !== 3" @click="proximoPasso(passo)">Avançar</v-btn>
+              <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn>
+              <!-- <v-btn class="mb-2" color="primary" v-if="passoAtual !== 3" @click="proximoPasso(passo)">Avançar</v-btn> -->
               <v-btn class="mb-2" color="primary" v-if="passoAtual === 3" @click="finalizarVenda()">Finalizar</v-btn>
             </v-flex>
           </v-layout>
@@ -219,6 +219,14 @@ export default {
         });
       }
     },
+    cesta(val){
+      if(val.length === 0){
+        this.estadoBtn = true
+      } else {
+        this.estadoBtn = false
+      }
+      
+    },
     "itemAtual.cliente"(cliente) {
       if (cliente !== null && cliente !== undefined && cliente.length === 24) {
         this.$axios
@@ -272,7 +280,6 @@ export default {
           datasParcelas.push(`${date[1]}/${date[0]}/${date[2]}`);
         }
 
-        // console.log(datasParcelas)
         datasParcelas.forEach((element, index) => {
           this.$axios
             .post(`parcela/`, {

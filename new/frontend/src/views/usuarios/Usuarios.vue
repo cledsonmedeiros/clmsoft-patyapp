@@ -1,68 +1,64 @@
 <template>
   <div>
-    <div>
-      <v-dialog v-model="modal" persistent>
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{tituloModal}}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" sm="12" md="6">
-                  <v-text-field label="Título" v-model="livroAtual.titulo"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12" md="6">
-                  <v-text-field label="Autor" v-model="livroAtual.autor"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12" md="6">
-                  <v-text-field label="Edição" v-model="livroAtual.edicao" v-mask="['###']"></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12" md="6">
-                  <v-text-field label="ISBN" v-model="livroAtual.isbn" v-mask="['#############']"></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
-            <v-btn color="primary" text @click="salvarLivro()">Salvar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <v-dialog v-model="modal" persistent>
       <v-card>
         <v-card-title>
-          <v-layout row wrap>
-            <v-flex xs12 sm6 class="d-flex align-center pl-4">
-              <h1 class="headline">Lista de livros</h1>
-              <v-btn small elevation="1" color="primary" class="ml-2" @click="abrirModal()">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6>
-              <v-text-field v-model="pesquisar" append-icon="mdi-magnify" label="Pesquisar" single-line hide-details></v-text-field>
-            </v-flex>
-          </v-layout>
+          <span class="headline">{{tituloModal}}</span>
         </v-card-title>
-        <v-data-table :headers="cabecalhos" :items="livros" sort-by="nome" :search="pesquisar">
+        <v-card-text>
+          <v-container fluid>
+            <v-row>
+              <v-col cols="12" sm="12" md="12">
+                <v-text-field label="Nome" id="nome" :readonly="itemAtual.usuario === 'admin'" v-model="itemAtual.nome" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="12" md="6">
+                <v-text-field label="Usuário" :readonly="itemAtual.usuario === 'admin'" v-model="itemAtual.usuario" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="12" md="6">
+                <v-text-field label="Senha" v-model="itemAtual.senha" @click:append="mostrarSenha = !mostrarSenha" :type="mostrarSenha ? 'text' : 'password'" :append-icon="mostrarSenha ? 'mdi-eye' : 'mdi-eye-off'" @keyup.enter="salvarItem()" autocomplete="off"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" text :disabled="usuarioTemVendas || itemAtual.usuario === 'admin'" v-if="!novoItem" @click="deletarItem(itemAtual)">{{usuarioTemVendas ? 'Não pode deletar' : 'Deletar'}}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
+          <v-btn color="primary" text @click="salvarItem()" :disabled="itemAtual.nome.trim().length < 2">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-card>
+      <v-card-title>
+        <v-layout row wrap>
+          <v-flex xs12 sm6 class="d-flex align-center pl-4">
+            <h1 class="headline">Usuários</h1>
+            <v-btn small elevation="1" color="primary" class="ml-2" @click="abrirModal()">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-flex>
+          <v-flex xs12 sm6>
+            <v-text-field v-model="pesquisar" append-icon="mdi-magnify" label="Pesquisar" single-line hide-details></v-text-field>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+      <div>
+        <v-data-table :headers="cabecalhos" :items="usuarios" :search="pesquisar" :page.sync="paginaAtual" :items-per-page="Number(itensPorPagina)" hide-default-footer :page-count="numeroPaginas">
           <template v-slot:item.action="{ item }">
-            <v-icon small color="info" @click="abrirLivro(item)">
+            <v-icon small color="info" @click="abrirItem(item)">
               mdi-pencil
-            </v-icon>
-            <v-icon small color="error" class="ml-1" @click="deletarLivro(item)">
-              mdi-close
             </v-icon>
           </template>
         </v-data-table>
-      </v-card>
-      <Toast :ativo="toastAtivo" :mensagem="toastMensagem" :cor="toastCor" :tempo="toastTempo"></Toast>
-    </div>
+        <div class="text-center pt-5 mx-5">
+          <v-pagination v-model="paginaAtual" :length="numeroPaginas" @input="listarItens()"></v-pagination>
+          <v-select :items="numeroElementos" label="Itens por página" v-model="itensPorPagina" @change="listarItens(n=true)"></v-select>
+        </div>
+      </div>
+    </v-card>
   </div>
 </template>
 <script>
-import Vue from "vue";
-import Toast from "@/components/layout/Toast";
 import { mask } from "vue-the-mask";
 
 export default {
@@ -70,125 +66,152 @@ export default {
   directives: {
     mask
   },
-  components: {
-    Toast
-  },
+  components: {},
   data() {
     return {
+      mostrarSenha: false,
+      usuarioTemVendas: true,
+      numeroElementos: ["3", "5", "10"],
+      paginaAtual: 1,
+      numeroPaginas: 1,
+      itensPorPagina: "5",
       tituloModal: "",
-      toastAtivo: false,
-      toastMensagem: "Lielson",
-      toastCor: "green",
-      toastTempo: 2500,
       modal: false,
       pesquisar: "",
-      novo: false,
-      livroAtual: {
-        titulo: "",
-        autor: "",
-        edicao: "",
-        isbn: "",
+      novoItem: false,
+      itemAtual: {
+        nome: "",
+        usuario: "",
+        senha: "",
         id: ""
       },
-      livros: [],
+      usuarios: [],
       cabecalhos: [
-        { text: "Título", align: "left", value: "titulo" },
-        { text: "Autor", value: "autor" },
-        { text: "Edição", value: "edicao" },
-        { text: "ISBN", value: "isbn" },
+        { text: "Nome", align: "left", value: "nome" },
+        { text: "Usuário", value: "usuario" },
+        // { text: "Senha", value: "senha" },
         { text: "Ação", value: "action", align: "right", sortable: false }
       ]
     };
   },
   created() {
-    this.getUsuarios();
+    this.listarItens();
   },
   methods: {
-    getUsuarios() {
-      Vue.axios
-        .get("usuario")
+    listarItens(n = false) {
+      this.$axios
+        .get(
+          `usuario?page=${n ? 1 : this.paginaAtual}&limit=${
+            this.itensPorPagina
+          }`
+        )
         .then(response => {
-          this.livros = response.data;
+          this.usuarios = response.data.docs;
+          this.paginaAtual = n ? 1 : response.data.page;
+          this.numeroPaginas = response.data.totalPages;
+          this.itensPorPagina = String(response.data.limit);
         })
         .catch(() => {
-          this.mostrarToast("Falha ao recuperar dados", "red");
+          this.mostrarToast("Falha ao listar usuarios", "error");
           this.fecharModal();
         });
     },
     abrirModal() {
-      this.tituloModal = "Cadastrar livro";
+      setTimeout(() => {
+        document.getElementById("nome").focus();
+      }, 1);
+      this.tituloModal = "Cadastrar usuario";
       this.modal = true;
-      this.novo = true;
+      this.novoItem = true;
     },
-    abrirLivro(item) {
-      this.tituloModal = "Editar livro";
-      this.livroAtual.titulo = item.titulo;
-      this.livroAtual.autor = item.autor;
-      this.livroAtual.edicao = Number(item.edicao);
-      this.livroAtual.isbn = item.isbn;
-      this.livroAtual.id = item.id;
+    checarVenda(idUsuario) {
+      this.$axios
+        .get(`venda/usuario/${idUsuario}`)
+        .then(response => {
+          if (response.data.length !== 0) {
+            this.usuarioTemVendas = true;
+          } else {
+            this.usuarioTemVendas = false;
+          }
+        })
+        .catch(() => {
+          this.mostrarToast("Falha ao listar vendas do usuario", "error");
+        });
+    },
+    abrirItem(item) {
+      this.checarVenda(item._id);
+      this.tituloModal = "Editar usuario";
+      this.itemAtual.nome = item.nome;
+      this.itemAtual.usuario = item.usuario;
+      this.itemAtual.senha = item.senha;
+      this.itemAtual.id = item._id;
       this.modal = true;
     },
     fecharModal() {
       this.modal = false;
-      this.novo = false;
+      this.novoItem = false;
       setTimeout(() => {
-        this.livroAtual.titulo = "";
-        this.livroAtual.autor = "";
-        this.livroAtual.edicao = "";
-        this.livroAtual.isbn = "";
-        this.livroAtual.id = "";
+        this.usuarioTemVendas = false;
+        this.itemAtual.nome = "";
+        this.itemAtual.usuario = "";
+        this.itemAtual.senha = "";
+        this.itemAtual.id = "";
       }, 1000);
     },
-    salvarLivro() {
-      this.livroAtual.edicao = Number(this.livroAtual.edicao);
-      if (this.novo) {
-        delete this.livroAtual.id;
-        Vue.axios
-          .post(`livro`, { ...this.livroAtual })
-          .then(response => {
-            this.mostrarToast("Livro criado com sucesso");
-            this.fecharModal();
-            this.getUsuarios();
-          })
-          .catch(() => {
-            this.mostrarToast("Falha ao criar livro", "red");
-            this.fecharModal();
-          });
+    salvarItem() {
+      if (this.novoItem) {
+        if (this.itemAtual.nome.length > 0) {
+          delete this.itemAtual.id;
+
+          this.$axios
+            .post(`usuario`, { ...this.itemAtual })
+            .then(() => {
+              this.mostrarToast("Usuário criado com sucesso");
+              this.fecharModal();
+              this.listarItens();
+            })
+            .catch(err => {
+              this.mostrarToast("Falha ao criar usuario", "error");
+              this.fecharModal();
+            });
+        }
       } else {
-        Vue.axios
-          .put(`livro/${this.livroAtual.id}`, { ...this.livroAtual })
-          .then(response => {
-            this.mostrarToast("Livro editado com sucesso");
+        this.$axios
+          .put(`usuario/${this.itemAtual.id}`, { ...this.itemAtual })
+          .then(() => {
+            this.mostrarToast("Usuário editado com sucesso");
             this.fecharModal();
-            this.getUsuarios();
+            this.listarItens();
           })
           .catch(() => {
-            this.mostrarToast("Falha ao editar livro", "red");
+            this.mostrarToast("Falha ao editar usuario", "error");
             this.fecharModal();
           });
       }
     },
-    deletarLivro(item) {
-      Vue.axios
-        .delete(`livro/${item.id}`)
-        .then(response => {
-          this.mostrarToast("Livro deletado com sucesso");
-          this.fecharModal();
-          this.getUsuarios();
-        })
-        .catch(() => {
-          this.mostrarToast("Falha ao deletar livro", "red");
-          this.fecharModal();
-        });
+    deletarItem(item) {
+      if (confirm(`Deseja realmente deletar o usuario ${item.nome}?`)) {
+        this.$axios
+          .delete(`usuario/${item.id}`)
+          .then(() => {
+            this.mostrarToast("Usuário deletado com sucesso");
+            this.fecharModal();
+            this.listarItens();
+          })
+          .catch(() => {
+            this.mostrarToast("Falha ao deletar usuario", "error");
+            this.fecharModal();
+          });
+      }
     },
-    mostrarToast(msg, cor = "green") {
-      this.toastAtivo = true;
-      this.toastMensagem = msg;
-      this.toastCor = cor;
-      setInterval(() => {
-        this.toastAtivo = false;
-      }, this.toastTempo);
+    mostrarToast(msg, tipo = "success") {
+      this.$toast.open({
+        message: msg,
+        type: tipo,
+        position: "bottom",
+        duration: 3000,
+        dismissible: true
+      });
     }
   }
 };

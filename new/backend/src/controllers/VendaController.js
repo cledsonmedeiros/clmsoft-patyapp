@@ -98,4 +98,12 @@ module.exports = {
       return res.status(500).json(error);
     }
   },
+  async getByUsuario (req, res) {
+    try {
+      const vendas = await Venda.find({ vendedor: req.params.id }).sort({ createdAt: 'desc' });
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
 };

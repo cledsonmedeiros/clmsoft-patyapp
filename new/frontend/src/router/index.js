@@ -59,6 +59,14 @@ const routes = [
       titulo: "Nova venda"
     },
     component: () => import(/* webpackChunkName: "novavenda" */ '@/views/vendas/NovaVenda.vue')
+  },
+  {
+    path: '/usuarios',
+    name: 'usuarios',
+    meta: {
+      titulo: "Usuários"
+    },
+    component: () => import(/* webpackChunkName: "usuarios" */ '@/views/usuarios/Usuarios.vue')
   }
 ]
 
