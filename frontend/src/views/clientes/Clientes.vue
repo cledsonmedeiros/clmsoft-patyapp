@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="modal" persistent>
+    <v-dialog v-model="modal" scrollable fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">{{tituloModal}}</span>
@@ -24,7 +24,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" text :disabled="clienteTemVendas" v-if="!novoItem" @click="deletarItem(itemAtual)">{{clienteTemVendas ? 'Não pode deletar' : 'Deletar'}}</v-btn>
+          <v-btn color="primary" text :disabled="clienteTemVendas" v-if="!novoItem" @click="deletarItem(itemAtual)">Deletar</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="fecharModal()">Fechar</v-btn>
           <v-btn color="primary" text @click="salvarItem()" :disabled="itemAtual.nome.trim().length < 2">Salvar</v-btn>

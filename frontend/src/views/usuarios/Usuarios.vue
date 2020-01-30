@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="modal" persistent>
+    <v-dialog v-model="modal" scrollable fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">{{tituloModal}}</span>

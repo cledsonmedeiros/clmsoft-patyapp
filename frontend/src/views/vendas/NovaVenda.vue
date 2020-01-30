@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="modalItemCesta" persistent max-width="600px">
+    <v-dialog v-model="modalItemCesta" scrollable fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">{{itemCestaAtual.nome}}</span>
@@ -128,7 +128,6 @@
             </v-flex>
             <v-flex xs12 md4>
               <v-btn color="primary" class="mt-3" v-if="passoAtual !== 3" @click="proximoPasso(passo)" :disabled="estadoBtn">Avançar</v-btn>
-              <!-- <v-btn class="mb-2" color="primary" v-if="passoAtual !== 3" @click="proximoPasso(passo)">Avançar</v-btn> -->
               <v-btn class="mb-2" color="primary" v-if="passoAtual === 3" @click="finalizarVenda()">Finalizar</v-btn>
             </v-flex>
           </v-layout>

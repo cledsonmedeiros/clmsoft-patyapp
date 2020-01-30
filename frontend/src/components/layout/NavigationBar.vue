@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="menu" absolute temporary>
+    <v-navigation-drawer v-model="menu" app fixed temporary>
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">

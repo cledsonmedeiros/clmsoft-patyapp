@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="modalParcelas" persistent>
+    <v-dialog v-model="modalParcelas" scrollable fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
       <v-card class="mx-auto">
         <v-container fluid>
           <v-row dense v-if="parcelas.length > 0">
