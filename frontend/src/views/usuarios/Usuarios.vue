@@ -106,13 +106,27 @@ export default {
           }`
         )
         .then(response => {
-          this.usuarios = response.data.docs;
-          this.paginaAtual = n ? 1 : response.data.page;
-          this.numeroPaginas = response.data.totalPages;
-          this.itensPorPagina = String(response.data.limit);
+          if (response.status === 200) {
+            this.usuarios = response.data.docs;
+            this.paginaAtual = n ? 1 : response.data.page;
+            this.numeroPaginas = response.data.totalPages;
+            this.itensPorPagina = String(response.data.limit);
+          } else {
+            console.log(response);
+          }
         })
-        .catch(() => {
-          this.mostrarToast("Falha ao listar usuarios", "error");
+        .catch(err => {
+          if (err.response.status === 403) {
+            this.mostrarToast("Sessão expirada", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else if (err.response.status === 400) {
+            this.mostrarToast("Credenciais não informadas", "error");
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.mostrarToast("Falha ao listar usuarios", "error");
+          }
           this.fecharModal();
         });
     },

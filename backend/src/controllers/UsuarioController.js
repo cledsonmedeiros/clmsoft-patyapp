@@ -1,4 +1,6 @@
+require('dotenv/config');
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const Usuario = require('../models/UsuarioModel');
 
 module.exports = {
@@ -87,7 +89,17 @@ module.exports = {
           error: 'Usuário não encontrado',
         });
       }
-      return res.json(usuario);
+      var token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, {
+        expiresIn: 60 * 60 * 24 // expires in 5min
+      });
+      res.status(200).json({
+        _id: usuario._id,
+        nome: usuario.nome,
+        usuario: usuario.usuario,
+        token: token,
+      });
+
+      // return res.json(usuario);
     } catch (error) {
       return res.status(400).json(error);
     }

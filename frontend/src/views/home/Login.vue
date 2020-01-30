@@ -39,6 +39,7 @@ export default {
           localStorage.setItem("userUsername", response.data.usuario);
           localStorage.setItem("userName", response.data.nome);
           localStorage.setItem("userID", response.data._id);
+          localStorage.setItem("token", response.data.token);
           this.$router.push("/home");
           this.usuario.login = "";
           this.usuario.senha = "";

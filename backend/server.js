@@ -2,9 +2,9 @@ require('dotenv/config');
 const mongoose = require('mongoose');
 const app = require('./app');
 
-const { PORT, DB_URL } = process.env;
+const { PORT, DB_URL, DB_URL_DEV, ENV } = process.env;
 
-mongoose.connect(DB_URL,
+mongoose.connect(ENV === 'prod' ? DB_URL : DB_URL_DEV,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -15,6 +15,7 @@ mongoose.connect(DB_URL,
 
     app.listen(PORT || 3000, () => {
       console.log(`Servidor rodando em: http://localhost:${PORT}`);
+      console.log(`Ambiente: ${ENV}`);
     });
   },
 );
