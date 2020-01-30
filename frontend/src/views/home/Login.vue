@@ -1,26 +1,22 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-col cols="12" sm="8" md="4">
-      <v-card class="elevation-12">
-        <v-toolbar color="primary" dark flat>
-          <v-spacer />
-          <v-toolbar-title><span class="font-weight-bold">Paty</span><span class="font-weight-light">App</span> Login</v-toolbar-title>
-          <v-spacer />
-        </v-toolbar>
-        <v-card-text>
-          <v-form>
-            <v-text-field label="Usuário" v-model="usuario.usuario" prepend-icon="mdi-account" type="text" autocomplete="off"/>
-            <v-text-field label="Senha" v-model="usuario.senha" prepend-icon="mdi-lock" type="password" @keydown.enter="autenticarUsuario()" />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" class="mb-5" @click="autenticarUsuario()">Entrar</v-btn>
-          <v-spacer />
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-card class="elevation-12 mx-auto">
+    <v-toolbar color="primary" dark flat>
+      <v-spacer />
+      <v-toolbar-title><span class="font-weight-bold">Paty</span><span class="font-weight-light">App</span> Login</v-toolbar-title>
+      <v-spacer />
+    </v-toolbar>
+    <v-card-text>
+      <v-form>
+        <v-text-field label="Usuário" v-model="usuario.usuario" prepend-icon="mdi-account" type="text" autocomplete="off" />
+        <v-text-field label="Senha" v-model="usuario.senha" prepend-icon="mdi-lock" type="password" @keydown.enter="autenticarUsuario()" />
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn color="primary" class="mb-5" @click="autenticarUsuario()">Entrar</v-btn>
+      <v-spacer />
+    </v-card-actions>
+  </v-card>
 </template>
 <script>
 import Vue from "vue";
