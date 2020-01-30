@@ -90,7 +90,7 @@ module.exports = {
         });
       }
       var token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, {
-        expiresIn: 60 * 60 * 24 // expires in 5min
+        expiresIn: 60 * 60 * 12
       });
       res.status(200).json({
         _id: usuario._id,
@@ -98,8 +98,6 @@ module.exports = {
         usuario: usuario.usuario,
         token: token,
       });
-
-      // return res.json(usuario);
     } catch (error) {
       return res.status(400).json(error);
     }

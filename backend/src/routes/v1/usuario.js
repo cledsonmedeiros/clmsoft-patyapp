@@ -1,4 +1,3 @@
-require('dotenv/config');
 const routes = require('express').Router();
 const UsuarioController = require('../../controllers/UsuarioController');
 
