@@ -1,27 +1,20 @@
-import Vue from 'vue';
-import VueToast from 'vue-toast-notification';
-import VueMoment from 'vue-moment';
-import moment from 'moment-timezone';
-import App from './App.vue';
-import router from './router';
-import store from './store';
+import Vue from 'vue'
+import './plugins/axios'
+import App from './App.vue'
+import router from './router'
 import vuetify from './plugins/vuetify';
-
+import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/index.css';
-import './modules/vuetify-money';
-
-
-Vue.use(VueMoment, {
-  moment,
-});
+import VueCurrencyInput from 'vue-currency-input'
 
 Vue.use(VueToast);
+Vue.use(VueCurrencyInput)
+Vue.use(require('vue-moment'));
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 new Vue({
   router,
-  store,
   vuetify,
-  render: h => h(App),
-}).$mount('#app');
+  render: h => h(App)
+}).$mount('#app')

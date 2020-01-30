@@ -76,7 +76,7 @@ export default {
         },
         { rota: "/produtos", icone: "mdi-view-dashboard", titulo: "Produtos" },
         { rota: "/vendas", icone: "mdi-currency-brl", titulo: "Vendas" },
-        { rota: "/relatorios", icone: "mdi-file-chart", titulo: "Relatórios" }
+        // { rota: "/relatorios", icone: "mdi-file-chart", titulo: "Relatórios" }
       ]
     };
   },
