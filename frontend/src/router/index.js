@@ -25,11 +25,11 @@ const routes = [
     path: '/',
     name: 'login',
     meta: {
-      titulo: "Login"
+      titulo: "Login",
+      hideNavigation: true
     },
     component: () => import(/* webpackChunkName: "login" */ '@/views/home/Login.vue'),
     beforeEnter (to, from, next) {
-      // console.log(from)
       if (localStorage.userID !== undefined && localStorage.userID.length === 24) {
         next({
           name: from.name
@@ -154,7 +154,7 @@ const router = new VueRouter({
 })
 
 router.beforeResolve((to, from, next) => {
-  document.title = `${to.meta.titulo} - PatyApp`
+  document.title = `${to.meta.titulo} - PatyApp`;
   next()
 })
 

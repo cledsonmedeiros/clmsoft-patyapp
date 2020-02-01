@@ -104,6 +104,9 @@
           <template v-slot:item.total="{ item }">
             {{ Number(item.total.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
           </template>
+          <template v-slot:item.createdAt="{ item }">
+            {{ new Date(item.createdAt).toLocaleString() }}
+          </template>
           <template v-slot:item.action="{ item }">
             <v-icon small color="info" @click="abrirItem(item)">
               mdi-eye
@@ -165,7 +168,7 @@ export default {
       vendas: [],
       parcelas: [],
       cabecalhos: [
-        { text: "Data", align: "left", value: "data" },
+        { text: "Data", align: "left", value: "createdAt" },
         { text: "Cliente", value: "cliente.nome" },
         { text: "Vendido por", value: "vendedor.nome" },
         { text: "Tipo", value: "isPrazo" },

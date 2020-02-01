@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <NavigationBar v-if="this.$route.name !== 'login'"></NavigationBar>
+    <NavigationBar v-if="!$route.meta.hideNavigation"></NavigationBar>
     <v-content>
       <v-container fluid :class="this.$route.name === 'login' ? 'fill-height' : ''">
         <router-view></router-view>
@@ -20,6 +20,7 @@ export default {
     return {};
   },
   methods: {},
-  created() {}
+  created() {
+  }
 };
 </script>

@@ -3,11 +3,11 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const vendaSchema = new mongoose.Schema(
   {
-    data: {
-      type: String,
-      trim: true,
-      required: true,
-    },
+    // data: {
+    //   type: String,
+    //   trim: true,
+    //   required: true,
+    // },
     isPrazo: {
       type: Boolean,
       required: true,

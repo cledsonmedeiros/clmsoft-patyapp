@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const moment = require('moment-timezone');
 const Venda = require('../models/VendaModel');
 
 module.exports = {
@@ -30,7 +31,7 @@ module.exports = {
   store (req, res, next) {
     const data = req.body;
     const schema = Joi.object().keys({
-      data: Joi.string().required(),
+      // data: Joi.string().required(),
       isPrazo: Joi.boolean().required(),
       isConcluida: Joi.boolean().required(),
       cliente: Joi.string().allow(null),
@@ -101,6 +102,34 @@ module.exports = {
   async getByUsuario (req, res) {
     try {
       const vendas = await Venda.find({ vendedor: req.params.id }).sort({ createdAt: 'desc' });
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async getByHojeDinheiro (req, res) {
+    let start = moment().startOf('day').tz('America/Sao_Paulo');
+    let end = moment().endOf('day').tz('America/Sao_Paulo');
+
+    console.log(start._d);
+    console.log(end._d);
+    
+    try {
+      const vendas = await Venda.find({ createdAt: { "$gte": start, "$lt": end }, isPrazo: false });
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async getByHojePromissoria (req, res) {
+    let start = moment().startOf('day').tz('America/Sao_Paulo');
+    let end = moment().endOf('day').tz('America/Sao_Paulo');
+
+    console.log(start._d);
+    console.log(end._d);
+    
+    try {
+      const vendas = await Venda.find({ createdAt: { "$gte": start, "$lt": end }, isPrazo: true });
       return res.status(200).json(vendas);
     } catch (error) {
       return res.status(500).json(error);

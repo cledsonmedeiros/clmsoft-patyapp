@@ -699,7 +699,7 @@ export default {
     this.listarClientes();
 
     const novaVenda = {
-      data: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+      // data: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
       isPrazo: false,
       isConcluida: false,
       cliente: null,
@@ -711,7 +711,7 @@ export default {
       .post(`venda`, { ...novaVenda })
       .then(response => {
         this.itemAtual._id = response.data._id;
-        this.itemAtual.data = response.data.data;
+        // this.itemAtual.data = response.data.data;
         this.itemAtual.isPrazo = response.data.isPrazo;
         this.itemAtual.isConcluida = response.data.isConcluida;
         this.itemAtual.vendedor = response.data.vendedor;
