@@ -89,7 +89,7 @@ export default {
       cabecalhos: [
         { text: "Nome", align: "left", value: "nome" },
         { text: "Usuário", value: "usuario" },
-        // { text: "Senha", value: "senha" },
+        { text: "Último login", value: "ultimoLogin" },
         { text: "Ação", value: "action", align: "right", sortable: false }
       ]
     };

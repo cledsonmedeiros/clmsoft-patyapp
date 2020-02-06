@@ -20,6 +20,9 @@ const usuarioSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    ultimoLogin: {
+      type: String,
+    },
   },
   {
     timestamps: true,

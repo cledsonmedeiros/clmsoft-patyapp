@@ -27,12 +27,14 @@ export default {
     return {
       usuario: {
         usuario: "",
-        senha: ""
+        senha: "",
+        ultimoLogin: ""
       }
     };
   },
   methods: {
     autenticarUsuario() {
+      this.usuario.ultimoLogin = `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
       Vue.axios
         .post("usuario/login", { ...this.usuario })
         .then(response => {

@@ -29,7 +29,8 @@
                   </v-flex>
                   <v-flex xs12 md2 class="text-center">
                     <div class="caption grey--text">Ação</div>
-                    <v-btn color="primary" :disabled="parcela.isPaga" @click="receberParcela(parcela)">Receber</v-btn>
+                    <v-btn v-if="!parcela.isPaga" color="primary" :disabled="index === 0 ? parcela.isPaga : parcelas[index-1].isPaga === false" @click="receberParcela(parcela, index === (parcelas.length - 1))">Receber</v-btn>
+                    <v-btn v-else color="primary" disabled>Recebida</v-btn>
                   </v-flex>
                 </v-layout>
               </v-card>
@@ -100,6 +101,9 @@
             <v-icon :color="item.isPrazo ? 'orange' : 'green'">
               {{ item.isPrazo ? "mdi-credit-card-clock-outline" : "mdi-currency-brl" }}
             </v-icon>
+          </template>
+          <template v-slot:item.isConcluida="{ item }">
+            {{ item.isConcluida ? "Finalizada" : "Em andamento" }}
           </template>
           <template v-slot:item.total="{ item }">
             {{ Number(item.total.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
@@ -172,6 +176,7 @@ export default {
         { text: "Cliente", value: "cliente.nome" },
         { text: "Vendido por", value: "vendedor.nome" },
         { text: "Tipo", value: "isPrazo" },
+        { text: "Status", value: "isConcluida" },
         { text: "Total", value: "total" },
         { text: "Ação", value: "action", align: "right", sortable: false }
       ],
@@ -183,15 +188,15 @@ export default {
   },
   methods: {
     diffDatas(data) {
-      var data_formatada = `${data.split("/")[2]}-${data.split("/")[1]}-${
+      let data_formatada = `${data.split("/")[2]}-${data.split("/")[1]}-${
         data.split("/")[0]
       }`;
-      var m = moment(data_formatada); // YYYY-MM-DD
-      var today = moment().startOf("day");
-      var days = Math.round(moment.duration(today - m).asDays());
+      let m = moment(data_formatada); // YYYY-MM-DD
+      let today = moment().startOf("day");
+      let days = Math.round(moment.duration(today - m).asDays());
       return days;
     },
-    receberParcela(parcela) {
+    receberParcela(parcela, isUltima = false) {
       this.$axios
         .get(`parcela/receber/${parcela._id}`)
         .then(response => {
@@ -200,6 +205,27 @@ export default {
             .then(response => {
               this.parcelas = response.data;
               this.mostrarToast("Parcela recebida com sucesso");
+
+              if (isUltima) {
+                this.$axios
+                  .put(`venda/${this.itemAbertoID}`, { isConcluida: true })
+                  .then(() => {
+                    this.listarItens();
+                  })
+                  .catch(err => {
+                    if (err.response.status === 403) {
+                      this.mostrarToast("Sessão expirada", "error");
+                      localStorage.clear();
+                      this.$router.push("/");
+                    } else if (err.response.status === 400) {
+                      this.mostrarToast("Credenciais não informadas", "error");
+                      localStorage.clear();
+                      this.$router.push("/");
+                    } else {
+                      this.mostrarToast("Falha ao atualizar venda", "error");
+                    }
+                  });
+              }
             })
             .catch(err => {
               if (err.response.status === 403) {

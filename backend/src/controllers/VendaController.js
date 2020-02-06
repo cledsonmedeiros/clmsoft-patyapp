@@ -110,10 +110,6 @@ module.exports = {
   async getByHojeDinheiro (req, res) {
     let start = moment().startOf('day').tz('America/Sao_Paulo');
     let end = moment().endOf('day').tz('America/Sao_Paulo');
-
-    console.log(start._d);
-    console.log(end._d);
-    
     try {
       const vendas = await Venda.find({ createdAt: { "$gte": start, "$lt": end }, isPrazo: false });
       return res.status(200).json(vendas);
@@ -124,12 +120,38 @@ module.exports = {
   async getByHojePromissoria (req, res) {
     let start = moment().startOf('day').tz('America/Sao_Paulo');
     let end = moment().endOf('day').tz('America/Sao_Paulo');
-
-    console.log(start._d);
-    console.log(end._d);
-    
     try {
       const vendas = await Venda.find({ createdAt: { "$gte": start, "$lt": end }, isPrazo: true });
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async getByMesPromissoria (req, res) {
+    let start = moment().startOf('month').tz('America/Sao_Paulo');
+    let end = moment().endOf('month').tz('America/Sao_Paulo');
+    // console.log(start._d);
+    // console.log(end._d);
+    try {
+      const vendas = await Venda.find({
+        createdAt: { "$gte": start, "$lt": end },
+        isPrazo: true
+      }
+      );
+      return res.status(200).json(vendas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
+  async getByMesDinheiro (req, res) {
+    let start = moment().startOf('month').tz('America/Sao_Paulo');
+    let end = moment().endOf('month').tz('America/Sao_Paulo');
+    try {
+      const vendas = await Venda.find({
+        createdAt: { "$gte": start, "$lt": end },
+        isPrazo: false
+      }
+      );
       return res.status(200).json(vendas);
     } catch (error) {
       return res.status(500).json(error);

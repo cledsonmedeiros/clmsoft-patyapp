@@ -82,22 +82,36 @@ module.exports = {
   async login (req, res) {
     try {
       const usuario = await Usuario.findOne({
-        ...req.body,
+        usuario: req.body.usuario,
+        senha: req.body.senha,
       });
       if (!usuario) {
         return res.status(404).json({
           error: 'Usuário não encontrado',
         });
+      } else {
+
+        try {
+          await Usuario.findByIdAndUpdate(usuario._id, { ultimoLogin: req.body.ultimoLogin }, {
+            new: true,
+          });
+          await usuario.save();
+          let token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, {
+            expiresIn: 60 * 60 * 8
+          });
+          res.status(200).json({
+            _id: usuario._id,
+            nome: usuario.nome,
+            usuario: usuario.usuario,
+            token: token,
+          });
+        } catch (error) {
+          return res.status(400).json(error);
+        }
+
+
       }
-      var token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, {
-        expiresIn: 60 * 60 * 8
-      });
-      res.status(200).json({
-        _id: usuario._id,
-        nome: usuario.nome,
-        usuario: usuario.usuario,
-        token: token,
-      });
+
     } catch (error) {
       return res.status(400).json(error);
     }
