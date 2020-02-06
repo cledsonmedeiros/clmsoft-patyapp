@@ -24,6 +24,26 @@
                 </div>
               </v-card-text>
             </v-card>
+            <v-card color="blue" dark min-width="300" class="mx-1 mb-2">
+              <v-card-text>
+                <div class="title font-weight-light">
+                  Vendas à vista do mês
+                </div>
+                <div class="headline font-weight-bold">
+                  {{ Number(vendasMesDinheiro.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
+                </div>
+              </v-card-text>
+            </v-card>
+            <v-card color="red" dark min-width="300" class="mx-1 mb-2">
+              <v-card-text>
+                <div class="title font-weight-light">
+                  Vendas à prazo do mês
+                </div>
+                <div class="headline font-weight-bold">
+                  {{ Number(vendasMesPromissoria.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"}) }}
+                </div>
+              </v-card-text>
+            </v-card>
           </v-row>
         </v-col>
       </v-row>
@@ -39,11 +59,15 @@ export default {
     return {
       vendasDiaDinheiro: 0,
       vendasDiaPromissoria: 0,
+      vendasMesDinheiro: 0,
+      vendasMesPromissoria: 0,
     };
   },
   created(){
     this.getTotalVendasDiaDinheiro();
     this.getTotalVendasDiaPromissoria();
+    this.getTotalVendasMesDinheiro();
+    this.getTotalVendasMesPromissoria();
   },
   methods: {
     getTotalVendasDiaDinheiro(){
@@ -57,6 +81,20 @@ export default {
       this.$axios.get('venda/hoje/promissoria').then(response => {
         response.data.forEach(element => {
           this.vendasDiaPromissoria += element.total
+        });
+      })
+    },
+    getTotalVendasMesDinheiro(){
+      this.$axios.get('venda/mes/dinheiro').then(response => {
+        response.data.forEach(element => {
+          this.vendasMesDinheiro += element.total
+        });
+      })
+    },
+    getTotalVendasMesPromissoria(){
+      this.$axios.get('venda/mes/promissoria').then(response => {
+        response.data.forEach(element => {
+          this.vendasMesPromissoria += element.total
         });
       })
     },
