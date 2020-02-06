@@ -4,6 +4,7 @@ const ParcelaController = require('../../controllers/ParcelaController');
 const autenticarToken = require('../../middlewares/jwt')
 
 routes.get('/', autenticarToken, ParcelaController.index);
+routes.post('/query', autenticarToken, ParcelaController.query);
 routes.get('/receber/:id', autenticarToken, ParcelaController.receber);
 routes.get('/venda/:venda', autenticarToken, ParcelaController.getByVenda);
 routes.get('/:id', autenticarToken, ParcelaController.show);

@@ -93,7 +93,7 @@
                             <v-select :items="metodosPagamento" v-model="isPrazo" label="Método" item-text="nome" item-value="valor"></v-select>
                           </v-flex>
                           <v-flex v-if="isPrazo" xs12 md3 class="pr-3">
-                            <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas"></v-text-field>
+                            <v-text-field color="purple" type="number" v-model="qntParcelas" label="Parcelas" :hint="qntParcelas > 1 ? `Valor da parcela: R$ ${String((totalCesta/qntParcelas).toFixed(2))}` : 'Quantidade inválida'" persistent-hint></v-text-field>
                           </v-flex>
                           <v-flex v-if="isPrazo" xs12 md3 class="pr-3">
                             <v-select :items="periodos" v-model="periodo" label="Período"></v-select>
@@ -315,7 +315,7 @@ export default {
               data: element,
               valor: this.totalCesta / datasParcelas.length,
               isPaga: false,
-              ordem: index
+              ordem: index + 1
             })
             .then(() => {
               return;

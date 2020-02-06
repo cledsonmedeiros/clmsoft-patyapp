@@ -99,4 +99,12 @@ module.exports = {
       return res.status(500).json(error);
     }
   },
+  async query (req, res) {
+    try {
+      const parcelas = await Parcela.find(req.body.query).sort({ ordem: 'asc' });
+      return res.status(200).json(parcelas);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  },
 };

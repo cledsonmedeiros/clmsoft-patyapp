@@ -1,5 +1,31 @@
 <template>
   <div>
+    <v-dialog v-model="modalReceberParcela" max-width="400" persistent>
+      <v-card class="mx-auto">
+        <v-container fluid>
+          <v-row dense>
+            <v-col cols="12" sm="12">
+              <v-card>
+                <v-card-title primary-title>
+                  {{`${dataParcelaAtual} - ${Number(valorParcelaAtualOriginal.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}`}}
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field color="purple" v-model="valorParcelaAtual" label="Valor recebido"></v-text-field>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-card-actions>
+          <v-layout>
+            <v-flex xs12 class="text-center">
+              <v-btn class="text-center mb-3" text color="primary" @click="modalReceberParcela = false">Fechar</v-btn>
+              <v-btn class="text-center mb-3" text color="primary" @click="modalReceberParcela = false">Receber</v-btn>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="modalParcelas" scrollable fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
       <v-card class="mx-auto">
         <v-container fluid>
@@ -13,7 +39,7 @@
                   </v-flex>
                   <v-flex xs12 md2 class="text-center">
                     <div class="caption grey--text">Número</div>
-                    <div>{{(index + 1)}}</div>
+                    <div>{{(parcela.ordem)}}</div>
                   </v-flex>
                   <v-flex xs12 md2 class="text-center">
                     <div class="caption grey--text">Dias em atraso</div>
@@ -31,6 +57,7 @@
                   <v-flex xs12 md2 class="text-center">
                     <div class="caption grey--text">Ação</div>
                     <v-btn v-if="!parcela.isPaga" color="primary" :disabled="index === 0 ? parcela.isPaga : parcelas[index-1].isPaga === false" @click="receberParcela(parcela, index === (parcelas.length - 1))">Receber</v-btn>
+                    <!-- <v-btn v-if="!parcela.isPaga" color="primary" :disabled="index === 0 ? parcela.isPaga : parcelas[index-1].isPaga === false" @click="receberParcela(parcela, index === (parcelas.length - 1))">Receber</v-btn> -->
                     <v-btn v-else color="primary" disabled>Recebida</v-btn>
                   </v-flex>
                 </v-layout>
@@ -64,10 +91,6 @@
               <v-card class="purple--lighten-1">
                 <v-layout row wrap class="pa-3">
                   <v-spacer></v-spacer>
-                  <!-- <v-flex xs12 md3 class="text-center">
-                    <div class="caption grey--text">Resta pagar</div>
-                    <div>{{Number(itemAbertoTotal.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
-                  </v-flex> -->
                   <v-flex xs12 md3 class="text-center">
                     <div class="caption grey--text">Total</div>
                     <div>{{Number(itemAbertoTotal.toFixed(2)).toLocaleString("pt-BR", {style: "currency", currency:"BRL"})}}</div>
@@ -145,6 +168,9 @@ export default {
   components: {},
   data() {
     return {
+      valorParcelaAtual: 0,
+      valorParcelaAtualOriginal: 0,
+      dataParcelaAtual: "",
       itemAbertoTotal: 0,
       endPoint: "venda",
       carregandoCategorias: false,
@@ -164,6 +190,7 @@ export default {
       tituloModal: "",
       modal: false,
       modalParcelas: false,
+      modalReceberParcela: false,
       pesquisar: "",
       novoItem: false,
       itemAtual: {
@@ -176,7 +203,6 @@ export default {
       },
       vendas: [],
       parcelas: [],
-      totalParcelasPagas: 0,
       cabecalhos: [
         { text: "Data", align: "left", value: "createdAt" },
         { text: "Cliente", value: "cliente.nome" },
@@ -203,6 +229,12 @@ export default {
       return days;
     },
     receberParcela(parcela, isUltima = false) {
+      // this.modalReceberParcela = true;
+      // console.log(parcela);
+      // this.valorParcelaAtual = parcela.valor;
+      // this.valorParcelaAtualOriginal = parcela.valor;
+      // this.dataParcelaAtual = parcela.data;
+
       this.$axios
         .get(`parcela/receber/${parcela._id}`)
         .then(response => {
@@ -297,21 +329,10 @@ export default {
         .get(`parcela/venda/${item._id}`)
         .then(response => {
           this.parcelas = response.data;
+
           this.$axios
             .get(`item/venda/${item._id}`)
             .then(response2 => {
-              // this.$axios
-              //   .post("parcela/query", {
-              //     venda: itemAbertoID,
-              //     isPaga: true
-              //   })
-              //   .then(response3 => {
-              //     console.log(response3.data)
-              //     // response3.data.forEach(element => {
-              //     //   this.totalParcelasPagas += element.valor;
-              //     // });
-              //   });
-
               this.itensVenda = response2.data;
               this.modalParcelas = true;
             })

@@ -46,7 +46,12 @@
     ],
     "rules": {
       "no-console": "off",
-      "no-parsing-error": "off"
+      "vue/no-parsing-error": [
+        2,
+        {
+          "invalid-first-character-of-tag-name": false
+        }
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"
